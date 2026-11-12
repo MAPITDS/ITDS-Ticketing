@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ITDS Helpdesk & Ticketing Portal</title>
+  <title>ITDS Ticketing System</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     .pill-btn { transition: all 0.15s ease; }
@@ -68,13 +68,13 @@
         <div class="w-14 h-14 mx-auto rounded-2xl bg-indigo-600 text-white flex items-center justify-center font-black text-2xl shadow-lg">
           IT
         </div>
-        <h1 class="text-xl font-extrabold text-slate-800">ITDS Helpdesk Portal</h1>
+        <h1 class="text-xl font-extrabold text-slate-800">ITDS</h1>
         <p class="text-xs text-slate-500">Mitra Asa Pratama • Login menggunakan akun terdaftar</p>
       </div>
 
       <form id="loginForm" class="space-y-4">
         <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1">Email Perusahaan</label>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Email</label>
           <input type="email" id="loginEmail" required placeholder="nama@mitraasa.co.id"
             class="w-full text-sm border border-slate-300 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none">
         </div>
@@ -104,8 +104,8 @@
             IT
           </div>
           <div>
-            <h1 class="text-base sm:text-lg font-bold tracking-tight">ITDS Helpdesk & Ticketing</h1>
-            <p class="text-[11px] text-indigo-200">Mitra Asa Pratama • Real-time Google Sheets Portal</p>
+            <h1 class="text-base sm:text-lg font-bold tracking-tight">ITDS Ticketing System</h1>
+            <p class="text-[11px] text-indigo-200">Mitra Asa Pratama • Real-time Tickets Portal</p>
           </div>
         </div>
 
@@ -124,9 +124,9 @@
             ↻
           </button>
 
-          <button onclick="openChangePasswordModal()" title="Ganti Password"
+          <button onclick="openChangePasswordModal()" title="Change Password"
             class="bg-white/15 hover:bg-white/25 text-white text-xs font-semibold px-3 py-1.5 rounded-lg border border-white/20 transition">
-            🔑 Ganti Password
+            🔑 Change Password
           </button>
 
           <button onclick="logoutUser()"
@@ -143,8 +143,8 @@
       <section class="lg:col-span-5 bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden h-fit">
         <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex justify-between items-center">
           <div>
-            <h2 class="text-base font-bold text-slate-800">Buat Tiket Baru</h2>
-            <p id="formSubtitle" class="text-xs text-slate-500">Identitas terisi otomatis dari akun Anda</p>
+            <h2 class="text-base font-bold text-slate-800">Create New Ticket</h2>
+            <p id="formSubtitle" class="text-xs text-slate-500">Profile Data Auto Fill</p>
           </div>
           <span class="text-[11px] font-semibold px-2.5 py-1 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-100">
             New Ticket
@@ -155,8 +155,8 @@
           <!-- IDENTITAS PELAPOR -->
           <div class="bg-slate-50/80 p-3.5 rounded-xl border border-slate-200/80 space-y-3">
             <div class="flex items-center justify-between">
-              <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Data Pelapor (Auto-Fill)</span>
-              <span id="badgeAutoFillLock" class="text-[10px] font-semibold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">🔒 Terkunci sesuai akun</span>
+              <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Created by (Auto-Fill)</span>
+              <span id="badgeAutoFillLock" class="text-[10px] font-semibold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">🔒</span>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -187,7 +187,7 @@
                 <label class="block text-[11px] font-semibold text-slate-600 mb-1">Company *</label>
                 <select name="Company" id="dd-Company" required
                   class="w-full text-xs font-medium border border-slate-200 rounded-lg px-2 py-2 bg-slate-100 text-slate-700 outline-none">
-                  <option value="">Memuat...</option>
+                  <option value="">Load...</option>
                 </select>
               </div>
             </div>
@@ -195,18 +195,18 @@
 
           <!-- FIELD YANG DIISI USER -->
           <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">1. Pilih Request Access - Module - Support *</label>
+            <label class="block text-xs font-bold text-slate-700 mb-1">1. Pick Request Access - Module - Support *</label>
             <select name="Request Access-Module-Support" id="dd-Request Access-Module-Support" required
               onchange="toggleOdooAccessSection(this.value)"
               class="w-full text-sm border border-slate-300 rounded-xl px-3 py-2.5 bg-white font-medium focus:ring-2 focus:ring-indigo-500 outline-none">
-              <option value="">Memuat...</option>
+              <option value="">Load...</option>
             </select>
           </div>
 
           <!-- CONDITIONAL SECTION: ACCESS RIGHT ODOO -->
           <div id="odooAccessSection" class="hidden animate-fade bg-indigo-50/70 border border-indigo-200 rounded-xl p-4 space-y-3">
             <div class="flex items-center gap-2 text-indigo-800 font-bold text-xs">
-              <span>🔐 Detail Permintaan Akses Odoo</span>
+              <span>🔐 Detail Odoo Access Rights</span>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
@@ -228,21 +228,21 @@
                 <label class="block text-[11px] font-semibold text-indigo-900 mb-1">Department *</label>
                 <select name="Department" id="dd-Department"
                   class="w-full text-xs border border-indigo-200 rounded-lg px-3 py-2 bg-white">
-                  <option value="">Memuat...</option>
+                  <option value="">Load...</option>
                 </select>
               </div>
             </div>
           </div>
 
           <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">2. Description (Detail Kendala / Permintaan) *</label>
+            <label class="block text-xs font-bold text-slate-700 mb-1">2. Description *</label>
             <textarea name="Description" rows="3" required placeholder="Jelaskan detail kendala, kebutuhan modul, atau permintaan Anda..."
               class="w-full text-sm border border-slate-300 rounded-xl px-3 py-2 focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label class="block text-xs font-bold text-slate-700 mb-1">3. Attachments (Gambar/Dokumen)</label>
+              <label class="block text-xs font-bold text-slate-700 mb-1">3. Attachments </label>
               <input type="file" id="attachmentInput" accept="image/*,.pdf,.doc,.docx,.xls,.xlsx"
                 class="w-full text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 border border-slate-300 rounded-xl p-1">
             </div>
@@ -250,32 +250,27 @@
               <label class="block text-xs font-bold text-slate-700 mb-1">4. Sent Mail CC</label>
               <select name="Sent Mail CC" id="dd-SentMailCC"
                 class="w-full text-xs border border-slate-300 rounded-xl px-3 py-2.5 bg-white">
-                <option value="">-- Tanpa CC --</option>
+                <option value="">-- No need CC --</option>
               </select>
             </div>
           </div>
 
-          <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Tags <span class="text-slate-400 font-normal">(Opsional)</span></label>
-            <input type="text" name="Tags" placeholder="contoh: odoo, invoice, urgent"
-              class="w-full text-xs border border-slate-300 rounded-xl px-3 py-2 focus:ring-2 focus:ring-indigo-500 outline-none">
-          </div>
-
-          <!-- =========================================================
-               BAGIAN KHUSUS ADMIN ITDS (TERTATA RAPI & BERURUTAN)
-          ========================================================== -->
+          <!-- BAGIAN KHUSUS ADMIN SAAT CREATE TICKET -->
           <div id="adminCreateFields" class="hidden border-t pt-4 space-y-4">
             <div class="flex items-center justify-between bg-indigo-50/80 px-3 py-2 rounded-xl border border-indigo-100">
               <span class="text-xs font-extrabold text-indigo-800 uppercase tracking-wider">🛡️ Pengaturan Admin ITDS</span>
               <span class="text-[10px] text-indigo-600 font-semibold">Full Access</span>
             </div>
 
-            <!-- 1. Assigned 1 & Assigned 2 -->
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">Tags <span class="text-slate-400 font-normal">(Opsional)</span></label>
+              <input type="text" name="Tags" value="ITDS"
+                class="w-full text-xs border border-slate-300 rounded-xl px-3 py-2 focus:ring-2 focus:ring-indigo-500 outline-none">
+            </div>
+
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-50/70 p-3 rounded-xl border border-slate-200/80">
               <div>
-                <div class="flex justify-between items-center mb-1.5">
-                  <label class="text-xs font-bold text-slate-700">Assigned 1 (PIC Utama)</label>
-                </div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">Assigned 1th</label>
                 <input type="hidden" name="Assigned" id="val-Assigned">
                 <input type="hidden" name="Assigned Email" id="val-AssignedEmail">
                 <div id="btnGroup-Assigned" class="flex flex-wrap gap-1.5"></div>
@@ -283,22 +278,18 @@
               </div>
 
               <div>
-                <div class="flex justify-between items-center mb-1.5">
-                  <label class="text-xs font-bold text-slate-700">Assigned 2 <span class="text-slate-400 font-normal">(Opsional)</span></label>
-                </div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">Assigned 2th <span class="text-slate-400 font-normal">(Opsional)</span></label>
                 <input type="hidden" name="Assigned 2" id="val-Assigned2">
                 <div id="btnGroup-Assigned2" class="flex flex-wrap gap-1.5"></div>
               </div>
             </div>
 
-            <!-- 2. Ticket Level (Berurutan: Trivial -> Very Hard) -->
             <div>
-              <label class="block text-xs font-bold text-slate-700 mb-1.5">Ticket Level <span class="text-[10px] font-normal text-slate-400">(Tingkat Kesulitan)</span></label>
+              <label class="block text-xs font-bold text-slate-700 mb-1.5">Ticket Level</label>
               <input type="hidden" name="Ticket Level" id="val-Ticket Level">
               <div id="btnGroup-Ticket Level" class="flex flex-wrap gap-1.5"></div>
             </div>
 
-            <!-- 3. Priority (Berurutan: Low -> Medium -> High) & Est Done -->
             <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
               <div class="sm:col-span-7">
                 <label class="block text-xs font-bold text-slate-700 mb-1.5">Priority</label>
@@ -306,16 +297,15 @@
                 <div id="btnGroup-Priority" class="flex flex-wrap gap-1.5"></div>
               </div>
               <div class="sm:col-span-5">
-                <label class="block text-[11px] font-bold text-slate-600 mb-1.5">Est Done (Otomatis)</label>
-                <input type="text" name="Est Done" id="val-EstDone" placeholder="Pilih Level & Priority"
+                <label class="block text-[11px] font-bold text-slate-600 mb-1.5">Est Done (auto fill)</label>
+                <input type="text" name="Est Done" id="val-EstDone" placeholder="Set Ticket Level & Priority"
                   class="w-full text-xs font-bold text-indigo-700 bg-indigo-50/50 border border-indigo-200 rounded-xl px-3 py-2 outline-none">
               </div>
             </div>
 
-            <!-- 4. Initial State (Memanjang Full-Width dengan Chevron Arrow Step-by-Step) -->
             <div class="pt-1">
               <div class="flex justify-between items-center mb-1.5">
-                <label class="text-xs font-bold text-slate-700">Initial State (Alur Status Tiket)</label>
+                <label class="text-xs font-bold text-slate-700">Initial State</label>
                 <span class="text-[10px] text-slate-400">Step-by-step</span>
               </div>
               <input type="hidden" name="State" id="val-State" value="New">
@@ -325,7 +315,7 @@
 
           <button type="submit" id="btnSubmit"
             class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl shadow-md transition text-sm">
-            🚀 Kirim Tiket Sekarang
+            🚀 Send Now
           </button>
         </form>
       </section>
@@ -334,15 +324,15 @@
       <section class="lg:col-span-7 space-y-4">
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <div class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm">
-            <p class="text-[11px] font-semibold text-slate-500">Total Tiket</p>
+            <p class="text-[11px] font-semibold text-slate-500">Total Tickets</p>
             <p id="statTotal" class="text-xl font-extrabold text-slate-800 mt-0.5">0</p>
           </div>
           <div class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm">
-            <p class="text-[11px] font-semibold text-amber-600">New / Open</p>
+            <p class="text-[11px] font-semibold text-amber-600">New</p>
             <p id="statNew" class="text-xl font-extrabold text-amber-600 mt-0.5">0</p>
           </div>
           <div class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm">
-            <p class="text-[11px] font-semibold text-blue-600">In Progress / Test</p>
+            <p class="text-[11px] font-semibold text-blue-600">Ongoing</p>
             <p id="statProgress" class="text-xl font-extrabold text-blue-600 mt-0.5">0</p>
           </div>
           <div class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm">
@@ -354,16 +344,16 @@
         <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden">
           <div class="p-5 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <h2 id="tableHeadingTitle" class="text-base font-bold text-slate-800">Daftar Tiket</h2>
-              <p class="text-xs text-slate-500">Default menampilkan tiket aktif (selain Done & Cancel)</p>
+              <h2 id="tableHeadingTitle" class="text-base font-bold text-slate-800">All Ticket</h2>
+              <p class="text-xs text-slate-500">Default filter (Open Tickets)</p>
             </div>
             <div class="flex flex-wrap gap-2">
               <input type="text" id="searchBox" onkeyup="renderTable()" placeholder="Cari ID, modul..."
                 class="text-xs border border-slate-300 rounded-xl px-3 py-2 w-36 focus:ring-2 focus:ring-indigo-500 outline-none">
               <select id="filterState" onchange="renderTable()"
                 class="text-xs border border-slate-300 rounded-xl px-3 py-2 bg-white font-semibold text-indigo-700">
-                <option value="ACTIVE_ONLY">Tiket Aktif (Selain Done & Cancel)</option>
-                <option value="ALL">Semua State (Termasuk Done/Cancel)</option>
+                <option value="ACTIVE_ONLY">Default filter (Open Tickets)</option>
+                <option value="ALL">All Tickets</option>
               </select>
             </div>
           </div>
@@ -373,9 +363,9 @@
               <thead>
                 <tr class="bg-slate-50 border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
                   <th class="py-3 px-4">ID</th>
-                  <th class="py-3 px-4">Modul & Kendala</th>
-                  <th class="py-3 px-4">Pelapor</th>
-                  <th class="py-3 px-4">PIC & Est</th>
+                  <th class="py-3 px-4">Modul & Issue</th>
+                  <th class="py-3 px-4">Create by</th>
+                  <th class="py-3 px-4">Assigne & Estimation</th>
                   <th class="py-3 px-4">State & Verify</th>
                 </tr>
               </thead>
@@ -396,7 +386,7 @@
         <div>
           <div class="flex items-center gap-2">
             <span id="modalIssueId" class="bg-indigo-500 text-white text-xs font-extrabold px-2.5 py-0.5 rounded-md">#0</span>
-            <h3 id="modalModule" class="font-bold text-sm sm:text-base">Detail Tiket</h3>
+            <h3 id="modalModule" class="font-bold text-sm sm:text-base">Detail Tickets</h3>
           </div>
           <p id="modalMeta" class="text-[11px] text-slate-300 mt-0.5"></p>
         </div>
@@ -404,73 +394,33 @@
       </div>
 
       <div class="p-6 space-y-5 max-h-[80vh] overflow-y-auto">
+        <!-- Ringkasan Kendala -->
         <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
-          <div class="flex justify-between text-xs text-slate-500">
+          <div class="flex justify-between items-center text-xs text-slate-500">
             <span id="modalReporter"></span>
-            <span id="modalCompany" class="font-semibold text-slate-700"></span>
+            <div class="flex items-center gap-2">
+              <span id="modalCompany" class="font-semibold text-slate-700"></span>
+              <span id="modalCurrentStateBadge" class="text-xs font-bold px-2.5 py-0.5 rounded-full"></span>
+            </div>
           </div>
           <p id="modalDesc" class="text-sm text-slate-800 whitespace-pre-line leading-relaxed"></p>
           <div id="modalOdooBox" class="hidden text-xs bg-indigo-50 text-indigo-900 p-2.5 rounded-lg border border-indigo-100"></div>
           <div id="modalAttachmentBox" class="pt-1"></div>
         </div>
 
-        <!-- BAGIAN USER: USER VERIFICATION & RATING 1-10 -->
-        <div class="border-2 border-emerald-200 bg-emerald-50/40 rounded-2xl p-4 space-y-4">
-          <div class="flex items-center justify-between">
-            <h4 class="text-xs font-extrabold uppercase tracking-wider text-emerald-800">
-              👤 Konfirmasi User & Penilaian
-            </h4>
-            <span id="modalCurrentStateBadge" class="text-xs font-bold px-2.5 py-0.5 rounded-full"></span>
-          </div>
+        <!-- KONTAINER KONFIRMASI USER & PENILAIAN (HANYA MUNCUL JIKA LOGIN === PEMILIK TIKET) -->
+        <div id="userVerificationContainer"></div>
 
-          <div id="verifyLockedNotice" class="hidden bg-amber-50 border border-amber-200 text-amber-800 text-xs rounded-xl p-3 font-medium">
-            ⏳ Tombol <strong>User Verification</strong> hanya dapat diisi apabila status tiket sudah berada pada tahap <strong>Test & Review</strong>.
-          </div>
-
-          <div id="verifyInteractiveBox">
-            <label class="block text-xs font-semibold text-slate-700 mb-2">
-              Konfirmasi Hasil Pengujian (Test & Review):
-              <span id="verifyStatusLabel" class="ml-1 font-extrabold text-indigo-700"></span>
-            </label>
-            <div class="flex flex-wrap gap-2.5">
-              <button type="button" id="btnVerifyConfirm" onclick="setUserVerification('CONFIRMED')"
-                class="flex-1 py-2.5 px-4 rounded-xl border-2 border-emerald-500 bg-white hover:bg-emerald-600 hover:text-white text-emerald-700 font-bold text-xs transition">
-                ✅ CONFIRMED (Siap Deployment)
-              </button>
-              <button type="button" id="btnVerifyReject" onclick="setUserVerification('REJECTED')"
-                class="flex-1 py-2.5 px-4 rounded-xl border-2 border-rose-400 bg-white hover:bg-rose-600 hover:text-white text-rose-700 font-bold text-xs transition">
-                ❌ REJECTED (Revisi / Belum Sesuai)
-              </button>
-            </div>
-            <input type="hidden" id="edit-UserVerification">
-          </div>
-
-          <div id="reasonBox" class="hidden animate-fade">
-            <label class="block text-xs font-semibold text-rose-700 mb-1">Reason (Alasan Penolakan) *</label>
-            <textarea id="edit-Reason" rows="2" placeholder="Jelaskan bagian mana yang masih belum sesuai..."
-              class="w-full text-xs border border-rose-300 rounded-xl px-3 py-2 bg-white focus:ring-2 focus:ring-rose-500 outline-none"></textarea>
-          </div>
-
-          <div id="feedbackSection" class="hidden animate-fade pt-2 border-t border-emerald-200">
-            <div class="flex justify-between items-center mb-2">
-              <label class="text-xs font-bold text-slate-800">⭐ Seberapa puas Anda dengan layanan ITDS? (1 - 10)</label>
-              <span id="feedbackEmojiLabel" class="text-xs font-bold text-indigo-600">Pilih angka</span>
-            </div>
-            <input type="hidden" id="edit-UserFeedback">
-            <div id="ratingButtons" class="grid grid-cols-10 gap-1.5"></div>
-          </div>
-        </div>
-
-        <!-- BAGIAN ADMIN ITDS (Konten hanya dirender di DOM jika Role Admin) -->
+        <!-- KONTAINER PANEL UPDATE ADMIN ITDS (HANYA MUNCUL JIKA LOGIN === ADMIN) -->
         <div id="adminPanelContainer"></div>
 
         <div class="flex justify-end gap-2.5 pt-2">
           <button type="button" onclick="closeModal()" class="px-4 py-2.5 rounded-xl border border-slate-300 text-xs font-semibold text-slate-600 hover:bg-slate-50">
-            Tutup
+            Close
           </button>
           <button type="button" id="btnSaveModal" onclick="saveTicketChanges()"
             class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow">
-            💾 Simpan Perubahan
+            💾 Save Update
           </button>
         </div>
       </div>
@@ -484,7 +434,7 @@
     <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden animate-fade">
       <div class="bg-indigo-800 text-white px-6 py-4 flex justify-between items-center">
         <div>
-          <h3 class="font-bold text-sm sm:text-base">🔑 Ganti Password Akun</h3>
+          <h3 class="font-bold text-sm sm:text-base">🔑 Change Password</h3>
           <p id="cpUserEmail" class="text-[11px] text-indigo-200"></p>
         </div>
         <button onclick="closeChangePasswordModal()" class="text-indigo-200 hover:text-white text-xl font-bold px-2">&times;</button>
@@ -492,18 +442,18 @@
 
       <form id="changePassForm" class="p-6 space-y-4">
         <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1">Password Lama *</label>
-          <input type="password" id="cpOldPass" required placeholder="Masukkan password saat ini"
+          <label class="block text-xs font-bold text-slate-700 mb-1">Old Password *</label>
+          <input type="password" id="cpOldPass" required placeholder="Enter old Password"
             class="w-full text-sm border border-slate-300 rounded-xl px-3.5 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none">
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1">Password Baru * <span class="text-slate-400 font-normal">(Min. 4 karakter)</span></label>
-          <input type="password" id="cpNewPass" required minlength="4" placeholder="Masukkan password baru"
+          <label class="block text-xs font-bold text-slate-700 mb-1">New Password * <span class="text-slate-400 font-normal">(Min. 4 character)</span></label>
+          <input type="password" id="cpNewPass" required minlength="4" placeholder="Enter new Passwrod"
             class="w-full text-sm border border-slate-300 rounded-xl px-3.5 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none">
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1">Konfirmasi Password Baru *</label>
-          <input type="password" id="cpConfirmPass" required minlength="4" placeholder="Ulangi password baru"
+          <label class="block text-xs font-bold text-slate-700 mb-1">Retype New Password *</label>
+          <input type="password" id="cpConfirmPass" required minlength="4" placeholder="Retype new password"
             class="w-full text-sm border border-slate-300 rounded-xl px-3.5 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none">
         </div>
 
@@ -512,11 +462,11 @@
         <div class="flex justify-end gap-2 pt-2">
           <button type="button" onclick="closeChangePasswordModal()"
             class="px-4 py-2.5 rounded-xl border border-slate-300 text-xs font-semibold text-slate-600 hover:bg-slate-50">
-            Batal
+            Cancel
           </button>
           <button type="submit" id="btnSavePassword"
             class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow">
-            Simpan Password Baru
+            Update Password
           </button>
         </div>
       </form>
@@ -540,7 +490,6 @@
         const clean = (item || '').toString().trim();
         if (!clean) return;
         const key = clean.toUpperCase();
-        // Prioritaskan penulisan Title Case / huruf kapital awal yang rapi jika duplikat beda kapital
         if (!mapClean.has(key) || (clean[0] === clean[0].toUpperCase() && mapClean.get(key)[0] !== mapClean.get(key)[0].toUpperCase())) {
           mapClean.set(key, clean);
         }
@@ -550,12 +499,11 @@
       preferredOrder.forEach(pref => {
         const key = pref.toUpperCase();
         if (mapClean.has(key)) {
-          result.push(pref); // Gunakan format penulisan standar yang rapi
+          result.push(pref);
           mapClean.delete(key);
         }
       });
 
-      // Tambahkan sisa item lain jika ada di sheet
       mapClean.forEach(val => result.push(val));
       return result;
     }
@@ -598,7 +546,7 @@
       const errBox = document.getElementById('loginError');
       errBox.classList.add('hidden');
       btn.disabled = true;
-      btn.textContent = '⏳ Memverifikasi akun...';
+      btn.textContent = '⏳ Account Verification...';
 
       const email = document.getElementById('loginEmail').value;
       const password = document.getElementById('loginPassword').value;
@@ -620,16 +568,16 @@
           errBox.classList.remove('hidden');
         }
       } catch (err) {
-        errBox.textContent = 'Gagal terhubung ke server: ' + err.message;
+        errBox.textContent = 'Failed connection server: ' + err.message;
         errBox.classList.remove('hidden');
       } finally {
         btn.disabled = false;
-        btn.textContent = 'Masuk ke Portal →';
+        btn.textContent = 'Login →';
       }
     });
 
     function logoutUser() {
-      if (!confirm('Yakin ingin keluar (Logout) dari akun ini?')) return;
+      if (!confirm('Are you sure (Logout) now?')) return;
       localStorage.removeItem(STORAGE_KEY);
       currentUser = null;
       document.getElementById('appScreen').classList.add('hidden');
@@ -638,6 +586,13 @@
 
     function isAdminUser() {
       return currentUser && (currentUser.role || '').toLowerCase().includes('admin');
+    }
+
+    function isOwnerOfTicket(ticket) {
+      if (!currentUser || !ticket) return false;
+      const owner = (ticket['Created By'] || '').trim().toLowerCase();
+      const logged = (currentUser.email || '').trim().toLowerCase();
+      return owner !== '' && owner === logged;
     }
 
     function showAppScreen() {
@@ -716,7 +671,7 @@
       const confirmPassword = document.getElementById('cpConfirmPass').value;
 
       if (newPassword !== confirmPassword) {
-        alertBox.textContent = 'Konfirmasi password baru tidak cocok!';
+        alertBox.textContent = 'Confirmation new password not match!';
         alertBox.className = 'text-xs font-semibold rounded-xl px-3 py-2 text-center bg-rose-50 text-rose-600 border border-rose-200';
         alertBox.classList.remove('hidden');
         return;
@@ -724,7 +679,7 @@
 
       alertBox.classList.add('hidden');
       btn.disabled = true;
-      btn.textContent = '⏳ Menyimpan...';
+      btn.textContent = '⏳ Sync...';
 
       try {
         const res = await fetch(GAS_WEBAPP_URL, {
@@ -744,17 +699,17 @@
           alertBox.classList.remove('hidden');
           setTimeout(() => closeChangePasswordModal(), 1200);
         } else {
-          alertBox.textContent = '❌ ' + (result.message || 'Gagal mengganti password.');
+          alertBox.textContent = '❌ ' + (result.message || 'Failed update password.');
           alertBox.className = 'text-xs font-semibold rounded-xl px-3 py-2 text-center bg-rose-50 text-rose-600 border border-rose-200';
           alertBox.classList.remove('hidden');
         }
       } catch (err) {
-        alertBox.textContent = 'Error jaringan: ' + err.message;
+        alertBox.textContent = 'Error connection: ' + err.message;
         alertBox.className = 'text-xs font-semibold rounded-xl px-3 py-2 text-center bg-rose-50 text-rose-600 border border-rose-200';
         alertBox.classList.remove('hidden');
       } finally {
         btn.disabled = false;
-        btn.textContent = 'Simpan Password Baru';
+        btn.textContent = 'Svae New Password';
       }
     });
 
@@ -813,12 +768,11 @@
       const orderedLevels = getOrderedLevels(dd['Ticket Level']);
       const orderedPriorities = getOrderedPriorities(dd['Priority']);
 
-      // Populate Filter State dengan Default = ACTIVE_ONLY (Selain Done & Cancel)
       const filterEl = document.getElementById('filterState');
       const prevFilter = filterEl.value || 'ACTIVE_ONLY';
       filterEl.innerHTML = `
-        <option value="ACTIVE_ONLY">Tiket Aktif (Selain Done & Cancel)</option>
-        <option value="ALL">Semua State (Termasuk Done/Cancel)</option>
+        <option value="ACTIVE_ONLY">Ongoing Tickets</option>
+        <option value="ALL">All Tickets</option>
       `;
       orderedStates.forEach(st => {
         const opt = document.createElement('option');
@@ -829,7 +783,7 @@
       filterEl.value = prevFilter;
 
       const ccSelect = document.getElementById('dd-SentMailCC');
-      ccSelect.innerHTML = '<option value="">-- Tanpa CC --</option>';
+      ccSelect.innerHTML = '<option value="">-- No CC --</option>';
       (appData.userEmails || []).forEach(u => {
         const opt = document.createElement('option');
         opt.value = u.email;
@@ -841,23 +795,15 @@
         const picList = (dd['Assigned'] && dd['Assigned'].length > 0) ? dd['Assigned'] : ['Angga', 'Jenius', 'Nurul', 'Ibnu'];
         const pic2List = (dd['Assigned 2'] && dd['Assigned 2'].length > 0) ? dd['Assigned 2'] : picList;
 
-        // Assigned 1
         renderPillButtons('btnGroup-Assigned', picList, 'val-Assigned', (val) => {
           const email = appData.picEmailMap[val] || '';
           document.getElementById('val-AssignedEmail').value = email;
           document.getElementById('displayAssignedEmail').textContent = email ? `✉ ${email}` : '';
         }, '', true);
 
-        // Assigned 2 (bisa diklik ulang untuk unselect / kosongkan)
         renderPillButtons('btnGroup-Assigned2', pic2List, 'val-Assigned2', null, '', true);
-
-        // Ticket Level (berurutan TRIVIAL -> VERY HARD)
-        renderPillButtons('btnGroup-Ticket Level', orderedLevels, 'val-Ticket Level', calculateEstDone);
-
-        // Priority (berurutan LOW -> MEDIUM -> HIGH)
-        renderPillButtons('btnGroup-Priority', orderedPriorities, 'val-Priority', calculateEstDone);
-
-        // Initial State (Arrow Pipeline Step-by-Step memanjang)
+        renderPillButtons('btnGroup-Ticket Level', orderedLevels, 'val-Ticket Level', () => calculateEstDone('val-Ticket Level', 'val-Priority', 'val-EstDone'));
+        renderPillButtons('btnGroup-Priority', orderedPriorities, 'val-Priority', () => calculateEstDone('val-Ticket Level', 'val-Priority', 'val-EstDone'));
         renderArrowPipeline('btnGroup-State', orderedStates, 'val-State', null, 'New');
       }
     }
@@ -886,15 +832,14 @@
         btn.textContent = opt;
         btn.className = 'pill-btn text-xs font-semibold px-3 py-1.5 rounded-xl border border-slate-300 bg-white text-slate-700 hover:border-indigo-400';
 
-        if (opt === defaultValue) {
+        if (opt.toUpperCase() === (defaultValue || '').toUpperCase() && defaultValue !== '') {
           hiddenInput.value = opt;
           applyActivePillStyle(btn, opt);
         }
 
         btn.onclick = () => {
-          const isAlreadySelected = hiddenInput.value === opt;
+          const isAlreadySelected = hiddenInput.value.toUpperCase() === opt.toUpperCase();
 
-          // Reset tampilan semua tombol di grup
           [...container.children].forEach(b => {
             b.className = 'pill-btn text-xs font-semibold px-3 py-1.5 rounded-xl border border-slate-300 bg-white text-slate-700 hover:border-indigo-400';
           });
@@ -913,9 +858,6 @@
       });
     }
 
-    /**
-     * Render State berbentuk Arrow Step-by-Step Memanjang
-     */
     function renderArrowPipeline(containerId, states, hiddenInputId, onSelectCallback, defaultValue = 'New') {
       const container = document.getElementById(containerId);
       const hiddenInput = document.getElementById(hiddenInputId);
@@ -934,11 +876,10 @@
         }
 
         btn.onclick = () => {
-          // Validasi khusus Modal State: Tidak bisa pilih Deployment jika belum CONFIRMED
           if (containerId === 'modalBtnGroup-State' && st.toLowerCase() === 'deployment') {
-            const currentVerify = (document.getElementById('edit-UserVerification').value || '').toUpperCase();
-            if (currentVerify !== 'CONFIRMED') {
-              alert('⚠️ Tidak dapat memindahkan status ke Deployment!\nUser Verification harus berstatus CONFIRMED terlebih dahulu.');
+            const verifyVal = (currentEditingTicket['User Verification'] || '').toUpperCase();
+            if (verifyVal !== 'CONFIRMED') {
+              alert('⚠️ Tidak dapat memindahkan status ke Deployment!\nUser terkait harus mengisi User Verification menjadi CONFIRMED terlebih dahulu.');
               return;
             }
           }
@@ -959,12 +900,12 @@
     function applyActiveArrowStyle(btn, stateValue) {
       const v = stateValue.toLowerCase();
       btn.classList.add('active');
-      if (v === 'new') btn.style.backgroundColor = '#4f46e5'; // Indigo
-      else if (v === 'in progress') btn.style.backgroundColor = '#2563eb'; // Blue
-      else if (v === 'test & review') btn.style.backgroundColor = '#d97706'; // Amber
-      else if (v === 'deployment') btn.style.backgroundColor = '#7c3aed'; // Purple
-      else if (v === 'done') btn.style.backgroundColor = '#059669'; // Emerald
-      else if (v === 'cancel') btn.style.backgroundColor = '#e11d48'; // Rose
+      if (v === 'new') btn.style.backgroundColor = '#4f46e5';
+      else if (v === 'in progress') btn.style.backgroundColor = '#2563eb';
+      else if (v === 'test & review') btn.style.backgroundColor = '#d97706';
+      else if (v === 'deployment') btn.style.backgroundColor = '#7c3aed';
+      else if (v === 'done') btn.style.backgroundColor = '#059669';
+      else if (v === 'cancel') btn.style.backgroundColor = '#e11d48';
       else btn.style.backgroundColor = '#4f46e5';
     }
 
@@ -995,9 +936,9 @@
       }
     }
 
-    function calculateEstDone() {
-      const level = (document.getElementById('val-Ticket Level').value || '').toUpperCase();
-      const priority = (document.getElementById('val-Priority').value || '').toUpperCase();
+    function calculateEstDone(levelInputId, priorityInputId, estOutputId) {
+      const level = (document.getElementById(levelInputId)?.value || '').toUpperCase();
+      const priority = (document.getElementById(priorityInputId)?.value || '').toUpperCase();
       if (!level && !priority) return;
 
       const levelDays = { 'TRIVIAL': 1, 'EASY': 2, 'MEDIUM': 4, 'HARD': 7, 'VERY HARD': 14 };
@@ -1008,7 +949,7 @@
       const estDate = new Date();
       estDate.setDate(estDate.getDate() + daysToAdd);
       const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-      document.getElementById('val-EstDone').value = `${String(estDate.getDate()).padStart(2, '0')}-${months[estDate.getMonth()]}-${estDate.getFullYear()}`;
+      document.getElementById(estOutputId).value = `${String(estDate.getDate()).padStart(2, '0')}-${months[estDate.getMonth()]}-${estDate.getFullYear()}`;
     }
 
     function readFileAsBase64(file) {
@@ -1024,7 +965,7 @@
       e.preventDefault();
       const btn = document.getElementById('btnSubmit');
       btn.disabled = true;
-      btn.textContent = '⏳ Menyimpan Tiket...';
+      btn.textContent = '⏳ Save Tickets...';
 
       try {
         const formData = new FormData(e.target);
@@ -1067,7 +1008,7 @@
         alert('Error: ' + err.message);
       } finally {
         btn.disabled = false;
-        btn.textContent = '🚀 Kirim Tiket Sekarang';
+        btn.textContent = '🚀 Send Now';
       }
     });
 
@@ -1102,7 +1043,7 @@
       });
 
       if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-slate-400">Tidak ada tiket aktif yang sesuai filter.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-slate-400">Ticket not found by filter.</td></tr>`;
         return;
       }
 
@@ -1154,92 +1095,152 @@
     function openTicketModal(ticket) {
       currentEditingTicket = ticket;
       const adminMode = isAdminUser();
+      const ownerMode = isOwnerOfTicket(ticket);
       const ticketState = (ticket['State'] || 'New').trim();
       const isTestAndReview = ticketState.toLowerCase() === 'test & review';
+      const currentVerify = ticket['User Verification'] || '';
 
       document.getElementById('modalIssueId').textContent = `#${ticket['Issue ID']}`;
-      document.getElementById('modalModule').textContent = ticket['Request Access-Module-Support'] || 'Detail Tiket';
+      document.getElementById('modalModule').textContent = ticket['Request Access-Module-Support'] || 'Detail Ticket';
 
       document.getElementById('modalMeta').textContent = adminMode
-        ? `Dibuat: ${ticket['Date Created'] || '-'} • Level: ${ticket['Ticket Level'] || '-'} • Priority: ${ticket['Priority'] || '-'}`
-        : `Dibuat: ${ticket['Date Created'] || '-'} • PIC: ${ticket['Assigned'] || 'Belum ditentukan'}`;
+        ? `Create on: ${ticket['Date Created'] || '-'} • Ticket Level: ${ticket['Ticket Level'] || '-'} • Priority: ${ticket['Priority'] || '-'}`
+        : `Create on: ${ticket['Date Created'] || '-'} • Assigned: ${ticket['Assigned'] || '-'}`;
 
-      document.getElementById('modalReporter').textContent = `Pelapor: ${ticket['Full Name']} (${ticket['Created By']})`;
+      document.getElementById('modalReporter').textContent = `Created By: ${ticket['Full Name']} (${ticket['Created By']})`;
       document.getElementById('modalCompany').textContent = ticket['Company'] || '';
       document.getElementById('modalDesc').textContent = ticket['Description'] || '-';
 
       const odooBox = document.getElementById('modalOdooBox');
       if (ticket['User Name'] || ticket['User Email']) {
         odooBox.classList.remove('hidden');
-        odooBox.innerHTML = `<strong>Akses Odoo:</strong> ${ticket['User Name']} (${ticket['User Email']}) — ${ticket['Position']} / ${ticket['Department']}`;
+        odooBox.innerHTML = `<strong>Access Rights Odoo:</strong> ${ticket['User Name']} (${ticket['User Email']}) — ${ticket['Position']} / ${ticket['Department']}`;
       } else {
         odooBox.classList.add('hidden');
       }
 
       const attBox = document.getElementById('modalAttachmentBox');
       attBox.innerHTML = ticket['Attachments']
-        ? `<a href="${ticket['Attachments']}" target="_blank" class="inline-flex items-center gap-1 text-xs font-bold text-indigo-600 hover:underline">📎 Lihat File Lampiran</a>`
+        ? `<a href="${ticket['Attachments']}" target="_blank" class="inline-flex items-center gap-1 text-xs font-bold text-indigo-600 hover:underline">📎 Open Attachments</a>`
         : '';
 
       const stBadge = document.getElementById('modalCurrentStateBadge');
       stBadge.textContent = ticketState;
       stBadge.className = `text-xs font-bold px-2.5 py-0.5 rounded-full ${getStateColor(ticketState)}`;
 
-      const currentVerify = ticket['User Verification'] || '';
-      document.getElementById('edit-UserVerification').value = currentVerify;
-      document.getElementById('verifyStatusLabel').textContent = currentVerify ? `[${currentVerify}]` : '[Belum Diverifikasi]';
-      document.getElementById('edit-Reason').value = ticket['Reason'] || '';
-      document.getElementById('reasonBox').classList.toggle('hidden', currentVerify.toUpperCase() !== 'REJECTED');
+      // =====================================================================
+      // 1. KONFIRMASI USER & PENILAIAN: HANYA DIRENDER JIKA LOGIN === PEMILIK TIKET
+      // =====================================================================
+      const verifyContainer = document.getElementById('userVerificationContainer');
+      if (ownerMode) {
+        verifyContainer.innerHTML = `
+          <div class="border-2 border-emerald-200 bg-emerald-50/40 rounded-2xl p-4 space-y-4">
+            <div class="flex items-center justify-between">
+              <h4 class="text-xs font-extrabold uppercase tracking-wider text-emerald-800">
+                👤 User Confirmation & satisfaction
+              </h4>
+              <span id="verifyStatusLabel" class="text-xs font-extrabold text-indigo-700">
+                ${currentVerify ? `[${currentVerify}]` : '[Need Verification]'}
+              </span>
+            </div>
 
-      const btnConfirm = document.getElementById('btnVerifyConfirm');
-      const btnReject  = document.getElementById('btnVerifyReject');
-      const lockedNotice = document.getElementById('verifyLockedNotice');
+            <div id="verifyLockedNotice" class="${isTestAndReview ? 'hidden' : ''} bg-amber-50 border border-amber-200 text-amber-800 text-xs rounded-xl p-3 font-medium">
+              ⏳ Tombol <strong>User Verification</strong> hanya dapat diisi apabila status tiket sudah berada pada tahap <strong>Test & Review</strong>.
+            </div>
 
-      if (isTestAndReview) {
-        lockedNotice.classList.add('hidden');
-        btnConfirm.disabled = false;
-        btnReject.disabled  = false;
-        btnConfirm.classList.remove('opacity-40', 'cursor-not-allowed');
-        btnReject.classList.remove('opacity-40', 'cursor-not-allowed');
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-2">
+                Konfirmasi Hasil Pengujian (Test & Review):
+              </label>
+              <div class="flex flex-wrap gap-2.5">
+                <button type="button" id="btnVerifyConfirm" onclick="setUserVerification('CONFIRMED')" ${isTestAndReview ? '' : 'disabled'}
+                  class="flex-1 py-2.5 px-4 rounded-xl border-2 border-emerald-500 bg-white hover:bg-emerald-600 hover:text-white text-emerald-700 font-bold text-xs transition ${isTestAndReview ? '' : 'opacity-40 cursor-not-allowed'}">
+                  ✅ CONFIRMED (Siap Deployment)
+                </button>
+                <button type="button" id="btnVerifyReject" onclick="setUserVerification('REJECTED')" ${isTestAndReview ? '' : 'disabled'}
+                  class="flex-1 py-2.5 px-4 rounded-xl border-2 border-rose-400 bg-white hover:bg-rose-600 hover:text-white text-rose-700 font-bold text-xs transition ${isTestAndReview ? '' : 'opacity-40 cursor-not-allowed'}">
+                  ❌ REJECTED (Revisi / Belum Sesuai)
+                </button>
+              </div>
+              <input type="hidden" id="edit-UserVerification" value="${currentVerify}">
+            </div>
+
+            <div id="reasonBox" class="${currentVerify.toUpperCase() === 'REJECTED' ? '' : 'hidden'} animate-fade">
+              <label class="block text-xs font-semibold text-rose-700 mb-1">Reason (Alasan Penolakan) *</label>
+              <textarea id="edit-Reason" rows="2" placeholder="Jelaskan bagian mana yang masih belum sesuai..."
+                class="w-full text-xs border border-rose-300 rounded-xl px-3 py-2 bg-white focus:ring-2 focus:ring-rose-500 outline-none">${ticket['Reason'] || ''}</textarea>
+            </div>
+
+            <div id="feedbackSection" class="${ticketState.toLowerCase() === 'done' ? '' : 'hidden'} animate-fade pt-2 border-t border-emerald-200">
+              <div class="flex justify-between items-center mb-2">
+                <label class="text-xs font-bold text-slate-800">⭐ Seberapa puas Anda dengan layanan ITDS? (1 - 10)</label>
+                <span id="feedbackEmojiLabel" class="text-xs font-bold text-indigo-600">Pilih angka</span>
+              </div>
+              <input type="hidden" id="edit-UserFeedback" value="${ticket['User Feedback'] || ''}">
+              <div id="ratingButtons" class="grid grid-cols-10 gap-1.5"></div>
+            </div>
+          </div>
+        `;
+
+        updateVerifyButtonsVisual(currentVerify);
+        if (ticketState.toLowerCase() === 'done') {
+          renderRatingButtons(ticket['User Feedback'] || '');
+        }
       } else {
-        lockedNotice.classList.remove('hidden');
-        btnConfirm.disabled = true;
-        btnReject.disabled  = true;
-        btnConfirm.classList.add('opacity-40', 'cursor-not-allowed');
-        btnReject.classList.add('opacity-40', 'cursor-not-allowed');
+        // Bukan pemilik tiket (misalnya Admin melihat tiket user lain): sembunyikan total form konfirmasi & penilaian
+        verifyContainer.innerHTML = '';
       }
 
-      updateVerifyButtonsVisual(currentVerify);
-
-      const fbSection = document.getElementById('feedbackSection');
-      if (ticketState.toLowerCase() === 'done') {
-        fbSection.classList.remove('hidden');
-        renderRatingButtons(ticket['User Feedback'] || '');
-      } else {
-        fbSection.classList.add('hidden');
-      }
-
-      // Render Panel Admin HANYA jika login ber-role Admin
+      // =====================================================================
+      // 2. PANEL UPDATE ADMIN ITDS (FULL ACCESS: LEVEL, PRIORITY, EST DONE, DLL)
+      // =====================================================================
       const adminContainer = document.getElementById('adminPanelContainer');
       if (adminMode) {
         const dd = appData.dropdowns;
         const orderedStates = getOrderedStates(dd['State']);
+        const orderedLevels = getOrderedLevels(dd['Ticket Level']);
+        const orderedPriorities = getOrderedPriorities(dd['Priority']);
 
         adminContainer.innerHTML = `
           <div class="border border-slate-200 rounded-2xl overflow-hidden">
-            <div class="bg-slate-100 px-4 py-3 text-xs font-extrabold text-slate-700 flex justify-between items-center">
+            <div class="bg-slate-100 px-4 py-3 text-xs font-extrabold text-slate-700 flex flex-wrap justify-between items-center gap-2">
               <span>🛠️ Panel Update Admin ITDS (Full Access)</span>
-              <span id="adminVerifyGateHint" class="text-[11px] font-semibold text-amber-700">
-                ${currentVerify.toUpperCase() === 'CONFIRMED' ? '✅ User CONFIRMED (Siap Deployment)' : '⚠️ Belum CONFIRMED (Deployment terkunci)'}
+              <span class="text-[11px] font-bold px-2.5 py-0.5 rounded-full ${currentVerify.toUpperCase() === 'CONFIRMED' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">
+                ${currentVerify.toUpperCase() === 'CONFIRMED' ? '✅ User Verify: CONFIRMED' : `⚠️ User Verify: ${currentVerify || 'Belum CONFIRMED'}`}
               </span>
             </div>
+
             <div class="p-4 space-y-4 bg-white">
+              <!-- State Pipeline -->
               <div>
                 <label class="block text-xs font-bold text-slate-600 mb-1.5">Update State (Step-by-Step Pipeline)</label>
                 <input type="hidden" id="edit-State">
                 <div id="modalBtnGroup-State" class="arrow-pipeline"></div>
               </div>
 
+              <!-- Ticket Level, Priority & Est Done -->
+              <div class="bg-slate-50/80 p-3 rounded-xl border border-slate-200/80 space-y-3">
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1.5">Ticket Level</label>
+                  <input type="hidden" id="edit-TicketLevel">
+                  <div id="modalBtnGroup-TicketLevel" class="flex flex-wrap gap-1.5"></div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
+                  <div class="sm:col-span-7">
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Priority</label>
+                    <input type="hidden" id="edit-Priority">
+                    <div id="modalBtnGroup-Priority" class="flex flex-wrap gap-1.5"></div>
+                  </div>
+                  <div class="sm:col-span-5">
+                    <label class="block text-[11px] font-bold text-slate-600 mb-1.5">Est Done</label>
+                    <input type="text" id="edit-EstDone" value="${ticket['Est Done'] || ''}" placeholder="Otomatis / Ketik manual"
+                      class="w-full text-xs font-bold text-indigo-700 bg-white border border-indigo-200 rounded-xl px-3 py-2 outline-none">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Assigned 1, Assigned 2 & Ticket Type -->
               <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
                   <label class="block text-xs font-semibold text-slate-600 mb-1">Assigned 1 (PIC)</label>
@@ -1255,6 +1256,7 @@
                 </div>
               </div>
 
+              <!-- Notes & SA Note -->
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label class="block text-xs font-semibold text-slate-600 mb-1">Notes (Catatan Admin)</label>
@@ -1266,6 +1268,7 @@
                 </div>
               </div>
 
+              <!-- Cost & Date Done -->
               <div class="grid grid-cols-2 gap-3">
                 <div>
                   <label class="block text-xs font-semibold text-slate-600 mb-1">Cost (Admin)</label>
@@ -1281,13 +1284,24 @@
         `;
 
         renderArrowPipeline('modalBtnGroup-State', orderedStates, 'edit-State', (newSt) => {
-          if (newSt.toLowerCase() === 'done') {
-            fbSection.classList.remove('hidden');
-            renderRatingButtons(document.getElementById('edit-UserFeedback').value);
-          } else {
-            fbSection.classList.add('hidden');
+          const fbEl = document.getElementById('feedbackSection');
+          if (fbEl) {
+            if (newSt.toLowerCase() === 'done') {
+              fbEl.classList.remove('hidden');
+              renderRatingButtons(document.getElementById('edit-UserFeedback')?.value || '');
+            } else {
+              fbEl.classList.add('hidden');
+            }
           }
         }, ticketState);
+
+        renderPillButtons('modalBtnGroup-TicketLevel', orderedLevels, 'edit-TicketLevel', () => {
+          calculateEstDone('edit-TicketLevel', 'edit-Priority', 'edit-EstDone');
+        }, ticket['Ticket Level'] || '');
+
+        renderPillButtons('modalBtnGroup-Priority', orderedPriorities, 'edit-Priority', () => {
+          calculateEstDone('edit-TicketLevel', 'edit-Priority', 'edit-EstDone');
+        }, ticket['Priority'] || '');
 
         fillSelect('edit-Assigned', dd['Assigned'] || ['Angga', 'Jenius', 'Nurul', 'Ibnu'], '-- Pilih PIC 1 --');
         document.getElementById('edit-Assigned').value = ticket['Assigned'] || '';
@@ -1308,6 +1322,14 @@
           : '';
       }
 
+      // Tampilkan tombol Simpan Perubahan hanya jika user memiliki hak edit pada tiket ini
+      const btnSave = document.getElementById('btnSaveModal');
+      if (adminMode || (ownerMode && (isTestAndReview || ticketState.toLowerCase() === 'done'))) {
+        btnSave.classList.remove('hidden');
+      } else {
+        btnSave.classList.add('hidden');
+      }
+
       document.getElementById('ticketModal').classList.remove('hidden');
     }
 
@@ -1316,7 +1338,10 @@
     }
 
     function setUserVerification(status) {
-      document.getElementById('edit-UserVerification').value = status;
+      const verifyInput = document.getElementById('edit-UserVerification');
+      if (!verifyInput) return;
+
+      verifyInput.value = status;
       document.getElementById('verifyStatusLabel').textContent = `[${status}]`;
       updateVerifyButtonsVisual(status);
 
@@ -1328,33 +1353,31 @@
         reasonBox.classList.add('hidden');
         document.getElementById('edit-Reason').value = '';
       }
-
-      const hintEl = document.getElementById('adminVerifyGateHint');
-      if (hintEl) {
-        hintEl.textContent = status === 'CONFIRMED'
-          ? '✅ User CONFIRMED (Siap Deployment)'
-          : '⚠️ Belum CONFIRMED (Deployment terkunci)';
-      }
     }
 
     function updateVerifyButtonsVisual(status) {
       const btnConfirm = document.getElementById('btnVerifyConfirm');
       const btnReject  = document.getElementById('btnVerifyReject');
+      if (!btnConfirm || !btnReject) return;
+
       const st = (status || '').toUpperCase();
+      const disabledClass = btnConfirm.disabled ? ' opacity-40 cursor-not-allowed' : '';
 
       btnConfirm.className = st === 'CONFIRMED'
-        ? 'flex-1 py-2.5 px-4 rounded-xl border-2 border-emerald-600 bg-emerald-600 text-white font-bold text-xs shadow transition'
-        : 'flex-1 py-2.5 px-4 rounded-xl border-2 border-emerald-500 bg-white hover:bg-emerald-600 hover:text-white text-emerald-700 font-bold text-xs transition';
+        ? `flex-1 py-2.5 px-4 rounded-xl border-2 border-emerald-600 bg-emerald-600 text-white font-bold text-xs shadow transition${disabledClass}`
+        : `flex-1 py-2.5 px-4 rounded-xl border-2 border-emerald-500 bg-white hover:bg-emerald-600 hover:text-white text-emerald-700 font-bold text-xs transition${disabledClass}`;
 
       btnReject.className = st === 'REJECTED'
-        ? 'flex-1 py-2.5 px-4 rounded-xl border-2 border-rose-600 bg-rose-600 text-white font-bold text-xs shadow transition'
-        : 'flex-1 py-2.5 px-4 rounded-xl border-2 border-rose-400 bg-white hover:bg-rose-600 hover:text-white text-rose-700 font-bold text-xs transition';
+        ? `flex-1 py-2.5 px-4 rounded-xl border-2 border-rose-600 bg-rose-600 text-white font-bold text-xs shadow transition${disabledClass}`
+        : `flex-1 py-2.5 px-4 rounded-xl border-2 border-rose-400 bg-white hover:bg-rose-600 hover:text-white text-rose-700 font-bold text-xs transition${disabledClass}`;
     }
 
     function renderRatingButtons(selectedVal) {
       const container = document.getElementById('ratingButtons');
       const hidden = document.getElementById('edit-UserFeedback');
       const label = document.getElementById('feedbackEmojiLabel');
+      if (!container || !hidden) return;
+
       hidden.value = selectedVal;
 
       const emojis = {
@@ -1383,29 +1406,41 @@
     }
 
     async function saveTicketChanges() {
-      const verification = document.getElementById('edit-UserVerification').value;
-      const reason = document.getElementById('edit-Reason').value.trim();
+      const updatePayload = {};
+      const ownerMode = isOwnerOfTicket(currentEditingTicket);
 
-      if (verification === 'REJECTED' && !reason) {
-        alert('Harap isi Reason (alasan penolakan) terlebih dahulu.');
-        return;
+      // Hanya kirim data konfirmasi & feedback jika akun yang login adalah pemilik tiket
+      if (ownerMode) {
+        const verification = document.getElementById('edit-UserVerification')?.value || '';
+        const reason = document.getElementById('edit-Reason')?.value.trim() || '';
+
+        if (verification === 'REJECTED' && !reason) {
+          alert('Harap isi Reason (alasan penolakan) terlebih dahulu.');
+          return;
+        }
+
+        updatePayload['User Verification'] = verification;
+        updatePayload['Reason'] = reason;
+        updatePayload['User Feedback'] = document.getElementById('edit-UserFeedback')?.value || '';
       }
 
-      const updatePayload = {
-        'User Verification': verification,
-        'Reason': reason,
-        'User Feedback': document.getElementById('edit-UserFeedback').value
-      };
-
+      // Kirim seluruh parameter operasional Admin jika login sebagai Admin
       if (isAdminUser()) {
         const targetState = document.getElementById('edit-State').value;
-        if (targetState.toLowerCase() === 'deployment' && verification.toUpperCase() !== 'CONFIRMED') {
-          alert('⚠️ Tidak dapat menyimpan status Deployment sebelum User Verification berstatus CONFIRMED!');
+        const effectiveVerify = ownerMode
+          ? (updatePayload['User Verification'] || '').toUpperCase()
+          : (currentEditingTicket['User Verification'] || '').toUpperCase();
+
+        if (targetState.toLowerCase() === 'deployment' && effectiveVerify !== 'CONFIRMED') {
+          alert('⚠️ Tidak dapat menyimpan status Deployment sebelum User terkait mengisi User Verification menjadi CONFIRMED!');
           return;
         }
 
         const assignedPic = document.getElementById('edit-Assigned').value;
         updatePayload['State'] = targetState;
+        updatePayload['Ticket Level'] = document.getElementById('edit-TicketLevel').value;
+        updatePayload['Priority'] = document.getElementById('edit-Priority').value;
+        updatePayload['Est Done'] = document.getElementById('edit-EstDone').value;
         updatePayload['Assigned'] = assignedPic;
         updatePayload['Assigned Email'] = appData.picEmailMap[assignedPic] || '';
         updatePayload['Assigned 2'] = document.getElementById('edit-Assigned2').value;
@@ -1417,7 +1452,7 @@
 
       const btn = document.getElementById('btnSaveModal');
       btn.disabled = true;
-      btn.textContent = '⏳ Menyimpan...';
+      btn.textContent = '⏳ Store Data...';
 
       try {
         const res = await fetch(GAS_WEBAPP_URL, {
@@ -1426,6 +1461,7 @@
             action: 'updateTicket',
             issueId: currentEditingTicket['Issue ID'],
             isAdmin: isAdminUser(),
+            userEmail: currentUser.email,
             data: updatePayload
           })
         });
