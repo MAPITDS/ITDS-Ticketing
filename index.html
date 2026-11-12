@@ -3,429 +3,860 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ITDS Ticketing - Mitra Asa Pratama</title>
+  <title>ITDS Helpdesk & Ticketing Portal</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .pill-btn { transition: all 0.15s ease; }
+    .pill-btn.active { transform: translateY(-1px); box-shadow: 0 2px 6px rgba(79, 70, 229, 0.25); }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fade { animation: fadeIn 0.25s ease-out forwards; }
+  </style>
 </head>
-<body class="bg-slate-100 text-slate-800 min-h-screen font-sans">
+<body class="bg-slate-100 text-slate-800 font-sans antialiased">
 
-  <!-- LOGIN SCREEN (TANPA PASSWORD) -->
-  <div id="loginView" class="min-h-screen flex items-center justify-center p-4">
-    <div class="bg-white p-8 rounded-2xl shadow-md w-full max-w-md border border-slate-200">
-      <div class="mb-6">
-        <span class="text-xs font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-2.5 py-1 rounded">Mitra Asa Pratama</span>
-        <h1 class="text-2xl font-bold mt-2 text-slate-900">ITDS Ticketing System</h1>
-        <p class="text-sm text-slate-500">Masukkan User ID atau Email kantor Anda untuk masuk.</p>
-      </div>
-      <form onsubmit="event.preventDefault(); handleLogin();" class="space-y-4">
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">User ID atau Email</label>
-          <input id="loginIdentifier" type="text" required placeholder="contoh: jenius@mitraasa.co.id atau user1" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+  <!-- TOP NAVBAR -->
+  <header class="bg-gradient-to-r from-indigo-800 via-indigo-700 to-blue-700 text-white shadow-lg sticky top-0 z-30">
+    <div class="max-w-7xl mx-auto px-4 py-3.5 flex flex-wrap justify-between items-center gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-white/15 flex items-center justify-center font-extrabold text-lg border border-white/20">
+          IT
         </div>
-        <button id="btnLogin" type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg text-sm transition">Masuk ke Portal</button>
-        <p id="loginError" class="text-red-600 text-xs text-center"></p>
+        <div>
+          <h1 class="text-base sm:text-lg font-bold tracking-tight">ITDS Helpdesk & Ticketing</h1>
+          <p class="text-[11px] text-indigo-200">Mitra Asa Pratama • Real-time Google Sheets Portal</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2.5">
+        <span id="syncStatus" class="text-xs px-3 py-1.5 rounded-full bg-white/15 text-amber-200 font-medium backdrop-blur-sm">
+          ● Menghubungkan...
+        </span>
+        <button onclick="loadSheetData()" class="bg-white text-indigo-700 hover:bg-indigo-50 text-xs font-semibold px-3.5 py-1.5 rounded-lg shadow-sm transition">
+          ↻ Refresh
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+    <!-- KOLOM KIRI: FORM BUAT TIKET BARU (5 Kolom) -->
+    <section class="lg:col-span-5 bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden h-fit">
+      <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex justify-between items-center">
+        <div>
+          <h2 class="text-base font-bold text-slate-800">Buat Tiket Baru</h2>
+          <p class="text-xs text-slate-500">Issue ID akan digenerate otomatis oleh sistem</p>
+        </div>
+        <span class="text-[11px] font-semibold px-2.5 py-1 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-100">
+          New Ticket
+        </span>
+      </div>
+
+      <form id="ticketForm" class="p-6 space-y-4">
+        <!-- Identitas Pelapor -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Full Name *</label>
+            <input type="text" name="Full Name" required placeholder="Nama lengkap Anda"
+              class="w-full text-sm border border-slate-300 rounded-xl px-3 py-2 focus:ring-2 focus:ring-indigo-500 outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Created By (Email) *</label>
+            <input type="email" name="Created By" required placeholder="nama@mitraasa.co.id"
+              class="w-full text-sm border border-slate-300 rounded-xl px-3 py-2 focus:ring-2 focus:ring-indigo-500 outline-none">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Phone / WA *</label>
+            <input type="text" name="Phone" required placeholder="0812..."
+              class="w-full text-sm border border-slate-300 rounded-xl px-3 py-2 focus:ring-2 focus:ring-indigo-500 outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">User ID <span class="text-slate-400 font-normal">(Opsional)</span></label>
+            <input type="text" name="User ID" placeholder="NIK / ID"
+              class="w-full text-sm border border-slate-300 rounded-xl px-3 py-2 focus:ring-2 focus:ring-indigo-500 outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Company *</label>
+            <select name="Company" id="dd-Company" required
+              class="w-full text-sm border border-slate-300 rounded-xl px-3 py-2 bg-white focus:ring-2 focus:ring-indigo-500 outline-none">
+              <option value="">Memuat...</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Kategori Modul -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Request Access - Module - Support *</label>
+          <select name="Request Access-Module-Support" id="dd-Request Access-Module-Support" required
+            onchange="toggleOdooAccessSection(this.value)"
+            class="w-full text-sm border border-slate-300 rounded-xl px-3 py-2.5 bg-white font-medium focus:ring-2 focus:ring-indigo-500 outline-none">
+            <option value="">Memuat...</option>
+          </select>
+        </div>
+
+        <!-- CONDITIONAL SECTION: Muncul HANYA jika Request Access-Module-Support = ACCESS RIGHT ODOO -->
+        <div id="odooAccessSection" class="hidden animate-fade bg-indigo-50/70 border border-indigo-200 rounded-xl p-4 space-y-3">
+          <div class="flex items-center gap-2 text-indigo-800 font-bold text-xs">
+            <span>🔐 Detail Permintaan Akses Odoo</span>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-[11px] font-semibold text-indigo-900 mb-1">User Name *</label>
+              <input type="text" name="User Name" id="inp-UserName" placeholder="Nama user Odoo"
+                class="w-full text-xs border border-indigo-200 rounded-lg px-3 py-2 bg-white">
+            </div>
+            <div>
+              <label class="block text-[11px] font-semibold text-indigo-900 mb-1">User Email *</label>
+              <input type="email" name="User Email" id="inp-UserEmail" placeholder="Email login Odoo"
+                class="w-full text-xs border border-indigo-200 rounded-lg px-3 py-2 bg-white">
+            </div>
+            <div>
+              <label class="block text-[11px] font-semibold text-indigo-900 mb-1">Position *</label>
+              <input type="text" name="Position" id="inp-Position" placeholder="Jabatan user"
+                class="w-full text-xs border border-indigo-200 rounded-lg px-3 py-2 bg-white">
+            </div>
+            <div>
+              <label class="block text-[11px] font-semibold text-indigo-900 mb-1">Department *</label>
+              <select name="Department" id="dd-Department"
+                class="w-full text-xs border border-indigo-200 rounded-lg px-3 py-2 bg-white">
+                <option value="">Memuat...</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Deskripsi & Tags -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Description *</label>
+          <textarea name="Description" rows="3" required placeholder="Jelaskan kendala, kebutuhan modul, atau detail permintaan..."
+            class="w-full text-sm border border-slate-300 rounded-xl px-3 py-2 focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Attachments (Gambar/Dokumen)</label>
+            <input type="file" id="attachmentInput" accept="image/*,.pdf,.doc,.docx,.xls,.xlsx"
+              class="w-full text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 border border-slate-300 rounded-xl p-1">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Sent Mail CC (Dari Sheet Users)</label>
+            <select name="Sent Mail CC" id="dd-SentMailCC"
+              class="w-full text-xs border border-slate-300 rounded-xl px-3 py-2.5 bg-white">
+              <option value="">-- Tanpa CC --</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Tags <span class="text-slate-400 font-normal">(Pisahkan dengan koma)</span></label>
+          <input type="text" name="Tags" placeholder="contoh: odoo, invoice, urgent"
+            class="w-full text-xs border border-slate-300 rounded-xl px-3 py-2 focus:ring-2 focus:ring-indigo-500 outline-none">
+        </div>
+
+        <!-- PILL BUTTONS: ASSIGNED PIC -->
+        <div class="border-t pt-3">
+          <div class="flex justify-between items-center mb-1.5">
+            <label class="text-xs font-bold text-slate-700">Assigned PIC ITDS</label>
+            <span id="displayAssignedEmail" class="text-[11px] text-indigo-600 font-medium"></span>
+          </div>
+          <input type="hidden" name="Assigned" id="val-Assigned">
+          <input type="hidden" name="Assigned Email" id="val-AssignedEmail">
+          <div id="btnGroup-Assigned" class="flex flex-wrap gap-2"></div>
+        </div>
+
+        <!-- PILL BUTTONS: TICKET LEVEL & PRIORITY + AUTO EST DONE -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1.5">Ticket Level</label>
+            <input type="hidden" name="Ticket Level" id="val-Ticket Level">
+            <div id="btnGroup-Ticket Level" class="flex flex-wrap gap-1.5"></div>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1.5">Priority</label>
+            <input type="hidden" name="Priority" id="val-Priority">
+            <div id="btnGroup-Priority" class="flex flex-wrap gap-1.5"></div>
+          </div>
+        </div>
+
+        <!-- Est Done & Initial State -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-600 mb-1">Est Done (Otomatis Level & Priority)</label>
+            <input type="text" name="Est Done" id="val-EstDone" placeholder="Pilih Level & Priority"
+              class="w-full text-xs font-semibold text-indigo-700 bg-white border border-slate-300 rounded-lg px-2.5 py-1.5">
+          </div>
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-600 mb-1">Initial State</label>
+            <input type="hidden" name="State" id="val-State" value="New">
+            <div id="btnGroup-State" class="flex flex-wrap gap-1"></div>
+          </div>
+        </div>
+
+        <button type="submit" id="btnSubmit"
+          class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl shadow-md hover:shadow-lg transition text-sm">
+          🚀 Kirim Tiket Sekarang
+        </button>
       </form>
-    </div>
-  </div>
+    </section>
 
-  <!-- MAIN APP -->
-  <div id="appView" class="hidden">
-    <nav class="bg-white border-b border-slate-200 sticky top-0 z-10">
-      <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-        <div class="flex items-center gap-3">
-          <div class="bg-blue-600 text-white font-bold px-2.5 py-1 rounded-lg text-sm">ITDS</div>
-          <div>
-            <h1 class="font-bold text-slate-900 text-sm md:text-base">Ticketing System</h1>
-            <p class="text-xs text-slate-500">Mitra Asa Pratama</p>
-          </div>
+    <!-- KOLOM KANAN: MONITORING & DAFTAR TIKET (7 Kolom) -->
+    <section class="lg:col-span-7 space-y-4">
+      <!-- KPI Summary Cards -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm">
+          <p class="text-[11px] font-semibold text-slate-500">Total Tiket</p>
+          <p id="statTotal" class="text-xl font-extrabold text-slate-800 mt-0.5">0</p>
         </div>
-        <div class="flex items-center gap-3">
-          <div class="text-right hidden sm:block">
-            <p id="navName" class="text-sm font-semibold text-slate-800"></p>
-            <span id="navRole" class="text-[11px] font-bold px-2 py-0.5 rounded bg-blue-100 text-blue-700"></span>
-          </div>
-          <button onclick="openNewModal()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs md:text-sm font-semibold px-3.5 py-2 rounded-lg">+ Buat Tiket</button>
-          <button onclick="logout()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs md:text-sm px-3 py-2 rounded-lg">Keluar</button>
+        <div class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm">
+          <p class="text-[11px] font-semibold text-amber-600">New / Open</p>
+          <p id="statNew" class="text-xl font-extrabold text-amber-600 mt-0.5">0</p>
+        </div>
+        <div class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm">
+          <p class="text-[11px] font-semibold text-blue-600">In Progress</p>
+          <p id="statProgress" class="text-xl font-extrabold text-blue-600 mt-0.5">0</p>
+        </div>
+        <div class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm">
+          <p class="text-[11px] font-semibold text-emerald-600">Done</p>
+          <p id="statDone" class="text-xl font-extrabold text-emerald-600 mt-0.5">0</p>
         </div>
       </div>
-    </nav>
 
-    <main class="max-w-7xl mx-auto p-4 md:p-6">
-      <div class="flex flex-wrap gap-2 mb-5 items-center justify-between">
-        <div class="flex flex-wrap gap-1.5" id="filterTabs">
-          <button onclick="setFilter('ALL')" class="filter-btn bg-slate-800 text-white px-3 py-1.5 rounded-lg text-xs font-medium">Semua</button>
-          <button onclick="setFilter('New')" class="filter-btn bg-white text-slate-600 border px-3 py-1.5 rounded-lg text-xs font-medium">New</button>
-          <button onclick="setFilter('In Progress')" class="filter-btn bg-white text-slate-600 border px-3 py-1.5 rounded-lg text-xs font-medium">In Progress</button>
-          <button onclick="setFilter('Test & Review')" class="filter-btn bg-white text-slate-600 border px-3 py-1.5 rounded-lg text-xs font-medium">Test & Review</button>
-          <button onclick="setFilter('Deployment')" class="filter-btn bg-white text-slate-600 border px-3 py-1.5 rounded-lg text-xs font-medium">Deployment</button>
-          <button onclick="setFilter('Done')" class="filter-btn bg-white text-slate-600 border px-3 py-1.5 rounded-lg text-xs font-medium">Done</button>
-        </div>
-        <button onclick="fetchTickets()" class="text-xs text-blue-600 hover:underline font-medium">↻ Refresh Data</button>
-      </div>
-
-      <div id="ticketContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
-    </main>
-  </div>
-
-  <!-- MODAL BUAT TIKET BARU -->
-  <div id="newModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 z-50">
-    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl">
-      <div class="flex justify-between items-center mb-4">
-        <h2 class="font-bold text-lg">Buat Tiket Baru</h2>
-        <button onclick="closeModal('newModal')" class="text-slate-400 hover:text-slate-600">✕</button>
-      </div>
-      <div class="space-y-3 text-sm">
-        <div>
-          <label class="block text-xs font-semibold mb-1">Modul / Kategori</label>
-          <select id="newModul" class="w-full border rounded-lg p-2">
-            <option value="SUPPORT">SUPPORT</option>
-            <option value="DEVELOPMENT">DEVELOPMENT</option>
-            <option value="SYSTEM ANALYST">SYSTEM ANALYST</option>
-            <option value="ACCESS RIGHT ODOO">ACCESS RIGHT ODOO</option>
-            <option value="ACCURATE">ACCURATE</option>
-            <option value="DATA ANALYST">DATA ANALYST</option>
-          </select>
-        </div>
-        <div class="grid grid-cols-2 gap-3">
+      <!-- Tabel Daftar Tiket -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden">
+        <div class="p-5 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <label class="block text-xs font-semibold mb-1">Priority</label>
-            <select id="newPriority" class="w-full border rounded-lg p-2">
-              <option value="LOW">LOW</option>
-              <option value="MEDIUM" selected>MEDIUM</option>
-              <option value="HIGH">HIGH</option>
-            </select>
+            <h2 class="text-base font-bold text-slate-800">Daftar Tiket Masuk</h2>
+            <p class="text-xs text-slate-500">Klik baris tiket untuk Verifikasi User, Rating 1–10, atau Update Admin</p>
           </div>
-          <div>
-            <label class="block text-xs font-semibold mb-1">No. WhatsApp / HP</label>
-            <input id="newPhone" type="text" class="w-full border rounded-lg p-2">
-          </div>
-        </div>
-        <div>
-          <label class="block text-xs font-semibold mb-1">Deskripsi Kendala / Permintaan</label>
-          <textarea id="newDesc" rows="4" placeholder="Jelaskan detail kendala atau kebutuhan..." class="w-full border rounded-lg p-2"></textarea>
-        </div>
-        <div>
-          <label class="block text-xs font-semibold mb-1">Link Attachment (Google Drive - Opsional)</label>
-          <input id="newAttach" type="text" placeholder="https://drive.google.com/..." class="w-full border rounded-lg p-2">
-        </div>
-        <div class="flex justify-end gap-2 pt-2">
-          <button onclick="closeModal('newModal')" class="px-4 py-2 rounded-lg bg-slate-100 text-slate-700">Batal</button>
-          <button id="btnSubmitNew" onclick="submitNewTicket()" class="px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold">Kirim Tiket</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL DETAIL & UPDATE TIKET -->
-  <div id="editModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 z-50">
-    <div class="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-xl max-h-[90vh] overflow-y-auto">
-      <div class="flex justify-between items-center mb-4 border-b pb-3">
-        <div>
-          <span id="editTicketNo" class="text-xs font-bold bg-blue-100 text-blue-700 px-2 py-0.5 rounded"></span>
-          <h2 id="editModulTitle" class="font-bold text-lg mt-1"></h2>
-        </div>
-        <button onclick="closeModal('editModal')" class="text-slate-400 hover:text-slate-600 text-lg">✕</button>
-      </div>
-
-      <div class="bg-slate-50 p-3.5 rounded-xl text-xs space-y-1.5 mb-4 border">
-        <p><span class="text-slate-500">Pemohon:</span> <b id="editUser"></b> (<span id="editDate"></span>)</p>
-        <p><span class="text-slate-500">Deskripsi:</span><br><span id="editDesc" class="text-slate-700 whitespace-pre-line"></span></p>
-      </div>
-
-      <!-- PANEL KHUSUS ADMIN -->
-      <div id="adminEditSection" class="hidden space-y-3 text-sm">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-          <div>
-            <label class="block text-xs font-semibold mb-1">Status (State)</label>
-            <select id="editState" class="w-full border rounded-lg p-2">
-              <option value="New">New</option>
-              <option value="In Progress">In Progress</option>
-              <option value="Test & Review">Test & Review</option>
-              <option value="Deployment">Deployment</option>
-              <option value="Done">Done</option>
-              <option value="Cancel">Cancel</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-xs font-semibold mb-1">Assigned 1 (Dev/Support)</label>
-            <select id="editAssign1" class="w-full border rounded-lg p-2">
-              <option value="">-- Pilih --</option>
-              <option value="Jenius">Jenius</option>
-              <option value="Angga">Angga</option>
-              <option value="Ibnu">Ibnu</option>
-              <option value="Nurul">Nurul</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-xs font-semibold mb-1">Assigned 2 (SA)</label>
-            <select id="editAssign2" class="w-full border rounded-lg p-2">
-              <option value="">-- Pilih --</option>
-              <option value="Jenius">Jenius</option>
-              <option value="Nurul">Nurul</option>
+          <div class="flex flex-wrap gap-2">
+            <input type="text" id="searchBox" onkeyup="renderTable()" placeholder="Cari ID, user, modul..."
+              class="text-xs border border-slate-300 rounded-xl px-3 py-2 w-44 focus:ring-2 focus:ring-indigo-500 outline-none">
+            <select id="filterState" onchange="renderTable()"
+              class="text-xs border border-slate-300 rounded-xl px-3 py-2 bg-white font-medium">
+              <option value="">Semua State</option>
             </select>
           </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-          <div>
-            <label class="block text-xs font-semibold mb-1">Estimasi Selesai</label>
-            <input id="editEstDone" type="datetime-local" class="w-full border rounded-lg p-2">
-          </div>
-          <div>
-            <label class="block text-xs font-semibold mb-1">Ticket Level</label>
-            <select id="editLevel" class="w-full border rounded-lg p-2">
-              <option value="TRIVIAL">TRIVIAL</option>
-              <option value="MEDIUM">MEDIUM</option>
-              <option value="MAJOR">MAJOR</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-xs font-semibold mb-1">GitHub Labels (Ticket Type)</label>
-            <input id="editType" type="text" placeholder="bug, enhancement" class="w-full border rounded-lg p-2">
-          </div>
-        </div>
-
-        <div>
-          <label class="block text-xs font-semibold mb-1">SA Notes</label>
-          <textarea id="editSaNote" rows="2" class="w-full border rounded-lg p-2"></textarea>
-        </div>
-        <div>
-          <label class="block text-xs font-semibold mb-1">Dev Notes</label>
-          <textarea id="editDevNotes" rows="3" class="w-full border rounded-lg p-2"></textarea>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-50 border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                <th class="py-3 px-4">ID</th>
+                <th class="py-3 px-4">Modul & Kendala</th>
+                <th class="py-3 px-4">Pelapor</th>
+                <th class="py-3 px-4">PIC & Est</th>
+                <th class="py-3 px-4">State & Rating</th>
+              </tr>
+            </thead>
+            <tbody id="ticketTableBody" class="divide-y divide-slate-100 text-xs">
+              <tr>
+                <td colspan="5" class="py-10 text-center text-slate-400">Memuat data tiket dari Google Sheets...</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
+    </section>
+  </main>
 
-      <!-- PANEL VERIFIKASI UNTUK USER BIASA -->
-      <div id="userVerifySection" class="hidden space-y-3 text-sm bg-amber-50 p-4 rounded-xl border border-amber-200">
-        <p class="text-xs font-bold text-amber-800">⚠️ Konfirmasi Hasil Testing</p>
+  <!-- MODAL DETAIL TIKET: USER VERIFICATION, FEEDBACK 1-10 & ADMIN PANEL -->
+  <div id="ticketModal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl max-w-2xl w-full shadow-2xl border border-slate-200 overflow-hidden my-8 animate-fade">
+      <!-- Header Modal -->
+      <div class="bg-slate-800 text-white px-6 py-4 flex justify-between items-center">
         <div>
-          <label class="block text-xs font-semibold mb-1">User Verification</label>
-          <select id="editUserVerify" class="w-full border rounded-lg p-2 bg-white">
-            <option value="">-- Pilih Status Verifikasi --</option>
-            <option value="CONFIRMED">CONFIRMED (Sudah Sesuai)</option>
-            <option value="INCOMPLETE">INCOMPLETE (Belum Sesuai / Revisi)</option>
-          </select>
+          <div class="flex items-center gap-2">
+            <span id="modalIssueId" class="bg-indigo-500 text-white text-xs font-extrabold px-2.5 py-0.5 rounded-md">#0</span>
+            <h3 id="modalModule" class="font-bold text-sm sm:text-base">Detail Tiket</h3>
+          </div>
+          <p id="modalMeta" class="text-[11px] text-slate-300 mt-0.5"></p>
         </div>
-        <div>
-          <label class="block text-xs font-semibold mb-1">Catatan / Alasan (Jika Incomplete)</label>
-          <textarea id="editUserReason" rows="2" class="w-full border rounded-lg p-2 bg-white"></textarea>
-        </div>
+        <button onclick="closeModal()" class="text-slate-300 hover:text-white text-xl font-bold px-2">&times;</button>
       </div>
 
-      <div class="flex justify-end gap-2 mt-5 pt-3 border-t">
-        <button onclick="closeModal('editModal')" class="px-4 py-2 rounded-lg bg-slate-100 text-slate-700 text-sm">Tutup</button>
-        <button id="btnSaveEdit" onclick="submitUpdateTicket()" class="px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold text-sm">Simpan Perubahan</button>
+      <div class="p-6 space-y-5 max-h-[80vh] overflow-y-auto">
+        <!-- Info Deskripsi & Lampiran -->
+        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
+          <div class="flex justify-between text-xs text-slate-500">
+            <span id="modalReporter"></span>
+            <span id="modalCompany" class="font-semibold text-slate-700"></span>
+          </div>
+          <p id="modalDesc" class="text-sm text-slate-800 whitespace-pre-line leading-relaxed"></p>
+          <div id="modalOdooBox" class="hidden text-xs bg-indigo-50 text-indigo-900 p-2.5 rounded-lg border border-indigo-100"></div>
+          <div id="modalAttachmentBox" class="pt-1"></div>
+        </div>
+
+        <!-- BAGIAN 1: KHUSUS USER (VERIFICATION & FEEDBACK 1-10) -->
+        <div class="border-2 border-emerald-200 bg-emerald-50/40 rounded-2xl p-4 space-y-4">
+          <div class="flex items-center justify-between">
+            <h4 class="text-xs font-extrabold uppercase tracking-wider text-emerald-800">
+              👤 Konfirmasi & Penilaian User
+            </h4>
+            <span id="modalCurrentStateBadge" class="text-xs font-bold px-2.5 py-0.5 rounded-full"></span>
+          </div>
+
+          <!-- Tombol User Verification -->
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-2">Apakah kendala Anda sudah terselesaikan dengan baik?</label>
+            <div class="flex flex-wrap gap-2.5">
+              <button type="button" onclick="setUserVerification('Verified / Selesai')" id="btnVerifyYes"
+                class="flex-1 py-2.5 px-4 rounded-xl border-2 border-emerald-500 bg-white hover:bg-emerald-500 hover:text-white text-emerald-700 font-bold text-xs transition">
+                ✅ Ya, Konfirmasi Selesai
+              </button>
+              <button type="button" onclick="setUserVerification('Rejected / Belum Selesai')" id="btnVerifyNo"
+                class="flex-1 py-2.5 px-4 rounded-xl border-2 border-rose-400 bg-white hover:bg-rose-500 hover:text-white text-rose-700 font-bold text-xs transition">
+                ❌ Tolak / Masih Kendala
+              </button>
+            </div>
+            <input type="hidden" id="edit-UserVerification">
+          </div>
+
+          <!-- Reason (Muncul jika user menolak) -->
+          <div id="reasonBox" class="hidden animate-fade">
+            <label class="block text-xs font-semibold text-rose-700 mb-1">Reason (Alasan Penolakan) *</label>
+            <textarea id="edit-Reason" rows="2" placeholder="Jelaskan bagian mana yang masih belum sesuai..."
+              class="w-full text-xs border border-rose-300 rounded-xl px-3 py-2 bg-white focus:ring-2 focus:ring-rose-500 outline-none"></textarea>
+          </div>
+
+          <!-- INTERACTIVE USER FEEDBACK 1-10 (Muncul saat State = Done) -->
+          <div id="feedbackSection" class="hidden animate-fade pt-2 border-t border-emerald-200">
+            <div class="flex justify-between items-center mb-2">
+              <label class="text-xs font-bold text-slate-800">⭐ Seberapa puas Anda dengan layanan ITDS? (1 - 10)</label>
+              <span id="feedbackEmojiLabel" class="text-xs font-bold text-indigo-600">Pilih angka</span>
+            </div>
+            <input type="hidden" id="edit-UserFeedback">
+            <div id="ratingButtons" class="grid grid-cols-10 gap-1.5">
+              <!-- Di-generate JS 1..10 -->
+            </div>
+            <div class="flex justify-between text-[10px] text-slate-400 mt-1 px-1">
+              <span>1 = Sangat Kecewa</span>
+              <span>5 = Cukup</span>
+              <span>10 = Sangat Puas</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- BAGIAN 2: PANEL ADMIN ITDS -->
+        <details class="border border-slate-200 rounded-2xl overflow-hidden" open>
+          <summary class="bg-slate-100 px-4 py-3 text-xs font-extrabold text-slate-700 cursor-pointer select-none">
+            🛠️ Panel Update Admin ITDS (State, PIC, Notes, SA Note, Cost, Ticket Type)
+          </summary>
+          <div class="p-4 space-y-3 bg-white">
+            <!-- State Pill Buttons di Modal -->
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1.5">Update State</label>
+              <input type="hidden" id="edit-State">
+              <div id="modalBtnGroup-State" class="flex flex-wrap gap-1.5"></div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Assigned PIC</label>
+                <select id="edit-Assigned" class="w-full text-xs border border-slate-300 rounded-lg px-2.5 py-2 bg-white"></select>
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Assigned 2</label>
+                <select id="edit-Assigned2" class="w-full text-xs border border-slate-300 rounded-lg px-2.5 py-2 bg-white"></select>
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Ticket Type (Admin)</label>
+                <select id="edit-TicketType" class="w-full text-xs border border-slate-300 rounded-lg px-2.5 py-2 bg-white"></select>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Notes (Catatan Admin)</label>
+                <textarea id="edit-Notes" rows="2" class="w-full text-xs border border-slate-300 rounded-lg px-2.5 py-1.5"></textarea>
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">SA Note (System Analyst)</label>
+                <textarea id="edit-SANote" rows="2" class="w-full text-xs border border-slate-300 rounded-lg px-2.5 py-1.5"></textarea>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Cost (Admin)</label>
+                <input type="text" id="edit-Cost" placeholder="Rp 0" class="w-full text-xs border border-slate-300 rounded-lg px-2.5 py-1.5">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Date Done</label>
+                <input type="text" id="edit-DateDone" readonly class="w-full text-xs border border-slate-200 bg-slate-50 rounded-lg px-2.5 py-1.5 text-slate-500">
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <!-- Tombol Simpan Perubahan -->
+        <div class="flex justify-end gap-2.5 pt-2">
+          <button type="button" onclick="closeModal()" class="px-4 py-2.5 rounded-xl border border-slate-300 text-xs font-semibold text-slate-600 hover:bg-slate-50">
+            Batal
+          </button>
+          <button type="button" id="btnSaveModal" onclick="saveTicketChanges()"
+            class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow">
+            💾 Simpan Perubahan
+          </button>
+        </div>
       </div>
     </div>
   </div>
 
   <script>
-    // GANTI DENGAN URL WEB APP APPS SCRIPT ANDA
-    const API_URL = "https://script.google.com/macros/s/AKfycbxAOhY0ARkSYuhHszf7TlA9sZYyKpXBGateVUImm0KtLvfnssXEBVrSfpVKsYy6ffD-aA/exec";
+    // GANTI DENGAN URL WEB APP GOOGLE APPS SCRIPT ANDA
+    const GAS_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbxAOhY0ARkSYuhHszf7TlA9sZYyKpXBGateVUImm0KtLvfnssXEBVrSfpVKsYy6ffD-aA/exec';
 
-    let currentUser = JSON.parse(localStorage.getItem("itds_user"));
-    let allTickets = [];
-    let currentFilter = "ALL";
-    let activeTicketNo = null;
+    let appData = { dropdowns: {}, picEmailMap: {}, userEmails: [], tickets: [] };
+    let currentEditingId = null;
 
-    if (currentUser) showApp();
+    // 1. LOAD DATA DARI GOOGLE SHEETS
+    async function loadSheetData() {
+      const badge = document.getElementById('syncStatus');
+      badge.textContent = '● Syncing...';
+      badge.className = 'text-xs px-3 py-1.5 rounded-full bg-white/15 text-amber-200 font-medium';
 
-    async function apiCall(payload) {
-      if (currentUser && !payload.identifier) {
-        payload.identifier = currentUser.email || currentUser.userId;
-      }
       try {
-        const res = await fetch(API_URL, {
-          method: "POST",
-          redirect: "follow",
-          headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify(payload)
-        });
-        const text = await res.text();
-        return JSON.parse(text);
+        const res = await fetch(`${GAS_WEBAPP_URL}?action=getInitData`);
+        const json = await res.json();
+        if (json.status !== 'success') throw new Error(json.message);
+
+        appData = json;
+        initFormControls();
+        updateStats();
+        renderTable();
+
+        badge.textContent = '● Connected to GSheets';
+        badge.className = 'text-xs px-3 py-1.5 rounded-full bg-emerald-500/25 text-emerald-100 font-medium border border-emerald-300/30';
       } catch (err) {
-        console.error("API Error:", err);
-        return { status: "error", message: "Gagal terhubung ke server Apps Script. Cek setting Deploy (Anyone) & URL /exec." };
+        console.error(err);
+        badge.textContent = '✕ Koneksi Gagal';
+        badge.className = 'text-xs px-3 py-1.5 rounded-full bg-rose-500/30 text-rose-100 font-medium';
       }
     }
 
-    async function handleLogin() {
-      const identifier = document.getElementById("loginIdentifier").value.trim();
-      const btn = document.getElementById("btnLogin");
-      btn.innerText = "Memeriksa..."; btn.disabled = true;
+    // 2. INISIALISASI DROPDOWN & PILL BUTTONS DINAMIS
+    function initFormControls() {
+      const dd = appData.dropdowns;
 
-      const res = await apiCall({ action: "login", identifier });
-      btn.innerText = "Masuk ke Portal"; btn.disabled = false;
+      // Dropdown standar
+      fillSelect('dd-Company', dd['Company'] || [], '-- Pilih Company --');
+      fillSelect('dd-Request Access-Module-Support', dd['Request Access-Module-Support'] || [], '-- Pilih Kategori / Modul --');
+      fillSelect('dd-Department', dd['Department'] || [], '-- Pilih Department --');
+      fillSelect('filterState', dd['State'] || [], 'Semua State');
 
-      if (res.status === "success") {
-        currentUser = res.user;
-        localStorage.setItem("itds_user", JSON.stringify(currentUser));
-        showApp();
-      } else {
-        document.getElementById("loginError").innerText = res.message;
-      }
-    }
-
-    function logout() {
-      localStorage.removeItem("itds_user");
-      location.reload();
-    }
-
-    function showApp() {
-      document.getElementById("loginView").classList.add("hidden");
-      document.getElementById("appView").classList.remove("hidden");
-      document.getElementById("navName").innerText = currentUser.nama;
-      document.getElementById("navRole").innerText = currentUser.role;
-      document.getElementById("newPhone").value = currentUser.phone || "";
-      fetchTickets();
-    }
-
-    async function fetchTickets() {
-      const container = document.getElementById("ticketContainer");
-      container.innerHTML = `<p class="text-sm text-slate-400 col-span-full text-center py-10">Memuat daftar tiket...</p>`;
-      const res = await apiCall({ action: "getTickets" });
-      if (res.status === "success") {
-        allTickets = res.tickets;
-        renderTickets();
-      } else {
-        alert(res.message);
-      }
-    }
-
-    function setFilter(status) {
-      currentFilter = status;
-      document.querySelectorAll(".filter-btn").forEach(btn => {
-        btn.className = btn.innerText === (status === "ALL" ? "Semua" : status)
-          ? "filter-btn bg-slate-800 text-white px-3 py-1.5 rounded-lg text-xs font-medium"
-          : "filter-btn bg-white text-slate-600 border px-3 py-1.5 rounded-lg text-xs font-medium";
+      // Dropdown Sent Mail CC dari Sheet 'users'
+      const ccSelect = document.getElementById('dd-SentMailCC');
+      ccSelect.innerHTML = '<option value="">-- Tanpa CC --</option>';
+      (appData.userEmails || []).forEach(u => {
+        const opt = document.createElement('option');
+        opt.value = u.email;
+        opt.textContent = u.name ? `${u.name} (${u.email})` : u.email;
+        ccSelect.appendChild(opt);
       });
-      renderTickets();
+
+      // Pill Buttons: Assigned PIC
+      renderPillButtons('btnGroup-Assigned', dd['Assigned'] || ['Jenius', 'Angga', 'Ibnu', 'Nurul'], 'val-Assigned', (val) => {
+        const email = appData.picEmailMap[val] || '';
+        document.getElementById('val-AssignedEmail').value = email;
+        document.getElementById('displayAssignedEmail').textContent = email ? `✉ ${email}` : '';
+      });
+
+      // Pill Buttons: Ticket Level
+      renderPillButtons('btnGroup-Ticket Level', dd['Ticket Level'] || ['TRIVIAL', 'EASY', 'MEDIUM', 'HARD', 'VERY HARD'], 'val-Ticket Level', calculateEstDone);
+
+      // Pill Buttons: Priority
+      renderPillButtons('btnGroup-Priority', dd['Priority'] || ['LOW', 'MEDIUM', 'HIGH'], 'val-Priority', calculateEstDone);
+
+      // Pill Buttons: State (default 'New')
+      const states = dd['State'] || ['New', 'In Progress', 'Test & Review', 'Deployment', 'Done', 'Cancel'];
+      renderPillButtons('btnGroup-State', states, 'val-State', null, 'New');
     }
 
-    function getBadgeColor(state) {
-      const map = {
-        "New": "bg-sky-100 text-sky-700",
-        "In Progress": "bg-amber-100 text-amber-700",
-        "Test & Review": "bg-purple-100 text-purple-700",
-        "Deployment": "bg-indigo-100 text-indigo-700",
-        "Done": "bg-emerald-100 text-emerald-700",
-        "Cancel": "bg-rose-100 text-rose-700"
-      };
-      return map[state] || "bg-slate-100 text-slate-700";
+    function fillSelect(id, items, placeholder) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.innerHTML = `<option value="">${placeholder}</option>`;
+      items.forEach(item => {
+        const opt = document.createElement('option');
+        opt.value = item;
+        opt.textContent = item;
+        el.appendChild(opt);
+      });
     }
 
-    function renderTickets() {
-      const container = document.getElementById("ticketContainer");
-      const filtered = currentFilter === "ALL" ? allTickets : allTickets.filter(t => t.state === currentFilter);
+    function renderPillButtons(containerId, options, hiddenInputId, onSelectCallback, defaultValue = '') {
+      const container = document.getElementById(containerId);
+      const hiddenInput = document.getElementById(hiddenInputId);
+      if (!container) return;
 
-      if (!filtered.length) {
-        container.innerHTML = `<p class="text-sm text-slate-400 col-span-full text-center py-10">Tidak ada tiket pada kategori ini.</p>`;
+      container.innerHTML = '';
+      options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.textContent = opt;
+        btn.dataset.value = opt;
+        btn.className = 'pill-btn text-xs font-semibold px-3 py-1.5 rounded-xl border border-slate-300 bg-white text-slate-700 hover:border-indigo-400';
+
+        if (opt === defaultValue) {
+          hiddenInput.value = opt;
+          applyActivePillStyle(btn, opt);
+        }
+
+        btn.onclick = () => {
+          hiddenInput.value = opt;
+          [...container.children].forEach(b => {
+            b.className = 'pill-btn text-xs font-semibold px-3 py-1.5 rounded-xl border border-slate-300 bg-white text-slate-700 hover:border-indigo-400';
+          });
+          applyActivePillStyle(btn, opt);
+          if (onSelectCallback) onSelectCallback(opt);
+        };
+        container.appendChild(btn);
+      });
+    }
+
+    function applyActivePillStyle(btn, value) {
+      const v = value.toUpperCase();
+      let colorClass = 'bg-indigo-600 text-white border-indigo-600 active';
+      if (v === 'HIGH' || v === 'VERY HARD' || v === 'CANCEL') colorClass = 'bg-rose-600 text-white border-rose-600 active';
+      else if (v === 'MEDIUM' || v === 'HARD' || v === 'IN PROGRESS') colorClass = 'bg-amber-500 text-white border-amber-500 active';
+      else if (v === 'LOW' || v === 'TRIVIAL' || v === 'EASY' || v === 'DONE') colorClass = 'bg-emerald-600 text-white border-emerald-600 active';
+      btn.className = `pill-btn text-xs font-bold px-3 py-1.5 rounded-xl border ${colorClass}`;
+    }
+
+    // 3. CONDITIONAL FIELDS UNTUK ACCESS RIGHT ODOO
+    function toggleOdooAccessSection(selectedModule) {
+      const section = document.getElementById('odooAccessSection');
+      const isOdooAccess = selectedModule.trim().toUpperCase() === 'ACCESS RIGHT ODOO';
+      const fields = ['inp-UserName', 'inp-UserEmail', 'inp-Position', 'dd-Department'];
+
+      if (isOdooAccess) {
+        section.classList.remove('hidden');
+        fields.forEach(id => document.getElementById(id).required = true);
+      } else {
+        section.classList.add('hidden');
+        fields.forEach(id => {
+          const el = document.getElementById(id);
+          el.required = false;
+          el.value = '';
+        });
+      }
+    }
+
+    // 4. KALKULASI OTOMATIS EST DONE BERDASARKAN TICKET LEVEL & PRIORITY
+    function calculateEstDone() {
+      const level = (document.getElementById('val-Ticket Level').value || '').toUpperCase();
+      const priority = (document.getElementById('val-Priority').value || '').toUpperCase();
+      if (!level && !priority) return;
+
+      const levelDays = { 'TRIVIAL': 1, 'EASY': 2, 'MEDIUM': 4, 'HARD': 7, 'VERY HARD': 14 };
+      let daysToAdd = levelDays[level] || 3;
+
+      if (priority === 'HIGH') daysToAdd = Math.max(1, Math.ceil(daysToAdd * 0.7));
+      else if (priority === 'LOW') daysToAdd += 1;
+
+      const estDate = new Date();
+      estDate.setDate(estDate.getDate() + daysToAdd);
+
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const formatted = `${String(estDate.getDate()).padStart(2, '0')}-${months[estDate.getMonth()]}-${estDate.getFullYear()}`;
+      document.getElementById('val-EstDone').value = formatted;
+    }
+
+    // 5. KONVERSI FILE LAMPIRAN KE BASE64
+    function readFileAsBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const base64String = reader.result.split(',')[1];
+          resolve({ fileName: file.name, mimeType: file.type, base64: base64String });
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // 6. SUBMIT TIKET BARU
+    document.getElementById('ticketForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('btnSubmit');
+      btn.disabled = true;
+      btn.textContent = '⏳ Mengunggah & Menyimpan Tiket...';
+
+      try {
+        const formData = new FormData(e.target);
+        const dataObj = {};
+        formData.forEach((v, k) => { dataObj[k] = v; });
+
+        const fileInput = document.getElementById('attachmentInput');
+        let filePayload = null;
+        if (fileInput.files.length > 0) {
+          filePayload = await readFileAsBase64(fileInput.files[0]);
+        }
+
+        const res = await fetch(GAS_WEBAPP_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'createTicket', data: dataObj, file: filePayload })
+        });
+        const result = await res.json();
+
+        if (result.status === 'success') {
+          alert(result.message);
+          e.target.reset();
+          toggleOdooAccessSection('');
+          loadSheetData();
+        } else {
+          alert('Gagal: ' + result.message);
+        }
+      } catch (err) {
+        alert('Error: ' + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '🚀 Kirim Tiket Sekarang';
+      }
+    });
+
+    // 7. UPDATE KPI & RENDER TABEL
+    function updateStats() {
+      const t = appData.tickets || [];
+      document.getElementById('statTotal').textContent = t.length;
+      document.getElementById('statNew').textContent = t.filter(x => (x['State'] || '').toLowerCase() === 'new').length;
+      document.getElementById('statProgress').textContent = t.filter(x => ['in progress', 'test & review', 'deployment'].includes((x['State'] || '').toLowerCase())).length;
+      document.getElementById('statDone').textContent = t.filter(x => (x['State'] || '').toLowerCase() === 'done').length;
+    }
+
+    function renderTable() {
+      const tbody = document.getElementById('ticketTableBody');
+      const kw = document.getElementById('searchBox').value.toLowerCase();
+      const stFilter = document.getElementById('filterState').value;
+
+      const filtered = (appData.tickets || []).filter(t => {
+        const matchSt = !stFilter || t['State'] === stFilter;
+        const text = `${t['Issue ID']} ${t['Request Access-Module-Support']} ${t['Description']} ${t['Full Name']} ${t['Assigned']}`.toLowerCase();
+        return matchSt && (!kw || text.includes(kw));
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-slate-400">Tidak ada tiket ditemukan.</td></tr>`;
         return;
       }
 
-      container.innerHTML = filtered.map(t => `
-        <div onclick="openEditModal('${t.ticketNo}')" class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 hover:border-blue-400 cursor-pointer transition flex flex-col justify-between">
-          <div>
-            <div class="flex justify-between items-start gap-2 mb-2">
-              <span class="text-xs font-bold text-slate-500">#${t.ticketNo} • ${t.modul}</span>
-              <span class="text-[11px] font-bold px-2 py-0.5 rounded-full ${getBadgeColor(t.state)}">${t.state}</span>
-            </div>
-            <p class="text-sm text-slate-800 font-medium line-clamp-2 mb-3">${t.deskripsi}</p>
-          </div>
-          <div class="border-t pt-2.5 text-xs text-slate-500 flex justify-between items-center">
-            <span>👤 ${t.nama}</span>
-            <span>PIC: <b class="text-slate-700">${t.assigned1 || "-"}</b></span>
-          </div>
-        </div>
-      `).join("");
+      tbody.innerHTML = filtered.slice(0, 60).map(t => {
+        const badgeClass = getStateColor(t['State']);
+        const ratingBadge = t['User Feedback'] ? `<span class="mt-1 inline-block text-[10px] font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-800">⭐ ${t['User Feedback']}/10</span>` : '';
+        return `
+          <tr onclick='openTicketModal(${JSON.stringify(t).replace(/'/g, "&#39;")})' class="hover:bg-indigo-50/60 cursor-pointer transition">
+            <td class="py-3.5 px-4 font-extrabold text-indigo-600 align-top">#${t['Issue ID']}</td>
+            <td class="py-3.5 px-4 align-top max-w-xs">
+              <div class="flex flex-wrap items-center gap-1.5 mb-1">
+                <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-200/80 text-slate-700">${t['Request Access-Module-Support'] || '-'}</span>
+                ${t['Priority'] ? `<span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-rose-50 text-rose-600">${t['Priority']}</span>` : ''}
+              </div>
+              <p class="text-slate-700 line-clamp-2 leading-snug">${t['Description'] || '-'}</p>
+              <span class="text-[10px] text-slate-400">${t['Date Created'] || ''}</span>
+            </td>
+            <td class="py-3.5 px-4 align-top">
+              <div class="font-semibold text-slate-800">${t['Full Name'] || '-'}</div>
+              <div class="text-[11px] text-slate-500">${t['Company'] || ''}</div>
+            </td>
+            <td class="py-3.5 px-4 align-top">
+              <div class="font-bold text-slate-700">${t['Assigned'] || '-'}</div>
+              ${t['Est Done'] ? `<div class="text-[10px] text-slate-400">Est: ${t['Est Done']}</div>` : ''}
+            </td>
+            <td class="py-3.5 px-4 align-top">
+              <span class="inline-block px-2.5 py-1 rounded-full text-[11px] font-bold ${badgeClass}">${t['State'] || '-'}</span>
+              <div>${ratingBadge}</div>
+            </td>
+          </tr>
+        `;
+      }).join('');
     }
 
-    function openNewModal() { document.getElementById("newModal").classList.replace("hidden", "flex"); }
-    function closeModal(id) { document.getElementById(id).classList.replace("flex", "hidden"); }
+    function getStateColor(state) {
+      const s = (state || '').toLowerCase();
+      if (s === 'done') return 'bg-emerald-100 text-emerald-800';
+      if (s === 'in progress') return 'bg-blue-100 text-blue-800';
+      if (s === 'test & review' || s === 'deployment') return 'bg-purple-100 text-purple-800';
+      if (s === 'cancel') return 'bg-rose-100 text-rose-800';
+      return 'bg-amber-100 text-amber-800';
+    }
 
-    async function submitNewTicket() {
-      const payload = {
-        modul: document.getElementById("newModul").value,
-        priority: document.getElementById("newPriority").value,
-        phone: document.getElementById("newPhone").value,
-        deskripsi: document.getElementById("newDesc").value.trim(),
-        attachment: document.getElementById("newAttach").value.trim()
+    // 8. MODAL DETAIL, USER VERIFICATION & RATING 1-10
+    function openTicketModal(ticket) {
+      currentEditingId = ticket['Issue ID'];
+      document.getElementById('modalIssueId').textContent = `#${ticket['Issue ID']}`;
+      document.getElementById('modalModule').textContent = ticket['Request Access-Module-Support'] || 'Detail Tiket';
+      document.getElementById('modalMeta').textContent = `Dibuat: ${ticket['Date Created'] || '-'} • Level: ${ticket['Ticket Level'] || '-'} • Priority: ${ticket['Priority'] || '-'}`;
+      document.getElementById('modalReporter').textContent = `Pelapor: ${ticket['Full Name']} (${ticket['Created By']})`;
+      document.getElementById('modalCompany').textContent = ticket['Company'] || '';
+      document.getElementById('modalDesc').textContent = ticket['Description'] || '-';
+
+      // Info Odoo Access jika ada
+      const odooBox = document.getElementById('modalOdooBox');
+      if (ticket['User Name'] || ticket['User Email']) {
+        odooBox.classList.remove('hidden');
+        odooBox.innerHTML = `<strong>Akses Odoo:</strong> ${ticket['User Name']} (${ticket['User Email']}) — ${ticket['Position']} / ${ticket['Department']}`;
+      } else {
+        odooBox.classList.add('hidden');
+      }
+
+      // Attachments link
+      const attBox = document.getElementById('modalAttachmentBox');
+      attBox.innerHTML = ticket['Attachments']
+        ? `<a href="${ticket['Attachments']}" target="_blank" class="inline-flex items-center gap-1 text-xs font-bold text-indigo-600 hover:underline">📎 Lihat File Lampiran</a>`
+        : '';
+
+      // Badge State
+      const stBadge = document.getElementById('modalCurrentStateBadge');
+      stBadge.textContent = ticket['State'] || 'New';
+      stBadge.className = `text-xs font-bold px-2.5 py-0.5 rounded-full ${getStateColor(ticket['State'])}`;
+
+      // User Verification & Reason
+      document.getElementById('edit-UserVerification').value = ticket['User Verification'] || '';
+      document.getElementById('edit-Reason').value = ticket['Reason'] || '';
+      if ((ticket['User Verification'] || '').toLowerCase().includes('reject')) {
+        document.getElementById('reasonBox').classList.remove('hidden');
+      } else {
+        document.getElementById('reasonBox').classList.add('hidden');
+      }
+
+      // Munculkan User Feedback 1-10 HANYA jika State = Done
+      const fbSection = document.getElementById('feedbackSection');
+      if ((ticket['State'] || '').toLowerCase() === 'done') {
+        fbSection.classList.remove('hidden');
+        renderRatingButtons(ticket['User Feedback'] || '');
+      } else {
+        fbSection.classList.add('hidden');
+      }
+
+      // Admin Fields
+      const dd = appData.dropdowns;
+      renderPillButtons('modalBtnGroup-State', dd['State'] || ['New', 'In Progress', 'Test & Review', 'Deployment', 'Done', 'Cancel'], 'edit-State', (newSt) => {
+        if (newSt.toLowerCase() === 'done') {
+          fbSection.classList.remove('hidden');
+          renderRatingButtons(document.getElementById('edit-UserFeedback').value);
+        } else {
+          fbSection.classList.add('hidden');
+        }
+      }, ticket['State']);
+
+      fillSelect('edit-Assigned', dd['Assigned'] || ['Jenius', 'Angga', 'Ibnu', 'Nurul'], '-- Pilih PIC --');
+      document.getElementById('edit-Assigned').value = ticket['Assigned'] || '';
+
+      fillSelect('edit-Assigned2', dd['Assigned 2'] || dd['Assigned'] || ['Jenius', 'Angga', 'Ibnu', 'Nurul'], '-- Tanpa PIC 2 --');
+      document.getElementById('edit-Assigned2').value = ticket['Assigned 2'] || '';
+
+      fillSelect('edit-TicketType', dd['Ticket Type'] || ['Bug', 'Feature Request', 'Access Right', 'Support'], '-- Pilih Ticket Type --');
+      document.getElementById('edit-TicketType').value = ticket['Ticket Type'] || '';
+
+      document.getElementById('edit-Notes').value = ticket['Notes'] || '';
+      document.getElementById('edit-SANote').value = ticket['SA Note'] || '';
+      document.getElementById('edit-Cost').value = ticket['Cost'] || '';
+      document.getElementById('edit-DateDone').value = ticket['Date Done'] || 'Otomatis saat Done';
+
+      document.getElementById('ticketModal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+      document.getElementById('ticketModal').classList.add('hidden');
+    }
+
+    function setUserVerification(status) {
+      document.getElementById('edit-UserVerification').value = status;
+      const reasonBox = document.getElementById('reasonBox');
+      if (status.includes('Rejected')) {
+        reasonBox.classList.remove('hidden');
+        document.getElementById('edit-Reason').focus();
+      } else {
+        reasonBox.classList.add('hidden');
+        document.getElementById('edit-Reason').value = '';
+      }
+    }
+
+    // Widget Interaktif Rating 1 - 10
+    function renderRatingButtons(selectedVal) {
+      const container = document.getElementById('ratingButtons');
+      const hidden = document.getElementById('edit-UserFeedback');
+      const label = document.getElementById('feedbackEmojiLabel');
+      hidden.value = selectedVal;
+
+      const emojis = {
+        1: '😡 1 - Sangat Buruk', 2: '😠 2 - Buruk', 3: '😞 3 - Kurang',
+        4: '😕 4 - Di Bawah Ekspektasi', 5: '😐 5 - Cukup', 6: '🙂 6 - Lumayan',
+        7: '😊 7 - Baik', 8: '😄 8 - Sangat Baik', 9: '🤩 9 - Memuaskan', 10: '🏆 10 - Sempurna!'
       };
-      if (!payload.deskripsi) return alert("Deskripsi wajib diisi!");
+      label.textContent = emojis[selectedVal] || 'Klik skor 1 - 10';
 
-      const btn = document.getElementById("btnSubmitNew");
-      btn.innerText = "Mengirim..."; btn.disabled = true;
-
-      const res = await apiCall({ action: "createTicket", payload });
-      btn.innerText = "Kirim Tiket"; btn.disabled = false;
-
-      if (res.status === "success") {
-        document.getElementById("newDesc").value = "";
-        closeModal("newModal");
-        fetchTickets();
-      } else alert(res.message);
+      container.innerHTML = '';
+      for (let i = 1; i <= 10; i++) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.textContent = i;
+        const isSelected = parseInt(selectedVal) === i;
+        let color = 'bg-white border-slate-300 text-slate-700 hover:bg-indigo-50';
+        if (isSelected) {
+          if (i <= 4) color = 'bg-rose-500 border-rose-600 text-white scale-110 shadow';
+          else if (i <= 7) color = 'bg-amber-500 border-amber-600 text-white scale-110 shadow';
+          else color = 'bg-emerald-600 border-emerald-700 text-white scale-110 shadow';
+        }
+        btn.className = `py-2 rounded-xl border font-extrabold text-xs transition ${color}`;
+        btn.onclick = () => renderRatingButtons(i);
+        container.appendChild(btn);
+      }
     }
 
-    function openEditModal(ticketNo) {
-      const t = allTickets.find(item => String(item.ticketNo) === String(ticketNo));
-      if (!t) return;
-      activeTicketNo = t.ticketNo;
+    // Simpan Update dari Modal ke Google Sheets
+    async function saveTicketChanges() {
+      const verification = document.getElementById('edit-UserVerification').value;
+      const reason = document.getElementById('edit-Reason').value.trim();
 
-      document.getElementById("editTicketNo").innerText = `Ticket #${t.ticketNo} (${t.state})`;
-      document.getElementById("editModulTitle").innerText = t.modul;
-      document.getElementById("editUser").innerText = t.nama;
-      document.getElementById("editDate").innerText = t.createDate;
-      document.getElementById("editDesc").innerText = t.deskripsi;
-
-      const isAdmin = currentUser.role.toUpperCase() === "ADMIN";
-      document.getElementById("adminEditSection").classList.toggle("hidden", !isAdmin);
-      document.getElementById("userVerifySection").classList.toggle("hidden", isAdmin);
-
-      if (isAdmin) {
-        document.getElementById("editState").value = t.state;
-        document.getElementById("editAssign1").value = t.assigned1 || "";
-        document.getElementById("editAssign2").value = t.assigned2 || "";
-        document.getElementById("editEstDone").value = t.estDone || "";
-        document.getElementById("editLevel").value = t.level || "TRIVIAL";
-        document.getElementById("editType").value = t.ticketType || "";
-        document.getElementById("editSaNote").value = t.saNote || "";
-        document.getElementById("editDevNotes").value = t.devNotes || "";
-      } else {
-        document.getElementById("editUserVerify").value = t.userVerify || "";
-        document.getElementById("editUserReason").value = t.userReason || "";
+      if (verification.includes('Rejected') && !reason) {
+        alert('Harap isi Reason (alasan penolakan) terlebih dahulu.');
+        return;
       }
 
-      document.getElementById("editModal").classList.replace("hidden", "flex");
-    }
+      const btn = document.getElementById('btnSaveModal');
+      btn.disabled = true;
+      btn.textContent = '⏳ Menyimpan...';
 
-    async function submitUpdateTicket() {
-      const isAdmin = currentUser.role.toUpperCase() === "ADMIN";
-      const payload = { ticketNo: activeTicketNo };
+      const assignedPic = document.getElementById('edit-Assigned').value;
+      const updatePayload = {
+        'State': document.getElementById('edit-State').value,
+        'Assigned': assignedPic,
+        'Assigned Email': appData.picEmailMap[assignedPic] || '',
+        'Assigned 2': document.getElementById('edit-Assigned2').value,
+        'Ticket Type': document.getElementById('edit-TicketType').value,
+        'Notes': document.getElementById('edit-Notes').value,
+        'SA Note': document.getElementById('edit-SANote').value,
+        'Cost': document.getElementById('edit-Cost').value,
+        'User Verification': verification,
+        'Reason': reason,
+        'User Feedback': document.getElementById('edit-UserFeedback').value
+      };
 
-      if (isAdmin) {
-        payload.state = document.getElementById("editState").value;
-        payload.assigned1 = document.getElementById("editAssign1").value;
-        payload.assigned2 = document.getElementById("editAssign2").value;
-        payload.estDone = document.getElementById("editEstDone").value;
-        payload.level = document.getElementById("editLevel").value;
-        payload.ticketType = document.getElementById("editType").value;
-        payload.saNote = document.getElementById("editSaNote").value;
-        payload.devNotes = document.getElementById("editDevNotes").value;
-      } else {
-        payload.userVerify = document.getElementById("editUserVerify").value;
-        payload.userReason = document.getElementById("editUserReason").value;
+      try {
+        const res = await fetch(GAS_WEBAPP_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'updateTicket', issueId: currentEditingId, data: updatePayload })
+        });
+        const result = await res.json();
+        if (result.status === 'success') {
+          closeModal();
+          loadSheetData();
+        } else {
+          alert('Gagal update: ' + result.message);
+        }
+      } catch (err) {
+        alert('Error: ' + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '💾 Simpan Perubahan';
       }
-
-      const btn = document.getElementById("btnSaveEdit");
-      btn.innerText = "Menyimpan..."; btn.disabled = true;
-
-      const res = await apiCall({ action: "updateTicket", payload });
-      btn.innerText = "Simpan Perubahan"; btn.disabled = false;
-
-      if (res.status === "success") {
-        closeModal("editModal");
-        fetchTickets();
-      } else alert(res.message);
     }
+
+    window.addEventListener('DOMContentLoaded', loadSheetData);
   </script>
 </body>
 </html>
