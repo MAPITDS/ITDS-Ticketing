@@ -216,7 +216,7 @@
               class="w-full text-xs border border-slate-300 rounded-xl px-3 py-2 focus:ring-2 focus:ring-indigo-500 outline-none">
           </div>
 
-          <!-- BAGIAN KHUSUS ADMIN SAAT CREATE TICKET (Disembunyikan jika Role = User) -->
+          <!-- BAGIAN KHUSUS ADMIN SAAT CREATE TICKET (Disembunyikan total jika Role = User) -->
           <div id="adminCreateFields" class="hidden border-t pt-4 space-y-3">
             <div class="flex items-center justify-between">
               <span class="text-xs font-extrabold text-indigo-700 uppercase tracking-wider">🛡️ Pengaturan Admin ITDS</span>
@@ -291,14 +291,15 @@
           <div class="p-5 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <h2 id="tableHeadingTitle" class="text-base font-bold text-slate-800">Daftar Tiket</h2>
-              <p class="text-xs text-slate-500">Klik baris tiket untuk detail, verifikasi Test & Review, atau rating</p>
+              <p class="text-xs text-slate-500">Default menampilkan tiket aktif (selain Done & Cancel)</p>
             </div>
             <div class="flex flex-wrap gap-2">
               <input type="text" id="searchBox" onkeyup="renderTable()" placeholder="Cari ID, modul..."
-                class="text-xs border border-slate-300 rounded-xl px-3 py-2 w-40 focus:ring-2 focus:ring-indigo-500 outline-none">
+                class="text-xs border border-slate-300 rounded-xl px-3 py-2 w-36 focus:ring-2 focus:ring-indigo-500 outline-none">
               <select id="filterState" onchange="renderTable()"
-                class="text-xs border border-slate-300 rounded-xl px-3 py-2 bg-white font-medium">
-                <option value="">Semua State</option>
+                class="text-xs border border-slate-300 rounded-xl px-3 py-2 bg-white font-semibold text-indigo-700">
+                <option value="ACTIVE_ONLY">Tiket Aktif (Selain Done & Cancel)</option>
+                <option value="ALL">Semua State (Termasuk Done/Cancel)</option>
               </select>
             </div>
           </div>
@@ -358,12 +359,10 @@
             <span id="modalCurrentStateBadge" class="text-xs font-bold px-2.5 py-0.5 rounded-full"></span>
           </div>
 
-          <!-- Peringatan jika State belum Test & Review -->
           <div id="verifyLockedNotice" class="hidden bg-amber-50 border border-amber-200 text-amber-800 text-xs rounded-xl p-3 font-medium">
             ⏳ Tombol <strong>User Verification</strong> hanya dapat diisi apabila status tiket sudah berada pada tahap <strong>Test & Review</strong>.
           </div>
 
-          <!-- Kontainer Tombol Verification (Aktif saat State == Test & Review) -->
           <div id="verifyInteractiveBox">
             <label class="block text-xs font-semibold text-slate-700 mb-2">
               Konfirmasi Hasil Pengujian (Test & Review):
@@ -388,7 +387,6 @@
               class="w-full text-xs border border-rose-300 rounded-xl px-3 py-2 bg-white focus:ring-2 focus:ring-rose-500 outline-none"></textarea>
           </div>
 
-          <!-- Rating 1-10 muncul saat State == Done -->
           <div id="feedbackSection" class="hidden animate-fade pt-2 border-t border-emerald-200">
             <div class="flex justify-between items-center mb-2">
               <label class="text-xs font-bold text-slate-800">⭐ Seberapa puas Anda dengan layanan ITDS? (1 - 10)</label>
@@ -399,57 +397,8 @@
           </div>
         </div>
 
-        <!-- BAGIAN ADMIN ITDS (Hanya tampil jika Role Admin) -->
-        <div id="adminPanelSection" class="hidden border border-slate-200 rounded-2xl overflow-hidden">
-          <div class="bg-slate-100 px-4 py-3 text-xs font-extrabold text-slate-700 flex justify-between items-center">
-            <span>🛠️ Panel Update Admin ITDS (Full Access)</span>
-            <span id="adminVerifyGateHint" class="text-[11px] font-semibold text-amber-700"></span>
-          </div>
-          <div class="p-4 space-y-3 bg-white">
-            <div>
-              <label class="block text-xs font-semibold text-slate-600 mb-1.5">Update State</label>
-              <input type="hidden" id="edit-State">
-              <div id="modalBtnGroup-State" class="flex flex-wrap gap-1.5"></div>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <div>
-                <label class="block text-xs font-semibold text-slate-600 mb-1">Assigned PIC</label>
-                <select id="edit-Assigned" class="w-full text-xs border border-slate-300 rounded-lg px-2.5 py-2 bg-white"></select>
-              </div>
-              <div>
-                <label class="block text-xs font-semibold text-slate-600 mb-1">Assigned 2</label>
-                <select id="edit-Assigned2" class="w-full text-xs border border-slate-300 rounded-lg px-2.5 py-2 bg-white"></select>
-              </div>
-              <div>
-                <label class="block text-xs font-semibold text-slate-600 mb-1">Ticket Type (Admin)</label>
-                <select id="edit-TicketType" class="w-full text-xs border border-slate-300 rounded-lg px-2.5 py-2 bg-white"></select>
-              </div>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div>
-                <label class="block text-xs font-semibold text-slate-600 mb-1">Notes (Catatan Admin)</label>
-                <textarea id="edit-Notes" rows="2" class="w-full text-xs border border-slate-300 rounded-lg px-2.5 py-1.5"></textarea>
-              </div>
-              <div>
-                <label class="block text-xs font-semibold text-slate-600 mb-1">SA Note (System Analyst)</label>
-                <textarea id="edit-SANote" rows="2" class="w-full text-xs border border-slate-300 rounded-lg px-2.5 py-1.5"></textarea>
-              </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-3">
-              <div>
-                <label class="block text-xs font-semibold text-slate-600 mb-1">Cost (Admin)</label>
-                <input type="text" id="edit-Cost" placeholder="Rp 0" class="w-full text-xs border border-slate-300 rounded-lg px-2.5 py-1.5">
-              </div>
-              <div>
-                <label class="block text-xs font-semibold text-slate-600 mb-1">Date Done</label>
-                <input type="text" id="edit-DateDone" readonly class="w-full text-xs border border-slate-200 bg-slate-50 rounded-lg px-2.5 py-1.5 text-slate-500">
-              </div>
-            </div>
-          </div>
-        </div>
+        <!-- BAGIAN ADMIN ITDS (Konten hanya dirender di DOM jika Role Admin) -->
+        <div id="adminPanelContainer"></div>
 
         <div class="flex justify-end gap-2.5 pt-2">
           <button type="button" onclick="closeModal()" class="px-4 py-2.5 rounded-xl border border-slate-300 text-xs font-semibold text-slate-600 hover:bg-slate-50">
@@ -588,7 +537,6 @@
       document.getElementById('navUserName').textContent = currentUser.name;
       document.getElementById('navUserRole').textContent = adminMode ? '🛡️ Admin ITDS (Full Access)' : '👤 User';
 
-      // Auto-fill seluruh identitas pelapor sesuai akun login
       applyUserAutoFillAndPermissions();
 
       document.getElementById('tableHeadingTitle').textContent = adminMode
@@ -612,7 +560,6 @@
       phoneEl.value    = currentUser.phone || '';
       uidEl.value      = currentUser.userId || '';
 
-      // Kunci field identitas & sembunyikan pengaturan Admin jika User Biasa
       if (!adminMode) {
         fullNameEl.readOnly = true;
         phoneEl.readOnly    = true;
@@ -716,7 +663,6 @@
         appData = json;
         initFormControls();
 
-        // Set Company otomatis dari profil user login
         if (currentUser && currentUser.company) {
           const compSelect = document.getElementById('dd-Company');
           if (![...compSelect.options].some(o => o.value === currentUser.company)) {
@@ -751,7 +697,21 @@
       fillSelect('dd-Company', dd['Company'] || [], '-- Pilih Company --');
       fillSelect('dd-Request Access-Module-Support', dd['Request Access-Module-Support'] || [], '-- Pilih Kategori / Modul --');
       fillSelect('dd-Department', dd['Department'] || [], '-- Pilih Department --');
-      fillSelect('filterState', dd['State'] || [], 'Semua State');
+
+      // Populate Filter State dengan Default = ACTIVE_ONLY (Selain Done & Cancel)
+      const filterEl = document.getElementById('filterState');
+      const prevFilter = filterEl.value || 'ACTIVE_ONLY';
+      filterEl.innerHTML = `
+        <option value="ACTIVE_ONLY">Tiket Aktif (Selain Done & Cancel)</option>
+        <option value="ALL">Semua State (Termasuk Done/Cancel)</option>
+      `;
+      (dd['State'] || []).forEach(st => {
+        const opt = document.createElement('option');
+        opt.value = st;
+        opt.textContent = `State: ${st}`;
+        filterEl.appendChild(opt);
+      });
+      filterEl.value = prevFilter;
 
       const ccSelect = document.getElementById('dd-SentMailCC');
       ccSelect.innerHTML = '<option value="">-- Tanpa CC --</option>';
@@ -762,15 +722,17 @@
         ccSelect.appendChild(opt);
       });
 
-      renderPillButtons('btnGroup-Assigned', dd['Assigned'] || ['Jenius', 'Angga', 'Ibnu', 'Nurul'], 'val-Assigned', (val) => {
-        const email = appData.picEmailMap[val] || '';
-        document.getElementById('val-AssignedEmail').value = email;
-        document.getElementById('displayAssignedEmail').textContent = email ? `✉ ${email}` : '';
-      });
+      if (isAdminUser()) {
+        renderPillButtons('btnGroup-Assigned', dd['Assigned'] || ['Jenius', 'Angga', 'Ibnu', 'Nurul'], 'val-Assigned', (val) => {
+          const email = appData.picEmailMap[val] || '';
+          document.getElementById('val-AssignedEmail').value = email;
+          document.getElementById('displayAssignedEmail').textContent = email ? `✉ ${email}` : '';
+        });
 
-      renderPillButtons('btnGroup-Ticket Level', dd['Ticket Level'] || ['TRIVIAL', 'EASY', 'MEDIUM', 'HARD', 'VERY HARD'], 'val-Ticket Level', calculateEstDone);
-      renderPillButtons('btnGroup-Priority', dd['Priority'] || ['LOW', 'MEDIUM', 'HIGH'], 'val-Priority', calculateEstDone);
-      renderPillButtons('btnGroup-State', dd['State'] || ['New', 'In Progress', 'Test & Review', 'Deployment', 'Done', 'Cancel'], 'val-State', null, 'New');
+        renderPillButtons('btnGroup-Ticket Level', dd['Ticket Level'] || ['TRIVIAL', 'EASY', 'MEDIUM', 'HARD', 'VERY HARD'], 'val-Ticket Level', calculateEstDone);
+        renderPillButtons('btnGroup-Priority', dd['Priority'] || ['LOW', 'MEDIUM', 'HIGH'], 'val-Priority', calculateEstDone);
+        renderPillButtons('btnGroup-State', dd['State'] || ['New', 'In Progress', 'Test & Review', 'Deployment', 'Done', 'Cancel'], 'val-State', null, 'New');
+      }
     }
 
     function fillSelect(id, items, placeholder) {
@@ -788,7 +750,7 @@
     function renderPillButtons(containerId, options, hiddenInputId, onSelectCallback, defaultValue = '') {
       const container = document.getElementById(containerId);
       const hiddenInput = document.getElementById(hiddenInputId);
-      if (!container) return;
+      if (!container || !hiddenInput) return;
 
       container.innerHTML = '';
       options.forEach(opt => {
@@ -803,7 +765,6 @@
         }
 
         btn.onclick = () => {
-          // Validasi khusus Modal State: Tidak bisa pilih Deployment jika belum CONFIRMED
           if (containerId === 'modalBtnGroup-State' && opt.toLowerCase() === 'deployment') {
             const currentVerify = (document.getElementById('edit-UserVerification').value || '').toUpperCase();
             if (currentVerify !== 'CONFIRMED') {
@@ -886,9 +847,13 @@
         const dataObj = {};
         formData.forEach((v, k) => { dataObj[k] = v; });
 
-        // Pastikan state awal tiket dari user selalu 'New'
         if (!isAdminUser()) {
           dataObj['State'] = 'New';
+          delete dataObj['Assigned'];
+          delete dataObj['Assigned Email'];
+          delete dataObj['Ticket Level'];
+          delete dataObj['Priority'];
+          delete dataObj['Est Done'];
         }
 
         const fileInput = document.getElementById('attachmentInput');
@@ -896,7 +861,12 @@
 
         const res = await fetch(GAS_WEBAPP_URL, {
           method: 'POST',
-          body: JSON.stringify({ action: 'createTicket', data: dataObj, file: filePayload })
+          body: JSON.stringify({
+            action: 'createTicket',
+            isAdmin: isAdminUser(),
+            data: dataObj,
+            file: filePayload
+          })
         });
         const result = await res.json();
 
@@ -933,13 +903,21 @@
       const stFilter = document.getElementById('filterState').value;
 
       const filtered = getVisibleTickets().filter(t => {
-        const matchSt = !stFilter || t['State'] === stFilter;
+        const stateLower = (t['State'] || '').trim().toLowerCase();
+        let matchSt = true;
+
+        if (stFilter === 'ACTIVE_ONLY') {
+          matchSt = stateLower !== 'done' && stateLower !== 'cancel';
+        } else if (stFilter !== 'ALL' && stFilter !== '') {
+          matchSt = t['State'] === stFilter;
+        }
+
         const text = `${t['Issue ID']} ${t['Request Access-Module-Support']} ${t['Description']} ${t['Full Name']} ${t['Assigned']}`.toLowerCase();
         return matchSt && (!kw || text.includes(kw));
       });
 
       if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-slate-400">Belum ada tiket untuk ditampilkan.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-slate-400">Tidak ada tiket aktif yang sesuai filter.</td></tr>`;
         return;
       }
 
@@ -956,7 +934,7 @@
             <td class="py-3.5 px-4 align-top max-w-xs">
               <div class="flex flex-wrap items-center gap-1.5 mb-1">
                 <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-200/80 text-slate-700">${t['Request Access-Module-Support'] || '-'}</span>
-                ${t['Priority'] ? `<span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-rose-50 text-rose-600">${t['Priority']}</span>` : ''}
+                ${isAdminUser() && t['Priority'] ? `<span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-rose-50 text-rose-600">${t['Priority']}</span>` : ''}
               </div>
               <p class="text-slate-700 line-clamp-2 leading-snug">${t['Description'] || '-'}</p>
               <span class="text-[10px] text-slate-400">${t['Date Created'] || ''}</span>
@@ -989,12 +967,18 @@
 
     function openTicketModal(ticket) {
       currentEditingTicket = ticket;
+      const adminMode = isAdminUser();
       const ticketState = (ticket['State'] || 'New').trim();
       const isTestAndReview = ticketState.toLowerCase() === 'test & review';
 
       document.getElementById('modalIssueId').textContent = `#${ticket['Issue ID']}`;
       document.getElementById('modalModule').textContent = ticket['Request Access-Module-Support'] || 'Detail Tiket';
-      document.getElementById('modalMeta').textContent = `Dibuat: ${ticket['Date Created'] || '-'} • Level: ${ticket['Ticket Level'] || '-'} • Priority: ${ticket['Priority'] || '-'}`;
+
+      // Ticket Level & Priority hanya ditampilkan di metadata modal jika Admin
+      document.getElementById('modalMeta').textContent = adminMode
+        ? `Dibuat: ${ticket['Date Created'] || '-'} • Level: ${ticket['Ticket Level'] || '-'} • Priority: ${ticket['Priority'] || '-'}`
+        : `Dibuat: ${ticket['Date Created'] || '-'} • PIC: ${ticket['Assigned'] || 'Belum ditentukan'}`;
+
       document.getElementById('modalReporter').textContent = `Pelapor: ${ticket['Full Name']} (${ticket['Created By']})`;
       document.getElementById('modalCompany').textContent = ticket['Company'] || '';
       document.getElementById('modalDesc').textContent = ticket['Description'] || '-';
@@ -1016,7 +1000,6 @@
       stBadge.textContent = ticketState;
       stBadge.className = `text-xs font-bold px-2.5 py-0.5 rounded-full ${getStateColor(ticketState)}`;
 
-      // Pengaturan User Verification: HANYA aktif jika State == 'Test & Review'
       const currentVerify = ticket['User Verification'] || '';
       document.getElementById('edit-UserVerification').value = currentVerify;
       document.getElementById('verifyStatusLabel').textContent = currentVerify ? `[${currentVerify}]` : '[Belum Diverifikasi]';
@@ -1043,7 +1026,6 @@
 
       updateVerifyButtonsVisual(currentVerify);
 
-      // Rating 1-10 muncul saat State == Done
       const fbSection = document.getElementById('feedbackSection');
       if (ticketState.toLowerCase() === 'done') {
         fbSection.classList.remove('hidden');
@@ -1052,40 +1034,93 @@
         fbSection.classList.add('hidden');
       }
 
-      // Panel Admin (Full Access)
-      const adminPanel = document.getElementById('adminPanelSection');
-      if (isAdminUser()) {
-        adminPanel.classList.remove('hidden');
-        document.getElementById('adminVerifyGateHint').textContent = currentVerify.toUpperCase() === 'CONFIRMED'
-          ? '✅ User CONFIRMED (Siap Deployment)'
-          : '⚠️ Belum CONFIRMED (Deployment terkunci)';
+      // Render Panel Admin HANYA jika login ber-role Admin (User biasa tidak mendapat elemen State, Assign 1, Assign 2, dll sama sekali)
+      const adminContainer = document.getElementById('adminPanelContainer');
+      if (adminMode) {
+        adminContainer.innerHTML = `
+          <div class="border border-slate-200 rounded-2xl overflow-hidden">
+            <div class="bg-slate-100 px-4 py-3 text-xs font-extrabold text-slate-700 flex justify-between items-center">
+              <span>🛠️ Panel Update Admin ITDS (Full Access)</span>
+              <span id="adminVerifyGateHint" class="text-[11px] font-semibold text-amber-700">
+                ${currentVerify.toUpperCase() === 'CONFIRMED' ? '✅ User CONFIRMED (Siap Deployment)' : '⚠️ Belum CONFIRMED (Deployment terkunci)'}
+              </span>
+            </div>
+            <div class="p-4 space-y-3 bg-white">
+              <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1.5">Update State</label>
+                <input type="hidden" id="edit-State">
+                <div id="modalBtnGroup-State" class="flex flex-wrap gap-1.5"></div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                  <label class="block text-xs font-semibold text-slate-600 mb-1">Assigned 1 (PIC)</label>
+                  <select id="edit-Assigned" class="w-full text-xs border border-slate-300 rounded-lg px-2.5 py-2 bg-white"></select>
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-600 mb-1">Assigned 2</label>
+                  <select id="edit-Assigned2" class="w-full text-xs border border-slate-300 rounded-lg px-2.5 py-2 bg-white"></select>
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-600 mb-1">Ticket Type (Admin)</label>
+                  <select id="edit-TicketType" class="w-full text-xs border border-slate-300 rounded-lg px-2.5 py-2 bg-white"></select>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs font-semibold text-slate-600 mb-1">Notes (Catatan Admin)</label>
+                  <textarea id="edit-Notes" rows="2" class="w-full text-xs border border-slate-300 rounded-lg px-2.5 py-1.5"></textarea>
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-600 mb-1">SA Note (System Analyst)</label>
+                  <textarea id="edit-SANote" rows="2" class="w-full text-xs border border-slate-300 rounded-lg px-2.5 py-1.5"></textarea>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs font-semibold text-slate-600 mb-1">Cost (Admin)</label>
+                  <input type="text" id="edit-Cost" placeholder="Rp 0" class="w-full text-xs border border-slate-300 rounded-lg px-2.5 py-1.5">
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-600 mb-1">Date Done</label>
+                  <input type="text" id="edit-DateDone" readonly class="w-full text-xs border border-slate-200 bg-slate-50 rounded-lg px-2.5 py-1.5 text-slate-500">
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+
+        const dd = appData.dropdowns;
+        renderPillButtons('modalBtnGroup-State', dd['State'] || ['New', 'In Progress', 'Test & Review', 'Deployment', 'Done', 'Cancel'], 'edit-State', (newSt) => {
+          if (newSt.toLowerCase() === 'done') {
+            fbSection.classList.remove('hidden');
+            renderRatingButtons(document.getElementById('edit-UserFeedback').value);
+          } else {
+            fbSection.classList.add('hidden');
+          }
+        }, ticketState);
+
+        fillSelect('edit-Assigned', dd['Assigned'] || ['Jenius', 'Angga', 'Ibnu', 'Nurul'], '-- Pilih PIC 1 --');
+        document.getElementById('edit-Assigned').value = ticket['Assigned'] || '';
+
+        fillSelect('edit-Assigned2', dd['Assigned 2'] || dd['Assigned'] || ['Jenius', 'Angga', 'Ibnu', 'Nurul'], '-- Tanpa PIC 2 --');
+        document.getElementById('edit-Assigned2').value = ticket['Assigned 2'] || '';
+
+        fillSelect('edit-TicketType', dd['Ticket Type'] || ['Bug', 'Feature Request', 'Access Right', 'Support'], '-- Pilih Ticket Type --');
+        document.getElementById('edit-TicketType').value = ticket['Ticket Type'] || '';
+
+        document.getElementById('edit-Notes').value = ticket['Notes'] || '';
+        document.getElementById('edit-SANote').value = ticket['SA Note'] || '';
+        document.getElementById('edit-Cost').value = ticket['Cost'] || '';
+        document.getElementById('edit-DateDone').value = ticket['Date Done'] || 'Otomatis saat Done';
       } else {
-        adminPanel.classList.add('hidden');
+        // User Biasa: Hapus total panel admin dari DOM & tampilkan catatan admin hanya sebagai teks baca saja jika ada
+        adminContainer.innerHTML = ticket['Notes']
+          ? `<div class="bg-blue-50/70 border border-blue-200 rounded-xl p-3 text-xs text-blue-900"><strong>Catatan ITDS:</strong> ${ticket['Notes']}</div>`
+          : '';
       }
-
-      const dd = appData.dropdowns;
-      renderPillButtons('modalBtnGroup-State', dd['State'] || ['New', 'In Progress', 'Test & Review', 'Deployment', 'Done', 'Cancel'], 'edit-State', (newSt) => {
-        if (newSt.toLowerCase() === 'done') {
-          fbSection.classList.remove('hidden');
-          renderRatingButtons(document.getElementById('edit-UserFeedback').value);
-        } else {
-          fbSection.classList.add('hidden');
-        }
-      }, ticketState);
-
-      fillSelect('edit-Assigned', dd['Assigned'] || ['Jenius', 'Angga', 'Ibnu', 'Nurul'], '-- Pilih PIC --');
-      document.getElementById('edit-Assigned').value = ticket['Assigned'] || '';
-
-      fillSelect('edit-Assigned2', dd['Assigned 2'] || dd['Assigned'] || ['Jenius', 'Angga', 'Ibnu', 'Nurul'], '-- Tanpa PIC 2 --');
-      document.getElementById('edit-Assigned2').value = ticket['Assigned 2'] || '';
-
-      fillSelect('edit-TicketType', dd['Ticket Type'] || ['Bug', 'Feature Request', 'Access Right', 'Support'], '-- Pilih Ticket Type --');
-      document.getElementById('edit-TicketType').value = ticket['Ticket Type'] || '';
-
-      document.getElementById('edit-Notes').value = ticket['Notes'] || '';
-      document.getElementById('edit-SANote').value = ticket['SA Note'] || '';
-      document.getElementById('edit-Cost').value = ticket['Cost'] || '';
-      document.getElementById('edit-DateDone').value = ticket['Date Done'] || 'Otomatis saat Done';
 
       document.getElementById('ticketModal').classList.remove('hidden');
     }
@@ -1108,8 +1143,9 @@
         document.getElementById('edit-Reason').value = '';
       }
 
-      if (isAdminUser()) {
-        document.getElementById('adminVerifyGateHint').textContent = status === 'CONFIRMED'
+      const hintEl = document.getElementById('adminVerifyGateHint');
+      if (hintEl) {
+        hintEl.textContent = status === 'CONFIRMED'
           ? '✅ User CONFIRMED (Siap Deployment)'
           : '⚠️ Belum CONFIRMED (Deployment terkunci)';
       }
