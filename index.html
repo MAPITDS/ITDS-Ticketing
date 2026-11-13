@@ -107,7 +107,7 @@
     <header class="bg-gradient-to-r from-indigo-800 via-indigo-700 to-blue-700 text-white shadow-lg sticky top-0 z-30">
       <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-3">
         <div class="flex items-center gap-3">
-          <!-- Logo Navbar (Ganti src="logo.png" dengan file logo Anda nanti; otomatis fallback ke teks IT jika file belum ada) -->
+          <!-- Logo Navbar -->
           <div class="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center font-extrabold text-lg border border-white/20 overflow-hidden">
             <img src="logo.png" alt="ITDS Logo" class="w-full h-full object-contain p-1 bg-white"
               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
@@ -150,8 +150,8 @@
     <main class="max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
 
       <!-- KOLOM KIRI: FORM BUAT TIKET BARU (5 Kolom) -->
-      <section class="lg:col-span-5 bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden h-fit">
-        <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex justify-between items-center">
+      <section class="lg:col-span-5 bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-visible h-fit">
+        <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex justify-between items-center rounded-t-2xl">
           <div>
             <h2 class="text-base font-bold text-slate-800">Create New Ticket</h2>
             <p id="formSubtitle" class="text-xs text-slate-500">Profile Data Auto Fill</p>
@@ -256,15 +256,33 @@
               <input type="file" id="attachmentInput" accept="image/*,.pdf,.doc,.docx,.xls,.xlsx"
                 class="w-full text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 border border-slate-300 rounded-xl p-1">
             </div>
-            <div>
-              <div class="flex items-center justify-between mb-1">
-                <label class="block text-xs font-bold text-slate-700">4. Sent Mail CC</label>
-                <span id="create-ccCountBadge" class="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full">0 dipilih</span>
-              </div>
-              <input type="text" id="create-ccSearch" onkeyup="filterCreateCcCheckboxes()" placeholder="Cari nama atau email CC..."
-                class="w-full text-xs border border-slate-300 rounded-t-xl px-3 py-1.5 bg-white outline-none focus:border-indigo-500">
-              <div id="create-SentMailCCList"
-                class="max-h-36 overflow-y-auto border border-t-0 border-slate-300 rounded-b-xl bg-white p-2 grid grid-cols-1 gap-1.5">
+
+            <!-- MULTI-SELECT DROPDOWN SENT MAIL CC (CREATE) -->
+            <div class="relative cc-dropdown-wrapper" id="create-ccWrapper">
+              <label class="block text-xs font-bold text-slate-700 mb-1">4. Sent Mail CC</label>
+              <button type="button" onclick="toggleCcDropdown('create')"
+                class="w-full flex items-center justify-between gap-2 text-xs border border-slate-300 hover:border-indigo-400 rounded-xl px-3 py-2.5 bg-white text-left transition focus:ring-2 focus:ring-indigo-500 outline-none">
+                <span id="create-ccSummaryText" class="truncate text-slate-500">-- No CC Selected --</span>
+                <span class="flex items-center gap-1.5 shrink-0">
+                  <span id="create-ccCountBadge" class="hidden text-[10px] font-bold text-indigo-700 bg-indigo-100 px-1.5 py-0.5 rounded-full">0</span>
+                  <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                  </svg>
+                </span>
+              </button>
+
+              <!-- Panel Popover yang muncul saat diklik -->
+              <div id="create-ccPanel"
+                class="hidden absolute left-0 right-0 mt-1.5 z-40 bg-white border border-slate-200 rounded-xl shadow-xl p-2 space-y-1.5 animate-fade">
+                <div class="flex items-center gap-1.5">
+                  <input type="text" id="create-ccSearch" onkeyup="filterCcCheckboxes('create')" placeholder="Cari nama / email..."
+                    class="w-full text-xs border border-slate-200 rounded-lg px-2.5 py-1.5 bg-slate-50 focus:bg-white focus:border-indigo-500 outline-none">
+                  <button type="button" onclick="clearCcSelection('create')" title="Reset pilihan"
+                    class="text-[11px] font-semibold text-rose-600 hover:bg-rose-50 px-2 py-1.5 rounded-lg shrink-0">
+                    Clear
+                  </button>
+                </div>
+                <div id="create-SentMailCCList" class="max-h-44 overflow-y-auto divide-y divide-slate-100"></div>
               </div>
             </div>
           </div>
@@ -505,6 +523,120 @@
     let appData = { dropdowns: {}, picEmailMap: {}, userEmails: [], tickets: [] };
     let currentEditingTicket = null;
     let filterAssignedToMe = false;
+
+    // ==========================================
+    // HELPER MULTI-SELECT CHECKBOX DROPDOWN (CC)
+    // ==========================================
+    function toggleCcDropdown(prefix) {
+      const panel = document.getElementById(`${prefix}-ccPanel`);
+      if (!panel) return;
+      const isHidden = panel.classList.contains('hidden');
+
+      // Tutup semua panel dropdown CC lain terlebih dahulu
+      document.querySelectorAll('[id$="-ccPanel"]').forEach(p => p.classList.add('hidden'));
+
+      if (isHidden) {
+        panel.classList.remove('hidden');
+        const searchInput = document.getElementById(`${prefix}-ccSearch`);
+        if (searchInput) searchInput.focus();
+      }
+    }
+
+    // Tutup dropdown otomatis jika klik di luar wrapper
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.cc-dropdown-wrapper')) {
+        document.querySelectorAll('[id$="-ccPanel"]').forEach(p => p.classList.add('hidden'));
+      }
+    });
+
+    function filterCcCheckboxes(prefix) {
+      const kw = (document.getElementById(`${prefix}-ccSearch`)?.value || '').toLowerCase();
+      document.querySelectorAll(`#${prefix}-SentMailCCList .cc-checkbox-item`).forEach(item => {
+        item.style.display = item.dataset.search.includes(kw) ? '' : 'none';
+      });
+    }
+
+    function clearCcSelection(prefix) {
+      document.querySelectorAll(`#${prefix}-SentMailCCList input[type="checkbox"]`).forEach(cb => {
+        cb.checked = false;
+      });
+      updateCcDropdownSummary(prefix);
+    }
+
+    function updateCcDropdownSummary(prefix) {
+      const summaryEl = document.getElementById(`${prefix}-ccSummaryText`);
+      const badgeEl = document.getElementById(`${prefix}-ccCountBadge`);
+      if (!summaryEl || !badgeEl) return;
+
+      const selected = Array.from(
+        document.querySelectorAll(`#${prefix}-SentMailCCList input[type="checkbox"]:checked`)
+      ).map(cb => cb.value.trim()).filter(Boolean);
+
+      if (selected.length === 0) {
+        summaryEl.textContent = '-- No CC Selected --';
+        summaryEl.className = 'truncate text-slate-500';
+        badgeEl.classList.add('hidden');
+      } else {
+        summaryEl.textContent = selected.join(', ');
+        summaryEl.className = 'truncate font-semibold text-slate-800';
+        badgeEl.textContent = selected.length;
+        badgeEl.classList.remove('hidden');
+      }
+    }
+
+    function populateCcDropdownOptions(prefix, existingCcRaw = '') {
+      const container = document.getElementById(`${prefix}-SentMailCCList`);
+      const userList = appData.userEmails || [];
+      if (!container) return;
+
+      const selectedItems = (existingCcRaw || '').toString()
+        .split(',')
+        .map(s => s.trim().toLowerCase())
+        .filter(Boolean);
+
+      container.innerHTML = '';
+
+      userList.forEach(u => {
+        const val = (u.name || u.email || '').trim();
+        const emailStr = (u.email || '').trim();
+        if (!val) return;
+
+        const isChecked = selectedItems.includes(val.toLowerCase()) || (emailStr && selectedItems.includes(emailStr.toLowerCase()));
+        const labelText = u.name ? `${u.name} (${u.email})` : u.email;
+
+        const labelEl = document.createElement('label');
+        labelEl.className = 'cc-checkbox-item flex items-center gap-2 text-xs px-2.5 py-2 hover:bg-indigo-50/80 cursor-pointer select-none transition';
+        labelEl.dataset.search = labelText.toLowerCase();
+        labelEl.innerHTML = `
+          <input type="checkbox" value="${val.replace(/"/g, '&quot;')}" ${isChecked ? 'checked' : ''}
+            onchange="updateCcDropdownSummary('${prefix}')"
+            class="rounded text-indigo-600 focus:ring-indigo-500 w-3.5 h-3.5 shrink-0">
+          <span class="truncate text-slate-700 font-medium" title="${labelText.replace(/"/g, '&quot;')}">${labelText}</span>
+        `;
+        container.appendChild(labelEl);
+      });
+
+      // Pertahankan nilai CC lama di sheet apabila tidak ada di master userEmails
+      selectedItems.forEach(savedItem => {
+        const exists = Array.from(container.querySelectorAll('input[type="checkbox"]')).some(
+          cb => cb.value.toLowerCase() === savedItem
+        );
+        if (!exists) {
+          const fallbackEl = document.createElement('label');
+          fallbackEl.className = 'cc-checkbox-item flex items-center gap-2 text-xs px-2.5 py-2 bg-amber-50/70 hover:bg-amber-50 cursor-pointer select-none transition';
+          fallbackEl.dataset.search = savedItem;
+          fallbackEl.innerHTML = `
+            <input type="checkbox" value="${savedItem.replace(/"/g, '&quot;')}" checked
+              onchange="updateCcDropdownSummary('${prefix}')"
+              class="rounded text-indigo-600 focus:ring-indigo-500 w-3.5 h-3.5 shrink-0">
+            <span class="truncate text-slate-700 font-medium">${savedItem}</span>
+          `;
+          container.appendChild(fallbackEl);
+        }
+      });
+
+      updateCcDropdownSummary(prefix);
+    }
 
     // ==========================================
     // HELPER PENGURUTAN & DEDUPLIKASI PILIHAN
@@ -855,47 +987,6 @@
       return all.filter(t => (t['Created By'] || '').toLowerCase() === myEmail);
     }
 
-    // Helper Checkbox Sent Mail CC pada Form Create Ticket
-    function renderCreateCcCheckboxes() {
-      const ccListContainer = document.getElementById('create-SentMailCCList');
-      const userList = appData.userEmails || [];
-      if (!ccListContainer) return;
-
-      ccListContainer.innerHTML = '';
-      userList.forEach(u => {
-        const val = (u.name || u.email || '').trim();
-        if (!val) return;
-
-        const labelText = u.name ? `${u.name} (${u.email})` : u.email;
-        const labelEl = document.createElement('label');
-        labelEl.className = 'cc-checkbox-item flex items-center gap-2 text-xs px-2 py-1.5 rounded-lg hover:bg-indigo-50 cursor-pointer select-none border border-transparent has-[:checked]:bg-indigo-50/80 has-[:checked]:border-indigo-200';
-        labelEl.dataset.search = labelText.toLowerCase();
-        labelEl.innerHTML = `
-          <input type="checkbox" value="${val.replace(/"/g, '&quot;')}"
-            onchange="updateCreateCcCountBadge()"
-            class="rounded text-indigo-600 focus:ring-indigo-500 w-3.5 h-3.5">
-          <span class="truncate text-slate-700 font-medium" title="${labelText.replace(/"/g, '&quot;')}">${labelText}</span>
-        `;
-        ccListContainer.appendChild(labelEl);
-      });
-
-      updateCreateCcCountBadge();
-    }
-
-    function filterCreateCcCheckboxes() {
-      const kw = (document.getElementById('create-ccSearch')?.value || '').toLowerCase();
-      document.querySelectorAll('#create-SentMailCCList .cc-checkbox-item').forEach(item => {
-        item.style.display = item.dataset.search.includes(kw) ? '' : 'none';
-      });
-    }
-
-    function updateCreateCcCountBadge() {
-      const badge = document.getElementById('create-ccCountBadge');
-      if (!badge) return;
-      const checkedCount = document.querySelectorAll('#create-SentMailCCList input[type="checkbox"]:checked').length;
-      badge.textContent = `${checkedCount} dipilih`;
-    }
-
     function initFormControls() {
       const dd = appData.dropdowns;
       fillSelect('dd-Company', dd['Company'] || [], '-- Choose Company --');
@@ -920,8 +1011,8 @@
       });
       filterEl.value = prevFilter;
 
-      // Render checkbox Sent Mail CC di Form Create Ticket
-      renderCreateCcCheckboxes();
+      // Isi opsi Multi-Select Dropdown Sent Mail CC pada Form Create
+      populateCcDropdownOptions('create', '');
 
       if (isAdminUser()) {
         const picList = (dd['Assigned'] && dd['Assigned'].length > 0) ? dd['Assigned'] : ['Angga', 'Jenius', 'Nurul', 'Ibnu'];
@@ -944,834 +1035,4 @@
       const el = document.getElementById(id);
       if (!el) return;
       el.innerHTML = `<option value="">${placeholder}</option>`;
-      items.forEach(item => {
-        const opt = document.createElement('option');
-        opt.value = item;
-        opt.textContent = item;
-        el.appendChild(opt);
-      });
-    }
-
-    function renderPillButtons(containerId, options, hiddenInputId, onSelectCallback, defaultValue = '', allowToggleOff = false) {
-      const container = document.getElementById(containerId);
-      const hiddenInput = document.getElementById(hiddenInputId);
-      if (!container || !hiddenInput) return;
-
-      container.innerHTML = '';
-      options.forEach(opt => {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.textContent = opt;
-        btn.className = 'pill-btn text-xs font-semibold px-3 py-1.5 rounded-xl border border-slate-300 bg-white text-slate-700 hover:border-indigo-400';
-
-        if (opt.toUpperCase() === (defaultValue || '').toUpperCase() && defaultValue !== '') {
-          hiddenInput.value = opt;
-          applyActivePillStyle(btn, opt);
-        }
-
-        btn.onclick = () => {
-          const isAlreadySelected = hiddenInput.value.toUpperCase() === opt.toUpperCase();
-
-          [...container.children].forEach(b => {
-            b.className = 'pill-btn text-xs font-semibold px-3 py-1.5 rounded-xl border border-slate-300 bg-white text-slate-700 hover:border-indigo-400';
-          });
-
-          if (allowToggleOff && isAlreadySelected) {
-            hiddenInput.value = '';
-            if (onSelectCallback) onSelectCallback('');
-            return;
-          }
-
-          hiddenInput.value = opt;
-          applyActivePillStyle(btn, opt);
-          if (onSelectCallback) onSelectCallback(opt);
-        };
-        container.appendChild(btn);
-      });
-    }
-
-    function renderArrowPipeline(containerId, states, hiddenInputId, onSelectCallback, defaultValue = 'New') {
-      const container = document.getElementById(containerId);
-      const hiddenInput = document.getElementById(hiddenInputId);
-      if (!container || !hiddenInput) return;
-
-      container.innerHTML = '';
-      states.forEach(st => {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.textContent = st;
-        btn.className = 'arrow-step';
-
-        if (st.toLowerCase() === (defaultValue || '').toLowerCase()) {
-          hiddenInput.value = st;
-          applyActiveArrowStyle(btn, st);
-        }
-
-        btn.onclick = () => {
-          if (containerId === 'modalBtnGroup-State' && st.toLowerCase() === 'deployment') {
-            const verifyVal = (currentEditingTicket['User Verification'] || '').toUpperCase();
-            if (verifyVal !== 'CONFIRMED') {
-              alert('⚠️ Tidak dapat memindahkan status ke Deployment!\nUser terkait harus mengisi User Verification menjadi CONFIRMED terlebih dahulu.');
-              return;
-            }
-          }
-
-          hiddenInput.value = st;
-          [...container.children].forEach(b => {
-            b.className = 'arrow-step';
-            b.style.backgroundColor = '';
-          });
-          applyActiveArrowStyle(btn, st);
-          if (onSelectCallback) onSelectCallback(st);
-        };
-
-        container.appendChild(btn);
-      });
-    }
-
-    function applyActiveArrowStyle(btn, stateValue) {
-      const v = stateValue.toLowerCase();
-      btn.classList.add('active');
-      if (v === 'new') btn.style.backgroundColor = '#4f46e5';
-      else if (v === 'in progress') btn.style.backgroundColor = '#2563eb';
-      else if (v === 'test & review') btn.style.backgroundColor = '#d97706';
-      else if (v === 'deployment') btn.style.backgroundColor = '#7c3aed';
-      else if (v === 'done') btn.style.backgroundColor = '#059669';
-      else if (v === 'cancel') btn.style.backgroundColor = '#e11d48';
-      else btn.style.backgroundColor = '#4f46e5';
-    }
-
-    function applyActivePillStyle(btn, value) {
-      const v = value.toUpperCase();
-      let colorClass = 'bg-indigo-600 text-white border-indigo-600 active';
-      if (v === 'HIGH' || v === 'VERY HARD') colorClass = 'bg-rose-600 text-white border-rose-600 active';
-      else if (v === 'MEDIUM' || v === 'HARD') colorClass = 'bg-amber-500 text-white border-amber-500 active';
-      else if (v === 'LOW' || v === 'TRIVIAL' || v === 'EASY') colorClass = 'bg-emerald-600 text-white border-emerald-600 active';
-      btn.className = `pill-btn text-xs font-bold px-3 py-1.5 rounded-xl border ${colorClass}`;
-    }
-
-    function toggleOdooAccessSection(selectedModule) {
-      const section = document.getElementById('odooAccessSection');
-      const isOdooAccess = selectedModule.trim().toUpperCase() === 'ACCESS RIGHT ODOO';
-      const fields = ['inp-UserName', 'inp-UserEmail', 'inp-Position', 'dd-Department'];
-
-      if (isOdooAccess) {
-        section.classList.remove('hidden');
-        fields.forEach(id => document.getElementById(id).required = true);
-      } else {
-        section.classList.add('hidden');
-        fields.forEach(id => {
-          const el = document.getElementById(id);
-          el.required = false;
-          el.value = '';
-        });
-      }
-    }
-
-    // Helper: Parse format "10-Mei-2023/08.39.39" menjadi objek Date JavaScript
-    function parseIndoSheetDateTime(dateStr) {
-      if (!dateStr) return new Date();
-      const str = dateStr.toString().trim();
-
-      if (/^\d{4}-\d{2}-\d{2}/.test(str)) {
-        const parsedIso = new Date(str);
-        if (!isNaN(parsedIso.getTime())) return parsedIso;
-      }
-
-      const monthMap = {
-        'jan': 0, 'feb': 1, 'mar': 2, 'apr': 3, 'mei': 4, 'may': 4,
-        'jun': 5, 'jul': 6, 'agu': 7, 'aug': 7, 'sep': 8,
-        'okt': 9, 'oct': 9, 'nov': 10, 'des': 11, 'dec': 11
-      };
-
-      const match = str.match(/^(\d{1,2})-([A-Za-z]+)-(\d{4})(?:[\/\s]+(\d{1,2})[\.:](\d{1,2})(?:[\.:](\d{1,2}))?)?/);
-      if (match) {
-        const day = parseInt(match[1], 10);
-        const monthIdx = monthMap[match[2].toLowerCase()];
-        const year = parseInt(match[3], 10);
-        const hour = match[4] ? parseInt(match[4], 10) : 0;
-        const minute = match[5] ? parseInt(match[5], 10) : 0;
-        const second = match[6] ? parseInt(match[6], 10) : 0;
-
-        if (monthIdx !== undefined) {
-          return new Date(year, monthIdx, day, hour, minute, second);
-        }
-      }
-
-      const fallback = new Date(str);
-      return isNaN(fallback.getTime()) ? new Date() : fallback;
-    }
-
-    // Helper: Format objek Date kembali ke "17-Mei-2023/08.39.39"
-    function formatIndoSheetDateTime(dateObj) {
-      const monthsIndo = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
-      const pad = (n) => String(n).padStart(2, '0');
-
-      const dd = pad(dateObj.getDate());
-      const mmm = monthsIndo[dateObj.getMonth()];
-      const yyyy = dateObj.getFullYear();
-      const hh = pad(dateObj.getHours());
-      const mm = pad(dateObj.getMinutes());
-      const ss = pad(dateObj.getSeconds());
-
-      return `${dd}-${mmm}-${yyyy}/${hh}.${mm}.${ss}`;
-    }
-
-    // Kalkulasi Est Done sesuai matriks Priority & Ticket Level
-    function calculateEstDone(levelInputId, priorityInputId, estOutputId, baseDateStr = null) {
-      const level = (document.getElementById(levelInputId)?.value || '').toUpperCase().trim();
-      const priority = (document.getElementById(priorityInputId)?.value || '').toUpperCase().trim();
-      if (!level || !priority) return;
-
-      const slaMatrix = {
-        'HIGH': {
-          'TRIVIAL': 1,
-          'EASY': 3,
-          'MEDIUM': 7,
-          'HARD': 15,
-          'VERY HARD': 30
-        },
-        'MEDIUM': {
-          'TRIVIAL': 7,
-          'EASY': 14,
-          'MEDIUM': 21,
-          'HARD': 30,
-          'VERY HARD': 45
-        },
-        'LOW': {
-          'TRIVIAL': 10,
-          'EASY': 20,
-          'MEDIUM': 30,
-          'HARD': 45,
-          'VERY HARD': 60
-        }
-      };
-
-      const daysToAdd = slaMatrix[priority]?.[level];
-      if (!daysToAdd) return;
-
-      const baseDate = baseDateStr ? parseIndoSheetDateTime(baseDateStr) : new Date();
-      baseDate.setDate(baseDate.getDate() + daysToAdd);
-
-      document.getElementById(estOutputId).value = formatIndoSheetDateTime(baseDate);
-    }
-
-    function readFileAsBase64(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve({ fileName: file.name, mimeType: file.type, base64: reader.result.split(',')[1] });
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
-    }
-
-    document.getElementById('ticketForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const btn = document.getElementById('btnSubmit');
-      btn.disabled = true;
-      btn.textContent = '⏳ Save Tickets...';
-
-      try {
-        const formData = new FormData(e.target);
-        const dataObj = {};
-        formData.forEach((v, k) => { dataObj[k] = v; });
-
-        // Ambil semua checkbox Sent Mail CC yang dipilih
-        const checkedCreateCc = Array.from(
-          document.querySelectorAll('#create-SentMailCCList input[type="checkbox"]:checked')
-        ).map(cb => cb.value.trim()).filter(Boolean);
-        dataObj['Sent Mail CC'] = checkedCreateCc.join(', ');
-
-        if (!isAdminUser()) {
-          dataObj['State'] = 'New';
-          delete dataObj['Assigned'];
-          delete dataObj['Assigned Email'];
-          delete dataObj['Assigned 2'];
-          delete dataObj['Ticket Level'];
-          delete dataObj['Priority'];
-          delete dataObj['Est Done'];
-        }
-
-        const fileInput = document.getElementById('attachmentInput');
-        const filePayload = fileInput.files.length > 0 ? await readFileAsBase64(fileInput.files[0]) : null;
-
-        const res = await fetch(GAS_WEBAPP_URL, {
-          method: 'POST',
-          body: JSON.stringify({
-            action: 'createTicket',
-            isAdmin: isAdminUser(),
-            data: dataObj,
-            file: filePayload
-          })
-        });
-        const result = await res.json();
-
-        if (result.status === 'success') {
-          alert(result.message);
-          e.target.reset();
-          updateCreateCcCountBadge();
-          toggleOdooAccessSection('');
-          showAppScreen();
-        } else {
-          alert('Gagal: ' + result.message);
-        }
-      } catch (err) {
-        alert('Error: ' + err.message);
-      } finally {
-        btn.disabled = false;
-        btn.textContent = '🚀 Send Now';
-      }
-    });
-
-    // ==========================================
-    // 4. MONITORING & MODAL DETAIL TICKET
-    // ==========================================
-    function updateStats() {
-      const t = getVisibleTickets();
-      document.getElementById('statTotal').textContent = t.length;
-      document.getElementById('statNew').textContent = t.filter(x => (x['State'] || '').toLowerCase() === 'new').length;
-      document.getElementById('statProgress').textContent = t.filter(x => ['in progress', 'test & review', 'deployment'].includes((x['State'] || '').toLowerCase())).length;
-      document.getElementById('statDone').textContent = t.filter(x => (x['State'] || '').toLowerCase() === 'done').length;
-    }
-
-    function renderTable() {
-      const tbody = document.getElementById('ticketTableBody');
-      const kw = document.getElementById('searchBox').value.toLowerCase();
-      const stFilter = document.getElementById('filterState').value;
-
-      const filtered = getVisibleTickets().filter(t => {
-        const stateLower = (t['State'] || '').trim().toLowerCase();
-        let matchSt = true;
-
-        if (stFilter === 'ACTIVE_ONLY') {
-          matchSt = stateLower !== 'done' && stateLower !== 'cancel';
-        } else if (stFilter !== 'ALL' && stFilter !== '') {
-          matchSt = stateLower === stFilter.toLowerCase();
-        }
-
-        const text = `${t['Issue ID']} ${t['Request Access-Module-Support']} ${t['Description']} ${t['Full Name']} ${t['Assigned']} ${t['Assigned 2']}`.toLowerCase();
-        return matchSt && (!kw || text.includes(kw));
-      });
-
-      if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-slate-400">Ticket not found by filter.</td></tr>`;
-        return;
-      }
-
-      tbody.innerHTML = filtered.slice(0, 60).map(t => {
-        const badgeClass = getStateColor(t['State']);
-        const verifyBadge = t['User Verification']
-          ? `<span class="mt-1 inline-block text-[10px] font-bold px-2 py-0.5 rounded ${t['User Verification'].toUpperCase() === 'CONFIRMED' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-rose-50 text-rose-700 border border-rose-200'}">${t['User Verification']}</span>`
-          : '';
-        const ratingBadge = t['User Feedback'] ? `<span class="mt-1 inline-block text-[10px] font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-800">⭐ ${t['User Feedback']}/10</span>` : '';
-        const picText = t['Assigned 2'] ? `${t['Assigned'] || '-'} & ${t['Assigned 2']}` : (t['Assigned'] || '-');
-
-        return `
-          <tr onclick='openTicketModal(${JSON.stringify(t).replace(/'/g, "&#39;")})' class="hover:bg-indigo-50/60 cursor-pointer transition">
-            <td class="py-3.5 px-4 font-extrabold text-indigo-600 align-top">#${t['Issue ID']}</td>
-            <td class="py-3.5 px-4 align-top max-w-xs">
-              <div class="flex flex-wrap items-center gap-1.5 mb-1">
-                <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-200/80 text-slate-700">${t['Request Access-Module-Support'] || '-'}</span>
-                ${isAdminUser() && t['Priority'] ? `<span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-rose-50 text-rose-600">${t['Priority']}</span>` : ''}
-              </div>
-              <p class="text-slate-700 line-clamp-2 leading-snug">${t['Description'] || '-'}</p>
-              <span class="text-[10px] text-slate-400">${t['Date Created'] || ''}</span>
-            </td>
-            <td class="py-3.5 px-4 align-top">
-              <div class="font-semibold text-slate-800">${t['Full Name'] || '-'}</div>
-              <div class="text-[11px] text-slate-500">${t['Company'] || ''}</div>
-            </td>
-            <td class="py-3.5 px-4 align-top">
-              <div class="font-bold text-slate-700">${picText}</div>
-              ${t['Est Done'] ? `<div class="text-[10px] text-slate-400">Est: ${t['Est Done']}</div>` : ''}
-            </td>
-            <td class="py-3.5 px-4 align-top">
-              <span class="inline-block px-2.5 py-1 rounded-full text-[11px] font-bold ${badgeClass}">${t['State'] || '-'}</span>
-              <div class="flex flex-col items-start">${verifyBadge}${ratingBadge}</div>
-            </td>
-          </tr>
-        `;
-      }).join('');
-    }
-
-    function getStateColor(state) {
-      const s = (state || '').toLowerCase();
-      if (s === 'done') return 'bg-emerald-100 text-emerald-800';
-      if (s === 'in progress') return 'bg-blue-100 text-blue-800';
-      if (s === 'test & review' || s === 'deployment') return 'bg-purple-100 text-purple-800';
-      if (s === 'cancel') return 'bg-rose-100 text-rose-800';
-      return 'bg-amber-100 text-amber-800';
-    }
-
-    function filterEditCcCheckboxes() {
-      const kw = (document.getElementById('edit-ccSearch')?.value || '').toLowerCase();
-      document.querySelectorAll('#edit-SentMailCCList .cc-checkbox-item').forEach(item => {
-        item.style.display = item.dataset.search.includes(kw) ? '' : 'none';
-      });
-    }
-
-    function updateEditCcCountBadge() {
-      const badge = document.getElementById('edit-ccCountBadge');
-      if (!badge) return;
-      const checkedCount = document.querySelectorAll('#edit-SentMailCCList input[type="checkbox"]:checked').length;
-      badge.textContent = `${checkedCount} dipilih`;
-    }
-
-    function openTicketModal(ticket) {
-      currentEditingTicket = ticket;
-      const adminMode = isAdminUser();
-      const ownerMode = isOwnerOfTicket(ticket);
-      const ticketState = (ticket['State'] || 'New').trim();
-      const isTestAndReview = ticketState.toLowerCase() === 'test & review';
-      const currentVerify = ticket['User Verification'] || '';
-
-      document.getElementById('modalIssueId').textContent = `#${ticket['Issue ID']}`;
-      document.getElementById('modalModule').textContent = ticket['Request Access-Module-Support'] || 'Detail Ticket';
-
-      document.getElementById('modalMeta').textContent = adminMode
-        ? `Create on: ${ticket['Date Created'] || '-'} • Ticket Level: ${ticket['Ticket Level'] || '-'} • Priority: ${ticket['Priority'] || '-'}`
-        : `Create on: ${ticket['Date Created'] || '-'} • Assigned: ${ticket['Assigned'] || '-'}`;
-
-      document.getElementById('modalReporter').textContent = `Created By: ${ticket['Full Name']} (${ticket['Created By']})`;
-      document.getElementById('modalCompany').textContent = ticket['Company'] || '';
-      document.getElementById('modalDesc').textContent = ticket['Description'] || '-';
-
-      const odooBox = document.getElementById('modalOdooBox');
-      if (ticket['User Name'] || ticket['User Email']) {
-        odooBox.classList.remove('hidden');
-        odooBox.innerHTML = `<strong>Access Rights Odoo:</strong> ${ticket['User Name']} (${ticket['User Email']}) — ${ticket['Position']} / ${ticket['Department']}`;
-      } else {
-        odooBox.classList.add('hidden');
-      }
-
-      const attBox = document.getElementById('modalAttachmentBox');
-      attBox.innerHTML = ticket['Attachments']
-        ? `<a href="${ticket['Attachments']}" target="_blank" class="inline-flex items-center gap-1 text-xs font-bold text-indigo-600 hover:underline">📎 Open Attachments</a>`
-        : '';
-
-      const stBadge = document.getElementById('modalCurrentStateBadge');
-      stBadge.textContent = ticketState;
-      stBadge.className = `text-xs font-bold px-2.5 py-0.5 rounded-full ${getStateColor(ticketState)}`;
-
-      // =====================================================================
-      // 1. KONFIRMASI USER & PENILAIAN: HANYA DIRENDER JIKA LOGIN === PEMILIK TIKET
-      // =====================================================================
-      const verifyContainer = document.getElementById('userVerificationContainer');
-      if (ownerMode) {
-        verifyContainer.innerHTML = `
-          <div class="border-2 border-emerald-200 bg-emerald-50/40 rounded-2xl p-4 space-y-4">
-            <div class="flex items-center justify-between">
-              <h4 class="text-xs font-extrabold uppercase tracking-wider text-emerald-800">
-                👤 User Confirmation & satisfaction
-              </h4>
-              <span id="verifyStatusLabel" class="text-xs font-extrabold text-indigo-700">
-                ${currentVerify ? `[${currentVerify}]` : '[Need Verification]'}
-              </span>
-            </div>
-
-            <div id="verifyLockedNotice" class="${isTestAndReview ? 'hidden' : ''} bg-amber-50 border border-amber-200 text-amber-800 text-xs rounded-xl p-3 font-medium">
-              ⏳ The <strong>User Verification</strong> button can only be filled in if the ticket status is at the <strong>Test & Review</strong> state.
-            </div>
-
-            <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-2">
-                Confirmation Test Result (Test & Review):
-              </label>
-              <div class="flex flex-wrap gap-2.5">
-                <button type="button" id="btnVerifyConfirm" onclick="setUserVerification('CONFIRMED')" ${isTestAndReview ? '' : 'disabled'}
-                  class="flex-1 py-2.5 px-4 rounded-xl border-2 border-emerald-500 bg-white hover:bg-emerald-600 hover:text-white text-emerald-700 font-bold text-xs transition ${isTestAndReview ? '' : 'opacity-40 cursor-not-allowed'}">
-                  ✅ CONFIRMED (Ready to Deployment)
-                </button>
-                <button type="button" id="btnVerifyReject" onclick="setUserVerification('INCOMPLETE')" ${isTestAndReview ? '' : 'disabled'}
-                  class="flex-1 py-2.5 px-4 rounded-xl border-2 border-rose-400 bg-white hover:bg-rose-600 hover:text-white text-rose-700 font-bold text-xs transition ${isTestAndReview ? '' : 'opacity-40 cursor-not-allowed'}">
-                  ❌ INCOMPLETE (Need Revision)
-                </button>
-              </div>
-              <input type="hidden" id="edit-UserVerification" value="${currentVerify}">
-            </div>
-
-            <div id="reasonBox" class="${currentVerify.toUpperCase() === 'INCOMPLETE' ? '' : 'hidden'} animate-fade">
-              <label class="block text-xs font-semibold text-rose-700 mb-1">Reason *</label>
-              <textarea id="edit-Reason" rows="2" placeholder="Explain which parts are still not quite right..."
-                class="w-full text-xs border border-rose-300 rounded-xl px-3 py-2 bg-white focus:ring-2 focus:ring-rose-500 outline-none">${ticket['Reason'] || ''}</textarea>
-            </div>
-
-            <div id="feedbackSection" class="${ticketState.toLowerCase() === 'done' ? '' : 'hidden'} animate-fade pt-2 border-t border-emerald-200">
-              <div class="flex justify-between items-center mb-2">
-                <label class="text-xs font-bold text-slate-800">⭐ Seberapa puas Anda dengan layanan ITDS? (1 - 10)</label>
-                <span id="feedbackEmojiLabel" class="text-xs font-bold text-indigo-600">Pilih angka</span>
-              </div>
-              <input type="hidden" id="edit-UserFeedback" value="${ticket['User Feedback'] || ''}">
-              <div id="ratingButtons" class="grid grid-cols-10 gap-1.5"></div>
-            </div>
-          </div>
-        `;
-
-        updateVerifyButtonsVisual(currentVerify);
-        if (ticketState.toLowerCase() === 'done') {
-          renderRatingButtons(ticket['User Feedback'] || '');
-        }
-      } else {
-        verifyContainer.innerHTML = '';
-      }
-
-      // =====================================================================
-      // 2. PANEL UPDATE ADMIN ITDS (FULL ACCESS: LEVEL, PRIORITY, EST DONE, DLL)
-      // =====================================================================
-      const adminContainer = document.getElementById('adminPanelContainer');
-      if (adminMode) {
-        const dd = appData.dropdowns;
-        const orderedStates = getOrderedStates(dd['State']);
-        const orderedLevels = getOrderedLevels(dd['Ticket Level']);
-        const orderedPriorities = getOrderedPriorities(dd['Priority']);
-
-        adminContainer.innerHTML = `
-          <div class="border border-slate-200 rounded-2xl overflow-hidden">
-            <div class="bg-slate-100 px-4 py-3 text-xs font-extrabold text-slate-700 flex flex-wrap justify-between items-center gap-2">
-              <span>🛠️ Panel Update Admin ITDS (Full Access)</span>
-              <span class="text-[11px] font-bold px-2.5 py-0.5 rounded-full ${currentVerify.toUpperCase() === 'CONFIRMED' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">
-                ${currentVerify.toUpperCase() === 'CONFIRMED' ? '✅ User Verify: CONFIRMED' : `⚠️ User Verify: ${currentVerify || 'Not CONFIRMED yet'}`}
-              </span>
-            </div>
-
-            <div class="p-4 space-y-4 bg-white">
-              <!-- State Pipeline -->
-              <div>
-                <label class="block text-xs font-bold text-slate-600 mb-1.5">Update State (Step-by-Step Pipeline)</label>
-                <input type="hidden" id="edit-State">
-                <div id="modalBtnGroup-State" class="arrow-pipeline"></div>
-              </div>
-
-              <!-- Ticket Level, Priority, Est Done (Readonly) & Sent Mail CC -->
-              <div class="bg-slate-50/80 p-3 rounded-xl border border-slate-200/80 space-y-3">
-                <div>
-                  <label class="block text-xs font-bold text-slate-700 mb-1.5">Ticket Level</label>
-                  <input type="hidden" id="edit-TicketLevel">
-                  <div id="modalBtnGroup-TicketLevel" class="flex flex-wrap gap-1.5"></div>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
-                  <div class="sm:col-span-7">
-                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Priority</label>
-                    <input type="hidden" id="edit-Priority">
-                    <div id="modalBtnGroup-Priority" class="flex flex-wrap gap-1.5"></div>
-                  </div>
-                  <div class="sm:col-span-5">
-                    <label class="block text-[11px] font-bold text-slate-600 mb-1.5">Est Done (Auto)</label>
-                    <input type="text" id="edit-EstDone" value="${ticket['Est Done'] || ''}" placeholder="Auto-calculated" readonly
-                      class="w-full text-xs font-bold text-indigo-700 bg-slate-100 border border-indigo-200 rounded-xl px-3 py-2 outline-none cursor-not-allowed select-none">
-                  </div>
-                  <div class="sm:col-span-12">
-                    <div class="flex items-center justify-between mb-1">
-                      <label class="block text-xs font-bold text-slate-700">Sent Mail CC (Pilih satu atau lebih)</label>
-                      <span id="edit-ccCountBadge" class="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full">0 dipilih</span>
-                    </div>
-                    <input type="text" id="edit-ccSearch" onkeyup="filterEditCcCheckboxes()" placeholder="Cari nama atau email CC..."
-                      class="w-full text-xs border border-slate-300 rounded-t-xl px-3 py-1.5 bg-white outline-none focus:border-indigo-500">
-                    <div id="edit-SentMailCCList"
-                      class="max-h-36 overflow-y-auto border border-t-0 border-slate-300 rounded-b-xl bg-white p-2 grid grid-cols-1 sm:grid-cols-2 gap-1.5">
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Assigned 1, Assigned 2 & Ticket Type -->
-              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div>
-                  <label class="block text-xs font-semibold text-slate-600 mb-1">Assigned 1</label>
-                  <select id="edit-Assigned" class="w-full text-xs border border-slate-300 rounded-lg px-2.5 py-2 bg-white"></select>
-                </div>
-                <div>
-                  <label class="block text-xs font-semibold text-slate-600 mb-1">Assigned 2</label>
-                  <select id="edit-Assigned2" class="w-full text-xs border border-slate-300 rounded-lg px-2.5 py-2 bg-white"></select>
-                </div>
-                <div>
-                  <label class="block text-xs font-semibold text-slate-600 mb-1">Ticket Type (Admin)</label>
-                  <select id="edit-TicketType" class="w-full text-xs border border-slate-300 rounded-lg px-2.5 py-2 bg-white"></select>
-                </div>
-              </div>
-
-              <!-- Notes & SA Note -->
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label class="block text-xs font-semibold text-slate-600 mb-1">Notes (Catatan Admin)</label>
-                  <textarea id="edit-Notes" rows="2" class="w-full text-xs border border-slate-300 rounded-lg px-2.5 py-1.5"></textarea>
-                </div>
-                <div>
-                  <label class="block text-xs font-semibold text-slate-600 mb-1">SA Note (System Analyst)</label>
-                  <textarea id="edit-SANote" rows="2" class="w-full text-xs border border-slate-300 rounded-lg px-2.5 py-1.5"></textarea>
-                </div>
-              </div>
-
-              <!-- Cost & Date Done -->
-              <div class="grid grid-cols-2 gap-3">
-                <div>
-                  <label class="block text-xs font-semibold text-slate-600 mb-1">Cost (Admin)</label>
-                  <input type="text" id="edit-Cost" placeholder="Rp 0" class="w-full text-xs border border-slate-300 rounded-lg px-2.5 py-1.5">
-                </div>
-                <div>
-                  <label class="block text-xs font-semibold text-slate-600 mb-1">Date Done</label>
-                  <input type="text" id="edit-DateDone" readonly class="w-full text-xs border border-slate-200 bg-slate-50 rounded-lg px-2.5 py-1.5 text-slate-500">
-                </div>
-              </div>
-            </div>
-          </div>
-        `;
-
-        // Isi opsi checkbox Sent Mail CC setelah HTML selesai di-render
-        const ccListContainer = document.getElementById('edit-SentMailCCList');
-        const userList = appData.userEmails || [];
-        if (ccListContainer) {
-          const existingCcRaw = (ticket['Sent Mail CC'] || '').toString();
-          const selectedCcItems = existingCcRaw.split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
-
-          ccListContainer.innerHTML = '';
-
-          userList.forEach(u => {
-            const val = (u.name || u.email || '').trim();
-            const emailStr = (u.email || '').trim();
-            if (!val) return;
-
-            const isChecked = selectedCcItems.includes(val.toLowerCase()) || (emailStr && selectedCcItems.includes(emailStr.toLowerCase()));
-            const labelText = u.name ? `${u.name} (${u.email})` : u.email;
-
-            const labelEl = document.createElement('label');
-            labelEl.className = 'cc-checkbox-item flex items-center gap-2 text-xs px-2 py-1.5 rounded-lg hover:bg-indigo-50 cursor-pointer select-none border border-transparent has-[:checked]:bg-indigo-50/80 has-[:checked]:border-indigo-200';
-            labelEl.dataset.search = labelText.toLowerCase();
-            labelEl.innerHTML = `
-              <input type="checkbox" value="${val.replace(/"/g, '&quot;')}" ${isChecked ? 'checked' : ''}
-                onchange="updateEditCcCountBadge()"
-                class="rounded text-indigo-600 focus:ring-indigo-500 w-3.5 h-3.5">
-              <span class="truncate text-slate-700 font-medium" title="${labelText.replace(/"/g, '&quot;')}">${labelText}</span>
-            `;
-            ccListContainer.appendChild(labelEl);
-          });
-
-          // Jika ada nama CC lama di sheet yang tidak ada di daftar userEmails, tetap tampilkan agar tidak hilang
-          selectedCcItems.forEach(savedItem => {
-            const alreadyExists = Array.from(ccListContainer.querySelectorAll('input[type="checkbox"]')).some(
-              cb => cb.value.toLowerCase() === savedItem
-            );
-            if (!alreadyExists) {
-              const fallbackLabel = document.createElement('label');
-              fallbackLabel.className = 'cc-checkbox-item flex items-center gap-2 text-xs px-2 py-1.5 rounded-lg bg-amber-50 border border-amber-200 cursor-pointer select-none';
-              fallbackLabel.dataset.search = savedItem;
-              fallbackLabel.innerHTML = `
-                <input type="checkbox" value="${savedItem.replace(/"/g, '&quot;')}" checked
-                  onchange="updateEditCcCountBadge()"
-                  class="rounded text-indigo-600 focus:ring-indigo-500 w-3.5 h-3.5">
-                <span class="truncate text-slate-700 font-medium">${savedItem}</span>
-              `;
-              ccListContainer.appendChild(fallbackLabel);
-            }
-          });
-
-          updateEditCcCountBadge();
-        }
-
-        renderArrowPipeline('modalBtnGroup-State', orderedStates, 'edit-State', (newSt) => {
-          const fbEl = document.getElementById('feedbackSection');
-          if (fbEl) {
-            if (newSt.toLowerCase() === 'done') {
-              fbEl.classList.remove('hidden');
-              renderRatingButtons(document.getElementById('edit-UserFeedback')?.value || '');
-            } else {
-              fbEl.classList.add('hidden');
-            }
-          }
-        }, ticketState);
-
-        renderPillButtons('modalBtnGroup-TicketLevel', orderedLevels, 'edit-TicketLevel', () => {
-          calculateEstDone('edit-TicketLevel', 'edit-Priority', 'edit-EstDone', ticket['Date Created']);
-        }, ticket['Ticket Level'] || '');
-
-        renderPillButtons('modalBtnGroup-Priority', orderedPriorities, 'edit-Priority', () => {
-          calculateEstDone('edit-TicketLevel', 'edit-Priority', 'edit-EstDone', ticket['Date Created']);
-        }, ticket['Priority'] || '');
-
-        fillSelect('edit-Assigned', dd['Assigned'] || ['Angga', 'Jenius', 'Nurul', 'Ibnu'], '-- Set Assigned --');
-        document.getElementById('edit-Assigned').value = ticket['Assigned'] || '';
-
-        fillSelect('edit-Assigned2', dd['Assigned 2'] || dd['Assigned'] || ['Angga', 'Jenius', 'Nurul', 'Ibnu'], '-- Set Assigned --');
-        document.getElementById('edit-Assigned2').value = ticket['Assigned 2'] || '';
-
-        fillSelect('edit-TicketType', dd['Ticket Type'] || ['Bug', 'Feature Request', 'Access Right', 'Support'], '-- Choose Ticket Type --');
-        document.getElementById('edit-TicketType').value = ticket['Ticket Type'] || '';
-
-        document.getElementById('edit-Notes').value = ticket['Notes'] || '';
-        document.getElementById('edit-SANote').value = ticket['SA Note'] || '';
-        document.getElementById('edit-Cost').value = ticket['Cost'] || '';
-        document.getElementById('edit-DateDone').value = ticket['Date Done'] || 'Auto set on state Done';
-      } else {
-        adminContainer.innerHTML = ticket['Notes']
-          ? `<div class="bg-blue-50/70 border border-blue-200 rounded-xl p-3 text-xs text-blue-900"><strong>Notes ITDS:</strong> ${ticket['Notes']}</div>`
-          : '';
-      }
-
-      const btnSave = document.getElementById('btnSaveModal');
-      if (adminMode || (ownerMode && (isTestAndReview || ticketState.toLowerCase() === 'done'))) {
-        btnSave.classList.remove('hidden');
-      } else {
-        btnSave.classList.add('hidden');
-      }
-
-      document.getElementById('ticketModal').classList.remove('hidden');
-    }
-
-    function closeModal() {
-      document.getElementById('ticketModal').classList.add('hidden');
-    }
-
-    function setUserVerification(status) {
-      const verifyInput = document.getElementById('edit-UserVerification');
-      if (!verifyInput) return;
-
-      verifyInput.value = status;
-      document.getElementById('verifyStatusLabel').textContent = `[${status}]`;
-      updateVerifyButtonsVisual(status);
-
-      const reasonBox = document.getElementById('reasonBox');
-      if (status === 'INCOMPLETE') {
-        reasonBox.classList.remove('hidden');
-        document.getElementById('edit-Reason').focus();
-      } else {
-        reasonBox.classList.add('hidden');
-        document.getElementById('edit-Reason').value = '';
-      }
-    }
-
-    function updateVerifyButtonsVisual(status) {
-      const btnConfirm = document.getElementById('btnVerifyConfirm');
-      const btnReject  = document.getElementById('btnVerifyReject');
-      if (!btnConfirm || !btnReject) return;
-
-      const st = (status || '').toUpperCase();
-      const disabledClass = btnConfirm.disabled ? ' opacity-40 cursor-not-allowed' : '';
-
-      btnConfirm.className = st === 'CONFIRMED'
-        ? `flex-1 py-2.5 px-4 rounded-xl border-2 border-emerald-600 bg-emerald-600 text-white font-bold text-xs shadow transition${disabledClass}`
-        : `flex-1 py-2.5 px-4 rounded-xl border-2 border-emerald-500 bg-white hover:bg-emerald-600 hover:text-white text-emerald-700 font-bold text-xs transition${disabledClass}`;
-
-      btnReject.className = st === 'INCOMPLETE'
-        ? `flex-1 py-2.5 px-4 rounded-xl border-2 border-rose-600 bg-rose-600 text-white font-bold text-xs shadow transition${disabledClass}`
-        : `flex-1 py-2.5 px-4 rounded-xl border-2 border-rose-400 bg-white hover:bg-rose-600 hover:text-white text-rose-700 font-bold text-xs transition${disabledClass}`;
-    }
-
-    function renderRatingButtons(selectedVal) {
-      const container = document.getElementById('ratingButtons');
-      const hidden = document.getElementById('edit-UserFeedback');
-      const label = document.getElementById('feedbackEmojiLabel');
-      if (!container || !hidden) return;
-
-      hidden.value = selectedVal;
-
-      const emojis = {
-        1: '😡 1 - Very Bad', 2: '😠 2 - Bad', 3: '😞 3 - Less',
-        4: '😕 4 - Below Expectation', 5: '😐 5 - Good', 6: '🙂 6 - Good Enough',
-        7: '😊 7 - Well Done', 8: '😄 8 - Bravo', 9: '🤩 9 - Satisfying', 10: '🏆 10 - Perfect!'
-      };
-      label.textContent = emojis[selectedVal] || 'Klik skor 1 - 10';
-
-      container.innerHTML = '';
-      for (let i = 1; i <= 10; i++) {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.textContent = i;
-        const isSelected = parseInt(selectedVal) === i;
-        let color = 'bg-white border-slate-300 text-slate-700 hover:bg-indigo-50';
-        if (isSelected) {
-          if (i <= 4) color = 'bg-rose-500 border-rose-600 text-white scale-110 shadow';
-          else if (i <= 7) color = 'bg-amber-500 border-amber-600 text-white scale-110 shadow';
-          else color = 'bg-emerald-600 border-emerald-700 text-white scale-110 shadow';
-        }
-        btn.className = `py-2 rounded-xl border font-extrabold text-xs transition ${color}`;
-        btn.onclick = () => renderRatingButtons(i);
-        container.appendChild(btn);
-      }
-    }
-
-    async function saveTicketChanges() {
-      const updatePayload = {};
-      const ownerMode = isOwnerOfTicket(currentEditingTicket);
-
-      // Hanya kirim data konfirmasi & feedback jika akun yang login adalah pemilik tiket
-      if (ownerMode) {
-        const verification = document.getElementById('edit-UserVerification')?.value || '';
-        const reason = document.getElementById('edit-Reason')?.value.trim() || '';
-
-        if (verification === 'INCOMPLETE' && !reason) {
-          alert('Please fill in the Reason (reason for rejection) first..');
-          return;
-        }
-
-        updatePayload['User Verification'] = verification;
-        updatePayload['Reason'] = reason;
-        updatePayload['User Feedback'] = document.getElementById('edit-UserFeedback')?.value || '';
-      }
-
-      // Kirim seluruh parameter operasional Admin jika login sebagai Admin
-      if (isAdminUser()) {
-        const targetState = document.getElementById('edit-State').value;
-        const effectiveVerify = ownerMode
-          ? (updatePayload['User Verification'] || '').toUpperCase()
-          : (currentEditingTicket['User Verification'] || '').toUpperCase();
-
-        if (targetState.toLowerCase() === 'deployment' && effectiveVerify !== 'CONFIRMED') {
-          alert('⚠️ Unable to save the Deployment status before the relevant User completes User Verification, setting it to CONFIRMED!');
-          return;
-        }
-
-        const assignedPic = document.getElementById('edit-Assigned').value;
-        updatePayload['State'] = targetState;
-        updatePayload['Ticket Level'] = document.getElementById('edit-TicketLevel').value;
-        updatePayload['Priority'] = document.getElementById('edit-Priority').value;
-        updatePayload['Est Done'] = document.getElementById('edit-EstDone').value;
-        updatePayload['Assigned'] = assignedPic;
-        updatePayload['Assigned Email'] = appData.picEmailMap[assignedPic] || '';
-        updatePayload['Assigned 2'] = document.getElementById('edit-Assigned2').value;
-        updatePayload['Ticket Type'] = document.getElementById('edit-TicketType').value;
-        updatePayload['Notes'] = document.getElementById('edit-Notes').value;
-        updatePayload['SA Note'] = document.getElementById('edit-SANote').value;
-        updatePayload['Cost'] = document.getElementById('edit-Cost').value;
-
-        const checkedCcValues = Array.from(
-          document.querySelectorAll('#edit-SentMailCCList input[type="checkbox"]:checked')
-        ).map(cb => cb.value.trim()).filter(Boolean);
-
-        updatePayload['Sent Mail CC'] = checkedCcValues.join(', ');
-      }
-
-      const btn = document.getElementById('btnSaveModal');
-      btn.disabled = true;
-      btn.textContent = '⏳ Store Data...';
-
-      try {
-        const res = await fetch(GAS_WEBAPP_URL, {
-          method: 'POST',
-          body: JSON.stringify({
-            action: 'updateTicket',
-            issueId: currentEditingTicket['Issue ID'],
-            isAdmin: isAdminUser(),
-            userEmail: currentUser.email,
-            data: updatePayload
-          })
-        });
-        const result = await res.json();
-        if (result.status === 'success') {
-          closeModal();
-          loadSheetData();
-        } else {
-          alert('Failed to update: ' + result.message);
-        }
-      } catch (err) {
-        alert('Error: ' + err.message);
-      } finally {
-        btn.disabled = false;
-        btn.textContent = '💾 Save Update';
-      }
-    }
-
-    window.addEventListener('DOMContentLoaded', checkSession);
-  </script>
-</body>
-</html>
+      items.for
