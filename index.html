@@ -4,6 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ITDS Ticketing System</title>
+  <!-- Favicon (Ganti href dengan nama file/URL gambar favicon Anda nanti) -->
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="apple-touch-icon" href="favicon.png">
+
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     .pill-btn { transition: all 0.15s ease; }
@@ -65,8 +69,11 @@
   <div id="loginScreen" class="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-900 via-indigo-800 to-blue-900 p-4">
     <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 space-y-6 animate-fade">
       <div class="text-center space-y-2">
-        <div class="w-14 h-14 mx-auto rounded-2xl bg-indigo-600 text-white flex items-center justify-center font-black text-2xl shadow-lg">
-          IT
+        <!-- Logo Login (Ganti src="logo.png" dengan file logo Anda nanti; otomatis fallback ke teks IT jika file belum ada) -->
+        <div class="w-16 h-16 mx-auto rounded-2xl bg-indigo-600 text-white flex items-center justify-center font-black text-2xl shadow-lg overflow-hidden">
+          <img src="logo.png" alt="ITDS Logo" class="w-full h-full object-contain p-1.5 bg-white"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+          <span class="hidden w-full h-full items-center justify-center">IT</span>
         </div>
         <h1 class="text-xl font-extrabold text-slate-800">ITDS</h1>
         <p class="text-xs text-slate-500">Mitra Asa Pratama • Login menggunakan akun terdaftar</p>
@@ -100,8 +107,11 @@
     <header class="bg-gradient-to-r from-indigo-800 via-indigo-700 to-blue-700 text-white shadow-lg sticky top-0 z-30">
       <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-3">
         <div class="flex items-center gap-3">
-          <div class="w-9 h-9 rounded-xl bg-white/15 flex items-center justify-center font-extrabold text-lg border border-white/20">
-            IT
+          <!-- Logo Navbar (Ganti src="logo.png" dengan file logo Anda nanti; otomatis fallback ke teks IT jika file belum ada) -->
+          <div class="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center font-extrabold text-lg border border-white/20 overflow-hidden">
+            <img src="logo.png" alt="ITDS Logo" class="w-full h-full object-contain p-1 bg-white"
+              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <span class="hidden w-full h-full items-center justify-center">IT</span>
           </div>
           <div>
             <h1 class="text-base sm:text-lg font-bold tracking-tight">ITDS Ticketing System</h1>
@@ -242,13 +252,13 @@
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label class="block text-xs font-bold text-slate-700 mb-1">3. Attachments </label>
+              <label class="block text-xs font-bold text-slate-700 mb-1">3. Attachments</label>
               <input type="file" id="attachmentInput" accept="image/*,.pdf,.doc,.docx,.xls,.xlsx"
                 class="w-full text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 border border-slate-300 rounded-xl p-1">
             </div>
             <div>
               <div class="flex items-center justify-between mb-1">
-                <label class="block text-xs font-bold text-slate-700">Sent Mail CC (Pilih satu atau lebih)</label>
+                <label class="block text-xs font-bold text-slate-700">4. Sent Mail CC</label>
                 <span id="create-ccCountBadge" class="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full">0 dipilih</span>
               </div>
               <input type="text" id="create-ccSearch" onkeyup="filterCreateCcCheckboxes()" placeholder="Cari nama atau email CC..."
@@ -301,9 +311,9 @@
                 <div id="btnGroup-Priority" class="flex flex-wrap gap-1.5"></div>
               </div>
               <div class="sm:col-span-5">
-                <label class="block text-[11px] font-bold text-slate-600 mb-1.5">Est Done (auto fill)</label>
-                <input type="text" name="Est Done" id="val-EstDone" placeholder="Set Ticket Level & Priority"
-                  class="w-full text-xs font-bold text-indigo-700 bg-indigo-50/50 border border-indigo-200 rounded-xl px-3 py-2 outline-none">
+                <label class="block text-[11px] font-bold text-slate-600 mb-1.5">Est Done (Auto)</label>
+                <input type="text" name="Est Done" id="val-EstDone" placeholder="Auto-calculated" readonly
+                  class="w-full text-xs font-bold text-indigo-700 bg-slate-100 border border-indigo-200 rounded-xl px-3 py-2 outline-none cursor-not-allowed select-none">
               </div>
             </div>
 
@@ -344,7 +354,8 @@
             <p id="statDone" class="text-xl font-extrabold text-emerald-600 mt-0.5">0</p>
           </div>
         </div>
-        
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden">
           <div class="p-5 border-b border-slate-200 space-y-3">
             <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
               <div>
@@ -586,7 +597,7 @@
         errBox.classList.remove('hidden');
       } finally {
         btn.disabled = false;
-        btn.textContent = 'Login →';
+        btn.textContent = 'Masuk ke Portal →';
       }
     });
 
@@ -792,7 +803,7 @@
         alertBox.classList.remove('hidden');
       } finally {
         btn.disabled = false;
-        btn.textContent = 'Save New Password';
+        btn.textContent = 'Update Password';
       }
     });
 
@@ -825,7 +836,7 @@
 
         updateStats();
         renderTable();
-        updateAssignedToMeButtonStyle()
+        updateAssignedToMeButtonStyle();
 
         badge.textContent = '● Connected';
         badge.className = 'text-xs px-2.5 py-1.5 rounded-full bg-emerald-500/25 text-emerald-100 font-medium';
@@ -842,6 +853,47 @@
       }
       const myEmail = (currentUser.email || '').toLowerCase();
       return all.filter(t => (t['Created By'] || '').toLowerCase() === myEmail);
+    }
+
+    // Helper Checkbox Sent Mail CC pada Form Create Ticket
+    function renderCreateCcCheckboxes() {
+      const ccListContainer = document.getElementById('create-SentMailCCList');
+      const userList = appData.userEmails || [];
+      if (!ccListContainer) return;
+
+      ccListContainer.innerHTML = '';
+      userList.forEach(u => {
+        const val = (u.name || u.email || '').trim();
+        if (!val) return;
+
+        const labelText = u.name ? `${u.name} (${u.email})` : u.email;
+        const labelEl = document.createElement('label');
+        labelEl.className = 'cc-checkbox-item flex items-center gap-2 text-xs px-2 py-1.5 rounded-lg hover:bg-indigo-50 cursor-pointer select-none border border-transparent has-[:checked]:bg-indigo-50/80 has-[:checked]:border-indigo-200';
+        labelEl.dataset.search = labelText.toLowerCase();
+        labelEl.innerHTML = `
+          <input type="checkbox" value="${val.replace(/"/g, '&quot;')}"
+            onchange="updateCreateCcCountBadge()"
+            class="rounded text-indigo-600 focus:ring-indigo-500 w-3.5 h-3.5">
+          <span class="truncate text-slate-700 font-medium" title="${labelText.replace(/"/g, '&quot;')}">${labelText}</span>
+        `;
+        ccListContainer.appendChild(labelEl);
+      });
+
+      updateCreateCcCountBadge();
+    }
+
+    function filterCreateCcCheckboxes() {
+      const kw = (document.getElementById('create-ccSearch')?.value || '').toLowerCase();
+      document.querySelectorAll('#create-SentMailCCList .cc-checkbox-item').forEach(item => {
+        item.style.display = item.dataset.search.includes(kw) ? '' : 'none';
+      });
+    }
+
+    function updateCreateCcCountBadge() {
+      const badge = document.getElementById('create-ccCountBadge');
+      if (!badge) return;
+      const checkedCount = document.querySelectorAll('#create-SentMailCCList input[type="checkbox"]:checked').length;
+      badge.textContent = `${checkedCount} dipilih`;
     }
 
     function initFormControls() {
@@ -868,14 +920,8 @@
       });
       filterEl.value = prevFilter;
 
-      const ccSelect = document.getElementById('dd-SentMailCC');
-      ccSelect.innerHTML = '<option value="">-- No CC --</option>';
-      (appData.userEmails || []).forEach(u => {
-        const opt = document.createElement('option');
-        opt.value = u.email;
-        opt.textContent = u.name ? `${u.name} (${u.email})` : u.email;
-        ccSelect.appendChild(opt);
-      });
+      // Render checkbox Sent Mail CC di Form Create Ticket
+      renderCreateCcCheckboxes();
 
       if (isAdminUser()) {
         const picList = (dd['Assigned'] && dd['Assigned'].length > 0) ? dd['Assigned'] : ['Angga', 'Jenius', 'Nurul', 'Ibnu'];
@@ -1027,7 +1073,6 @@
       if (!dateStr) return new Date();
       const str = dateStr.toString().trim();
 
-      // Jika sudah format ISO (misal dari Google Apps Script JSON)
       if (/^\d{4}-\d{2}-\d{2}/.test(str)) {
         const parsedIso = new Date(str);
         if (!isNaN(parsedIso.getTime())) return parsedIso;
@@ -1039,7 +1084,6 @@
         'okt': 9, 'oct': 9, 'nov': 10, 'des': 11, 'dec': 11
       };
 
-      // Cocokkan pola dd-MMM-yyyy/HH.mm.ss atau dd-MMM-yyyy HH:mm:ss
       const match = str.match(/^(\d{1,2})-([A-Za-z]+)-(\d{4})(?:[\/\s]+(\d{1,2})[\.:](\d{1,2})(?:[\.:](\d{1,2}))?)?/);
       if (match) {
         const day = parseInt(match[1], 10);
@@ -1106,7 +1150,6 @@
       const daysToAdd = slaMatrix[priority]?.[level];
       if (!daysToAdd) return;
 
-      // Saat edit tiket di modal, gunakan Date Created tiket; saat buat tiket baru, gunakan waktu sekarang
       const baseDate = baseDateStr ? parseIndoSheetDateTime(baseDateStr) : new Date();
       baseDate.setDate(baseDate.getDate() + daysToAdd);
 
@@ -1132,6 +1175,12 @@
         const formData = new FormData(e.target);
         const dataObj = {};
         formData.forEach((v, k) => { dataObj[k] = v; });
+
+        // Ambil semua checkbox Sent Mail CC yang dipilih
+        const checkedCreateCc = Array.from(
+          document.querySelectorAll('#create-SentMailCCList input[type="checkbox"]:checked')
+        ).map(cb => cb.value.trim()).filter(Boolean);
+        dataObj['Sent Mail CC'] = checkedCreateCc.join(', ');
 
         if (!isAdminUser()) {
           dataObj['State'] = 'New';
@@ -1160,6 +1209,7 @@
         if (result.status === 'success') {
           alert(result.message);
           e.target.reset();
+          updateCreateCcCountBadge();
           toggleOdooAccessSection('');
           showAppScreen();
         } else {
@@ -1252,19 +1302,20 @@
       if (s === 'cancel') return 'bg-rose-100 text-rose-800';
       return 'bg-amber-100 text-amber-800';
     }
+
     function filterEditCcCheckboxes() {
       const kw = (document.getElementById('edit-ccSearch')?.value || '').toLowerCase();
       document.querySelectorAll('#edit-SentMailCCList .cc-checkbox-item').forEach(item => {
         item.style.display = item.dataset.search.includes(kw) ? '' : 'none';
       });
     }
-    
+
     function updateEditCcCountBadge() {
       const badge = document.getElementById('edit-ccCountBadge');
       if (!badge) return;
       const checkedCount = document.querySelectorAll('#edit-SentMailCCList input[type="checkbox"]:checked').length;
       badge.textContent = `${checkedCount} dipilih`;
-    }          
+    }
 
     function openTicketModal(ticket) {
       currentEditingTicket = ticket;
@@ -1361,7 +1412,6 @@
           renderRatingButtons(ticket['User Feedback'] || '');
         }
       } else {
-        // Bukan pemilik tiket (misalnya Admin melihat tiket user lain): sembunyikan total form konfirmasi & penilaian
         verifyContainer.innerHTML = '';
       }
 
@@ -1468,23 +1518,23 @@
           </div>
         `;
 
-        // Isi opsi Sent Mail CC setelah HTML selesai di-render
+        // Isi opsi checkbox Sent Mail CC setelah HTML selesai di-render
         const ccListContainer = document.getElementById('edit-SentMailCCList');
         const userList = appData.userEmails || [];
         if (ccListContainer) {
           const existingCcRaw = (ticket['Sent Mail CC'] || '').toString();
           const selectedCcItems = existingCcRaw.split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
-        
+
           ccListContainer.innerHTML = '';
-        
+
           userList.forEach(u => {
             const val = (u.name || u.email || '').trim();
             const emailStr = (u.email || '').trim();
             if (!val) return;
-        
+
             const isChecked = selectedCcItems.includes(val.toLowerCase()) || (emailStr && selectedCcItems.includes(emailStr.toLowerCase()));
             const labelText = u.name ? `${u.name} (${u.email})` : u.email;
-        
+
             const labelEl = document.createElement('label');
             labelEl.className = 'cc-checkbox-item flex items-center gap-2 text-xs px-2 py-1.5 rounded-lg hover:bg-indigo-50 cursor-pointer select-none border border-transparent has-[:checked]:bg-indigo-50/80 has-[:checked]:border-indigo-200';
             labelEl.dataset.search = labelText.toLowerCase();
@@ -1496,7 +1546,7 @@
             `;
             ccListContainer.appendChild(labelEl);
           });
-        
+
           // Jika ada nama CC lama di sheet yang tidak ada di daftar userEmails, tetap tampilkan agar tidak hilang
           selectedCcItems.forEach(savedItem => {
             const alreadyExists = Array.from(ccListContainer.querySelectorAll('input[type="checkbox"]')).some(
@@ -1515,7 +1565,7 @@
               ccListContainer.appendChild(fallbackLabel);
             }
           });
-        
+
           updateEditCcCountBadge();
         }
 
@@ -1683,10 +1733,11 @@
         updatePayload['Notes'] = document.getElementById('edit-Notes').value;
         updatePayload['SA Note'] = document.getElementById('edit-SANote').value;
         updatePayload['Cost'] = document.getElementById('edit-Cost').value;
+
         const checkedCcValues = Array.from(
           document.querySelectorAll('#edit-SentMailCCList input[type="checkbox"]:checked')
         ).map(cb => cb.value.trim()).filter(Boolean);
-        
+
         updatePayload['Sent Mail CC'] = checkedCcValues.join(', ');
       }
 
@@ -1716,7 +1767,7 @@
         alert('Error: ' + err.message);
       } finally {
         btn.disabled = false;
-        btn.textContent = '💾 Save Changes';
+        btn.textContent = '💾 Save Update';
       }
     }
 
