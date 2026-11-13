@@ -486,6 +486,7 @@
     let currentUser = null;
     let appData = { dropdowns: {}, picEmailMap: {}, userEmails: [], tickets: [] };
     let currentEditingTicket = null;
+    let filterAssignedToMe = false;
 
     // ==========================================
     // HELPER PENGURUTAN & DEDUPLIKASI PILIHAN
@@ -599,6 +600,73 @@
       const owner = (ticket['Created By'] || '').trim().toLowerCase();
       const logged = (currentUser.email || '').trim().toLowerCase();
       return owner !== '' && owner === logged;
+    }
+    
+    function isTicketAssignedToCurrentUser(ticket) {
+      if (!currentUser || !ticket) return false;
+
+      const userEmail = (currentUser.email || '').trim().toLowerCase();
+      const fullName = (currentUser.name || '').trim().toLowerCase();
+      const firstName = fullName.split(/\s+/)[0] || '';
+
+      const pic1 = (ticket['Assigned'] || '').trim().toLowerCase();
+      const pic2 = (ticket['Assigned 2'] || '').trim().toLowerCase();
+      const pic1Email = (ticket['Assigned Email'] || '').trim().toLowerCase();
+
+      if (userEmail && pic1Email && pic1Email === userEmail) return true;
+
+      const matchesName = (picField) => {
+        if (!picField) return false;
+        if (fullName && (picField === fullName || fullName.includes(picField) || picField.includes(fullName))) return true;
+        if (firstName && firstName.length >= 3 && (picField === firstName || picField.split(/\s+/).includes(firstName))) return true;
+        return false;
+      };
+
+      return matchesName(pic1) || matchesName(pic2);
+    }
+
+    function toggleAssignedToMe() {
+      filterAssignedToMe = !filterAssignedToMe;
+      updateAssignedToMeButtonStyle();
+      updateStats();
+      renderTable();
+    }
+
+    function updateAssignedToMeButtonStyle() {
+      const btn = document.getElementById('btnAssignedToMe');
+      const countBadge = document.getElementById('assignedToMeCount');
+      const heading = document.getElementById('tableHeadingTitle');
+      const subtitle = document.getElementById('tableSubtitle');
+      if (!btn) return;
+
+      if (!isAdminUser()) {
+        btn.classList.add('hidden');
+        btn.classList.remove('inline-flex');
+        heading.textContent = 'Daftar Tiket Saya';
+        subtitle.textContent = 'Default menampilkan tiket aktif (selain Done & Cancel)';
+        return;
+      }
+
+      btn.classList.remove('hidden');
+      btn.classList.add('inline-flex');
+
+      const myAssignedActiveCount = (appData.tickets || []).filter(t => {
+        const st = (t['State'] || '').trim().toLowerCase();
+        return st !== 'done' && st !== 'cancel' && isTicketAssignedToCurrentUser(t);
+      }).length;
+      countBadge.textContent = myAssignedActiveCount;
+
+      if (filterAssignedToMe) {
+        btn.className = 'inline-flex items-center gap-1.5 text-xs font-bold px-3.5 py-2 rounded-xl border border-indigo-600 bg-indigo-600 text-white shadow-sm transition';
+        countBadge.className = 'px-1.5 py-0.5 text-[10px] rounded-full bg-white/20 text-white font-extrabold';
+        heading.textContent = 'Tugas Saya (Assigned 1 & Assigned 2)';
+        subtitle.textContent = 'Menampilkan tiket yang ditugaskan kepada Anda • Klik "Assigned to Me" untuk melihat semua tiket';
+      } else {
+        btn.className = 'inline-flex items-center gap-1.5 text-xs font-bold px-3.5 py-2 rounded-xl border border-slate-300 bg-white text-slate-700 hover:border-indigo-500 hover:text-indigo-700 transition shadow-2xs';
+        countBadge.className = 'px-1.5 py-0.5 text-[10px] rounded-full bg-indigo-50 text-indigo-700 font-extrabold';
+        heading.textContent = 'Semua Daftar Tiket (Admin Full Access)';
+        subtitle.textContent = 'Default menampilkan tiket aktif (selain Done & Cancel)';
+      }
     }
 
     function showAppScreen() {
