@@ -347,6 +347,12 @@
               <h2 id="tableHeadingTitle" class="text-base font-bold text-slate-800">All Ticket</h2>
               <p class="text-xs text-slate-500">Default filter (Open Tickets)</p>
             </div>
+            <!-- INI POSISI TOMBOL ASSIGNED TO ME -->
+              <button type="button" id="btnAssignedToMe" onclick="toggleAssignedToMe()"
+                class="hidden items-center gap-1.5 text-xs font-bold px-3.5 py-2 rounded-xl border border-indigo-600 bg-indigo-600 text-white shadow-sm transition">
+                <span>🙋 Assigned to Me</span>
+                <span id="assignedToMeCount" class="px-1.5 py-0.5 text-[10px] rounded-full bg-white/20 text-white font-extrabold">0</span>
+              </button>
             <div class="flex flex-wrap gap-2">
               <input type="text" id="searchBox" onkeyup="renderTable()" placeholder="Cari ID, modul..."
                 class="text-xs border border-slate-300 rounded-xl px-3 py-2 w-36 focus:ring-2 focus:ring-indigo-500 outline-none">
@@ -600,6 +606,8 @@
       document.getElementById('appScreen').classList.remove('hidden');
 
       const adminMode = isAdminUser();
+      filterAssignedToMe = adminMode;
+
       document.getElementById('navUserName').textContent = currentUser.name;
       document.getElementById('navUserRole').textContent = adminMode ? '🛡️ Admin ITDS (Full Access)' : '👤 User';
 
