@@ -1450,9 +1450,9 @@
         // Isi opsi Sent Mail CC setelah HTML selesai di-render
         const editCcSelect = document.getElementById('edit-SentMailCC');
         const userList = appData.userEmails || [];
-        if (editCcSelect && Array.isArray(userList)) {
+        if (editCcSelect && Array.isArray(appData.userEmails)) {
           const currentCc = (ticket['Sent Mail CC'] || '').trim();
-          userList.forEach(u => {
+          appData.userEmails.forEach(u => {
             const opt = document.createElement('option');
             const val = u.name || u.email;
             opt.value = val;
