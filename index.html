@@ -341,14 +341,14 @@
           </div>
         </div>
 
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden">
+        <!-- <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden">
           <div class="p-5 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <h2 id="tableHeadingTitle" class="text-base font-bold text-slate-800">All Ticket</h2>
               <p class="text-xs text-slate-500">Default filter (Open Tickets)</p>
-            </div>
+            </div> -->
             <!-- INI POSISI TOMBOL ASSIGNED TO ME -->
-              <button type="button" id="btnAssignedToMe" onclick="toggleAssignedToMe()"
+              <!-- <button type="button" id="btnAssignedToMe" onclick="toggleAssignedToMe()"
                 class="hidden items-center gap-1.5 text-xs font-bold px-3.5 py-2 rounded-xl border border-indigo-600 bg-indigo-600 text-white shadow-sm transition">
                 <span>🙋 Assigned to Me</span>
                 <span id="assignedToMeCount" class="px-1.5 py-0.5 text-[10px] rounded-full bg-white/20 text-white font-extrabold">0</span>
@@ -356,6 +356,31 @@
             <div class="flex flex-wrap gap-2">
               <input type="text" id="searchBox" onkeyup="renderTable()" placeholder="Cari ID, modul..."
                 class="text-xs border border-slate-300 rounded-xl px-3 py-2 w-36 focus:ring-2 focus:ring-indigo-500 outline-none">
+              <select id="filterState" onchange="renderTable()"
+                class="text-xs border border-slate-300 rounded-xl px-3 py-2 bg-white font-semibold text-indigo-700">
+                <option value="ACTIVE_ONLY">Default filter (Open Tickets)</option>
+                <option value="ALL">All Tickets</option>
+              </select>
+            </div>
+          </div> -->
+          <div class="p-5 border-b border-slate-200 space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <h2 id="tableHeadingTitle" class="text-base font-bold text-slate-800">All Ticket</h2>
+                <p id="tableSubtitle" class="text-xs text-slate-500">Default filter (Open Tickets)</p>
+              </div>
+
+              <!-- INI POSISI TOMBOL ASSIGNED TO ME -->
+              <button type="button" id="btnAssignedToMe" onclick="toggleAssignedToMe()"
+                class="hidden items-center gap-1.5 text-xs font-bold px-3.5 py-2 rounded-xl border border-indigo-600 bg-indigo-600 text-white shadow-sm transition">
+                <span>🙋 Assigned to Me</span>
+                <span id="assignedToMeCount" class="px-1.5 py-0.5 text-[10px] rounded-full bg-white/20 text-white font-extrabold">0</span>
+              </button>
+            </div>
+
+            <div class="flex flex-wrap gap-2">
+              <input type="text" id="searchBox" onkeyup="renderTable()" placeholder="Search ID, modul, Assigne, user..."
+                class="flex-1 min-w-[160px] text-xs border border-slate-300 rounded-xl px-3 py-2 focus:ring-2 focus:ring-indigo-500 outline-none">
               <select id="filterState" onchange="renderTable()"
                 class="text-xs border border-slate-300 rounded-xl px-3 py-2 bg-white font-semibold text-indigo-700">
                 <option value="ACTIVE_ONLY">Default filter (Open Tickets)</option>
@@ -601,7 +626,7 @@
       const logged = (currentUser.email || '').trim().toLowerCase();
       return owner !== '' && owner === logged;
     }
-    
+
     function isTicketAssignedToCurrentUser(ticket) {
       if (!currentUser || !ticket) return false;
 
