@@ -633,7 +633,7 @@
         compEl.classList.add('pointer-events-none', 'bg-slate-100');
         document.getElementById('badgeAutoFillLock').classList.remove('hidden');
         document.getElementById('adminCreateFields').classList.add('hidden');
-        document.getElementById('formSubtitle').textContent = 'Pilih Modul, isi Deskripsi, Attachment & CC Email';
+        document.getElementById('formSubtitle').textContent = 'Choose Modul, Fill Description, Attachment & mail cc who need to know';
       } else {
         fullNameEl.readOnly = false;
         phoneEl.readOnly    = false;
@@ -642,7 +642,7 @@
         compEl.classList.add('bg-white');
         document.getElementById('badgeAutoFillLock').classList.add('hidden');
         document.getElementById('adminCreateFields').classList.remove('hidden');
-        document.getElementById('formSubtitle').textContent = 'Mode Admin: Full Access seluruh parameter tiket';
+        document.getElementById('formSubtitle').textContent = 'Admin Mode: Full Access all tickets parameter';
       }
     }
 
@@ -709,7 +709,7 @@
         alertBox.classList.remove('hidden');
       } finally {
         btn.disabled = false;
-        btn.textContent = 'Svae New Password';
+        btn.textContent = 'Save New Password';
       }
     });
 
@@ -760,9 +760,9 @@
 
     function initFormControls() {
       const dd = appData.dropdowns;
-      fillSelect('dd-Company', dd['Company'] || [], '-- Pilih Company --');
-      fillSelect('dd-Request Access-Module-Support', dd['Request Access-Module-Support'] || [], '-- Pilih Kategori / Modul --');
-      fillSelect('dd-Department', dd['Department'] || [], '-- Pilih Department --');
+      fillSelect('dd-Company', dd['Company'] || [], '-- Choose Company --');
+      fillSelect('dd-Request Access-Module-Support', dd['Request Access-Module-Support'] || [], '-- Choose Category / Modul --');
+      fillSelect('dd-Department', dd['Department'] || [], '-- Choose Department --');
 
       const orderedStates = getOrderedStates(dd['State']);
       const orderedLevels = getOrderedLevels(dd['Ticket Level']);
