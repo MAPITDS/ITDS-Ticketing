@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ITDS Ticketing System</title>
-  <!-- Favicon (Ganti href dengan nama file/URL gambar favicon Anda nanti) -->
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="apple-touch-icon" href="favicon.png">
 
@@ -15,9 +14,6 @@
     @keyframes fadeIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
     .animate-fade { animation: fadeIn 0.25s ease-out forwards; }
 
-    /* =========================================================
-       CHEVRON / ARROW STEP-BY-STEP PIPELINE (ALA ODOO STATUSBAR)
-    ========================================================== */
     .arrow-pipeline {
       display: flex;
       width: 100%;
@@ -63,13 +59,10 @@
 </head>
 <body class="bg-slate-100 text-slate-800 font-sans antialiased">
 
-  <!-- =========================================================
-       1. HALAMAN LOGIN
-  ========================================================== -->
+  <!-- 1. HALAMAN LOGIN -->
   <div id="loginScreen" class="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-900 via-indigo-800 to-blue-900 p-4">
     <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 space-y-6 animate-fade">
       <div class="text-center space-y-2">
-        <!-- Logo Login (Ganti src="logo.png" dengan file logo Anda nanti; otomatis fallback ke teks IT jika file belum ada) -->
         <div class="w-16 h-16 mx-auto rounded-2xl bg-indigo-600 text-white flex items-center justify-center font-black text-2xl shadow-lg overflow-hidden">
           <img src="logo.png" alt="ITDS Logo" class="w-full h-full object-contain p-1.5 bg-white"
             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
@@ -99,15 +92,11 @@
     </div>
   </div>
 
-  <!-- =========================================================
-       2. APLIKASI UTAMA
-  ========================================================== -->
+  <!-- 2. APLIKASI UTAMA -->
   <div id="appScreen" class="hidden">
-    <!-- NAVBAR -->
     <header class="bg-gradient-to-r from-indigo-800 via-indigo-700 to-blue-700 text-white shadow-lg sticky top-0 z-30">
       <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-3">
         <div class="flex items-center gap-3">
-          <!-- Logo Navbar -->
           <div class="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center font-extrabold text-lg border border-white/20 overflow-hidden">
             <img src="logo.png" alt="ITDS Logo" class="w-full h-full object-contain p-1 bg-white"
               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
@@ -148,8 +137,7 @@
     </header>
 
     <main class="max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
-
-      <!-- KOLOM KIRI: FORM BUAT TIKET BARU (5 Kolom) -->
+      <!-- KOLOM KIRI: FORM BUAT TIKET BARU -->
       <section class="lg:col-span-5 bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-visible h-fit">
         <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex justify-between items-center rounded-t-2xl">
           <div>
@@ -162,7 +150,6 @@
         </div>
 
         <form id="ticketForm" class="p-6 space-y-4">
-          <!-- IDENTITAS PELAPOR -->
           <div class="bg-slate-50/80 p-3.5 rounded-xl border border-slate-200/80 space-y-3">
             <div class="flex items-center justify-between">
               <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Created by (Auto-Fill)</span>
@@ -203,7 +190,6 @@
             </div>
           </div>
 
-          <!-- FIELD YANG DIISI USER -->
           <div>
             <label class="block text-xs font-bold text-slate-700 mb-1">1. Pick Request Access - Module - Support *</label>
             <select name="Request Access-Module-Support" id="dd-Request Access-Module-Support" required
@@ -213,7 +199,6 @@
             </select>
           </div>
 
-          <!-- CONDITIONAL SECTION: ACCESS RIGHT ODOO -->
           <div id="odooAccessSection" class="hidden animate-fade bg-indigo-50/70 border border-indigo-200 rounded-xl p-4 space-y-3">
             <div class="flex items-center gap-2 text-indigo-800 font-bold text-xs">
               <span>🔐 Detail Odoo Access Rights</span>
@@ -257,7 +242,6 @@
                 class="w-full text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 border border-slate-300 rounded-xl p-1">
             </div>
 
-            <!-- MULTI-SELECT DROPDOWN SENT MAIL CC (CREATE) -->
             <div class="relative cc-dropdown-wrapper" id="create-ccWrapper">
               <label class="block text-xs font-bold text-slate-700 mb-1">4. Sent Mail CC</label>
               <button type="button" onclick="toggleCcDropdown('create')"
@@ -271,7 +255,6 @@
                 </span>
               </button>
 
-              <!-- Panel Popover yang muncul saat diklik -->
               <div id="create-ccPanel"
                 class="hidden absolute left-0 right-0 mt-1.5 z-40 bg-white border border-slate-200 rounded-xl shadow-xl p-2 space-y-1.5 animate-fade">
                 <div class="flex items-center gap-1.5">
@@ -287,7 +270,7 @@
             </div>
           </div>
 
-          <!-- BAGIAN KHUSUS ADMIN SAAT CREATE TICKET -->
+          <!-- BAGIAN KHUSUS ADMIN -->
           <div id="adminCreateFields" class="hidden border-t pt-4 space-y-4">
             <div class="flex items-center justify-between bg-indigo-50/80 px-3 py-2 rounded-xl border border-indigo-100">
               <span class="text-xs font-extrabold text-indigo-800 uppercase tracking-wider">🛡️ Admin ITDS Configuration</span>
@@ -310,7 +293,7 @@
               </div>
 
               <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1.5">Assigned <span class="text-slate-400 font-normal">(Optional)</span></label>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">Assigned 2 <span class="text-slate-400 font-normal">(Optional)</span></label>
                 <input type="hidden" name="Assigned 2" id="val-Assigned2">
                 <div id="btnGroup-Assigned2" class="flex flex-wrap gap-1.0"></div>
               </div>
@@ -352,7 +335,7 @@
         </form>
       </section>
 
-      <!-- KOLOM KANAN: MONITORING & DAFTAR TIKET (7 Kolom) -->
+      <!-- KOLOM KANAN: MONITORING & DAFTAR TIKET -->
       <section class="lg:col-span-7 space-y-4">
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <div class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm">
@@ -381,7 +364,6 @@
                 <p id="tableSubtitle" class="text-xs text-slate-500">Default filter (Open Tickets)</p>
               </div>
 
-              <!-- TOMBOL ASSIGNED TO ME (AKTIF DEFAULT UNTUK ADMIN) -->
               <button type="button" id="btnAssignedToMe" onclick="toggleAssignedToMe()"
                 class="hidden items-center gap-1.5 text-xs font-bold px-3.5 py-2 rounded-xl border border-indigo-600 bg-indigo-600 text-white shadow-sm transition">
                 <span>🙋 Assigned to Me</span>
@@ -419,9 +401,7 @@
     </main>
   </div>
 
-  <!-- =========================================================
-       3. MODAL DETAIL TIKET
-  ========================================================== -->
+  <!-- 3. MODAL DETAIL TIKET -->
   <div id="ticketModal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
     <div class="bg-white rounded-2xl max-w-2xl w-full shadow-2xl border border-slate-200 overflow-hidden my-8 animate-fade">
       <div class="bg-slate-800 text-white px-6 py-4 flex justify-between items-center">
@@ -436,7 +416,6 @@
       </div>
 
       <div class="p-6 space-y-5 max-h-[80vh] overflow-y-auto">
-        <!-- Ringkasan Kendala -->
         <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
           <div class="flex justify-between items-center text-xs text-slate-500">
             <span id="modalReporter"></span>
@@ -450,10 +429,7 @@
           <div id="modalAttachmentBox" class="pt-1"></div>
         </div>
 
-        <!-- KONTAINER KONFIRMASI USER & PENILAIAN (HANYA MUNCUL JIKA LOGIN === PEMILIK TIKET) -->
         <div id="userVerificationContainer"></div>
-
-        <!-- KONTAINER PANEL UPDATE ADMIN ITDS (HANYA MUNCUL JIKA LOGIN === ADMIN) -->
         <div id="adminPanelContainer"></div>
 
         <div class="flex justify-end gap-2.5 pt-2">
@@ -469,9 +445,7 @@
     </div>
   </div>
 
-  <!-- =========================================================
-       4. MODAL GANTI PASSWORD (KOLOM H)
-  ========================================================== -->
+  <!-- 4. MODAL GANTI PASSWORD -->
   <div id="changePassModal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden animate-fade">
       <div class="bg-indigo-800 text-white px-6 py-4 flex justify-between items-center">
@@ -490,7 +464,7 @@
         </div>
         <div>
           <label class="block text-xs font-bold text-slate-700 mb-1">New Password * <span class="text-slate-400 font-normal">(Min. 4 character)</span></label>
-          <input type="password" id="cpNewPass" required minlength="4" placeholder="Enter new Passwrod"
+          <input type="password" id="cpNewPass" required minlength="4" placeholder="Enter new Password"
             class="w-full text-sm border border-slate-300 rounded-xl px-3.5 py-2.5 focus:ring-2 focus:ring-indigo-500 outline-none">
         </div>
         <div>
@@ -531,10 +505,7 @@
       const panel = document.getElementById(`${prefix}-ccPanel`);
       if (!panel) return;
       const isHidden = panel.classList.contains('hidden');
-
-      // Tutup semua panel dropdown CC lain terlebih dahulu
       document.querySelectorAll('[id$="-ccPanel"]').forEach(p => p.classList.add('hidden'));
-
       if (isHidden) {
         panel.classList.remove('hidden');
         const searchInput = document.getElementById(`${prefix}-ccSearch`);
@@ -542,7 +513,6 @@
       }
     }
 
-    // Tutup dropdown otomatis jika klik di luar wrapper
     document.addEventListener('click', (e) => {
       if (!e.target.closest('.cc-dropdown-wrapper')) {
         document.querySelectorAll('[id$="-ccPanel"]').forEach(p => p.classList.add('hidden'));
@@ -616,7 +586,6 @@
         container.appendChild(labelEl);
       });
 
-      // Pertahankan nilai CC lama di sheet apabila tidak ada di master userEmails
       selectedItems.forEach(savedItem => {
         const exists = Array.from(container.querySelectorAll('input[type="checkbox"]')).some(
           cb => cb.value.toLowerCase() === savedItem
@@ -689,8 +658,14 @@
     function checkSession() {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
-        currentUser = JSON.parse(saved);
-        showAppScreen();
+        try {
+          currentUser = JSON.parse(saved);
+          showAppScreen();
+        } catch (e) {
+          localStorage.removeItem(STORAGE_KEY);
+          document.getElementById('loginScreen').classList.remove('hidden');
+          document.getElementById('appScreen').classList.add('hidden');
+        }
       } else {
         document.getElementById('loginScreen').classList.remove('hidden');
         document.getElementById('appScreen').classList.add('hidden');
@@ -705,15 +680,22 @@
       btn.disabled = true;
       btn.textContent = '⏳ Account Verification...';
 
-      const email = document.getElementById('loginEmail').value;
-      const password = document.getElementById('loginPassword').value;
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value.trim();
 
       try {
         const res = await fetch(GAS_WEBAPP_URL, {
           method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({ action: 'login', email, password })
         });
-        const result = await res.json();
+        const text = await res.text();
+        let result;
+        try {
+          result = JSON.parse(text);
+        } catch (parseErr) {
+          throw new Error('Server mengembalikan format tidak valid. Pastikan Web App diakses sebagai Anyone.');
+        }
 
         if (result.status === 'success') {
           currentUser = result.user;
@@ -873,7 +855,7 @@
     }
 
     // ==========================================
-    // 2. GANTI PASSWORD (KOLOM H)
+    // 2. GANTI PASSWORD
     // ==========================================
     function openChangePasswordModal() {
       if (!currentUser) return;
@@ -910,6 +892,7 @@
       try {
         const res = await fetch(GAS_WEBAPP_URL, {
           method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({
             action: 'changePassword',
             email: currentUser.email,
@@ -1011,7 +994,6 @@
       });
       filterEl.value = prevFilter;
 
-      // Isi opsi Multi-Select Dropdown Sent Mail CC pada Form Create
       populateCcDropdownOptions('create', '');
 
       if (isAdminUser()) {
@@ -1035,4 +1017,513 @@
       const el = document.getElementById(id);
       if (!el) return;
       el.innerHTML = `<option value="">${placeholder}</option>`;
-      items.for
+      items.forEach(item => {
+        const opt = document.createElement('option');
+        opt.value = item;
+        opt.textContent = item;
+        el.appendChild(opt);
+      });
+    }
+
+    function toggleOdooAccessSection(val) {
+      const sec = document.getElementById('odooAccessSection');
+      const isOdoo = val.toUpperCase().includes('ACCESS RIGHT ODOO');
+      sec.classList.toggle('hidden', !isOdoo);
+      ['inp-UserName', 'inp-UserEmail', 'inp-Position', 'dd-Department'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.required = isOdoo;
+      });
+    }
+
+    function getStateActiveColor(stateName) {
+      const st = (stateName || '').toLowerCase();
+      if (st === 'new') return '#d97706';
+      if (st === 'in progress') return '#2563eb';
+      if (st === 'test & review') return '#7c3aed';
+      if (st === 'deployment') return '#0891b2';
+      if (st === 'done') return '#059669';
+      if (st === 'cancel') return '#e11d48';
+      return '#4f46e5';
+    }
+
+    function renderArrowPipeline(containerId, items, hiddenInputId, onSelectCallback, defaultVal = '') {
+      const container = document.getElementById(containerId);
+      const hiddenInput = document.getElementById(hiddenInputId);
+      if (!container || !hiddenInput) return;
+
+      container.innerHTML = '';
+      hiddenInput.value = defaultVal;
+
+      items.forEach(item => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.textContent = item;
+        btn.className = 'arrow-step';
+
+        if (item.toLowerCase() === defaultVal.toLowerCase()) {
+          btn.classList.add('active');
+          btn.style.backgroundColor = getStateActiveColor(item);
+        }
+
+        btn.onclick = () => {
+          container.querySelectorAll('.arrow-step').forEach(b => {
+            b.classList.remove('active');
+            b.style.backgroundColor = '';
+          });
+          btn.classList.add('active');
+          btn.style.backgroundColor = getStateActiveColor(item);
+          hiddenInput.value = item;
+          if (onSelectCallback) onSelectCallback(item);
+        };
+        container.appendChild(btn);
+      });
+    }
+
+    function renderPillButtons(containerId, items, hiddenInputId, onSelectCallback, defaultVal = '', allowToggleOff = false) {
+      const container = document.getElementById(containerId);
+      const hiddenInput = document.getElementById(hiddenInputId);
+      if (!container || !hiddenInput) return;
+
+      container.innerHTML = '';
+      hiddenInput.value = defaultVal;
+
+      items.forEach(item => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.textContent = item;
+        const isSelected = defaultVal && item.toLowerCase() === defaultVal.toLowerCase();
+        btn.className = isSelected
+          ? 'pill-btn active text-xs font-semibold px-3 py-1.5 rounded-lg border bg-indigo-600 text-white border-indigo-600'
+          : 'pill-btn text-xs font-semibold px-3 py-1.5 rounded-lg border border-slate-300 bg-white text-slate-600 hover:border-indigo-400';
+
+        btn.onclick = () => {
+          const wasActive = btn.classList.contains('active');
+          container.querySelectorAll('.pill-btn').forEach(b => {
+            b.className = 'pill-btn text-xs font-semibold px-3 py-1.5 rounded-lg border border-slate-300 bg-white text-slate-600 hover:border-indigo-400';
+          });
+          if (allowToggleOff && wasActive) {
+            hiddenInput.value = '';
+            if (onSelectCallback) onSelectCallback('');
+            return;
+          }
+          btn.className = 'pill-btn active text-xs font-semibold px-3 py-1.5 rounded-lg border bg-indigo-600 text-white border-indigo-600';
+          hiddenInput.value = item;
+          if (onSelectCallback) onSelectCallback(item);
+        };
+        container.appendChild(btn);
+      });
+    }
+
+    // ==========================================
+    // 4. PERHITUNGAN EST DONE (HARI KERJA)
+    // ==========================================
+    function addWorkingHours(startDate, hoursToAdd) {
+      let current = new Date(startDate.getTime());
+      let remaining = hoursToAdd;
+      while (remaining > 0) {
+        current.setHours(current.getHours() + 1);
+        const day = current.getDay();
+        if (day !== 0 && day !== 6) {
+          remaining--;
+        }
+      }
+      return current;
+    }
+
+    function formatIndoSheetDateTime(dateObj) {
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+      const d = String(dateObj.getDate()).padStart(2, '0');
+      const m = months[dateObj.getMonth()];
+      const y = dateObj.getFullYear();
+      const hh = String(dateObj.getHours()).padStart(2, '0');
+      const mm = String(dateObj.getMinutes()).padStart(2, '0');
+      const ss = String(dateObj.getSeconds()).padStart(2, '0');
+      return `${d}-${m}-${y}/${hh}.${mm}.${ss}`;
+    }
+
+    function calculateEstDone(levelId, priorityId, outputId, baseDateStr = null) {
+      const level = (document.getElementById(levelId)?.value || '').toUpperCase();
+      const priority = (document.getElementById(priorityId)?.value || '').toUpperCase();
+      const outEl = document.getElementById(outputId);
+      if (!outEl || !level || !priority) return;
+
+      const matrix = {
+        'TRIVIAL':   { 'LOW': 24,  'MEDIUM': 12,  'HIGH': 4 },
+        'EASY':      { 'LOW': 48,  'MEDIUM': 24,  'HIGH': 8 },
+        'MEDIUM':    { 'LOW': 72,  'MEDIUM': 48,  'HIGH': 24 },
+        'HARD':      { 'LOW': 120, 'MEDIUM': 72,  'HIGH': 48 },
+        'VERY HARD': { 'LOW': 240, 'MEDIUM': 168, 'HIGH': 96 }
+      };
+
+      const hours = (matrix[level] && matrix[level][priority]) ? matrix[level][priority] : 24;
+      const start = baseDateStr ? new Date(baseDateStr) : new Date();
+      const validStart = isNaN(start.getTime()) ? new Date() : start;
+      const target = addWorkingHours(validStart, hours);
+      outEl.value = formatIndoSheetDateTime(target);
+    }
+
+    // ==========================================
+    // 5. SUBMIT TIKET BARU
+    // ==========================================
+    document.getElementById('ticketForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('btnSubmit');
+      btn.disabled = true;
+      btn.textContent = '⏳ Sending Ticket...';
+
+      const formData = {};
+      new FormData(e.target).forEach((val, key) => { formData[key] = val; });
+
+      const selectedCc = Array.from(
+        document.querySelectorAll('#create-SentMailCCList input[type="checkbox"]:checked')
+      ).map(cb => cb.value.trim()).filter(Boolean);
+      formData['Sent Mail CC'] = selectedCc.join(', ');
+
+      let filePayload = null;
+      const fileInput = document.getElementById('attachmentInput');
+      if (fileInput.files.length > 0) {
+        const file = fileInput.files[0];
+        filePayload = await toBase64File(file);
+      }
+
+      try {
+        const res = await fetch(GAS_WEBAPP_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: 'createTicket',
+            data: formData,
+            file: filePayload,
+            isAdmin: isAdminUser()
+          })
+        });
+        const result = await res.json();
+        if (result.status === 'success') {
+          alert('✅ ' + result.message);
+          e.target.reset();
+          applyUserAutoFillAndPermissions();
+          clearCcSelection('create');
+          toggleOdooAccessSection('');
+          await loadSheetData();
+        } else {
+          alert('❌ Gagal: ' + result.message);
+        }
+      } catch (err) {
+        alert('❌ Error koneksi: ' + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '🚀 Send Now';
+      }
+    });
+
+    function toBase64File(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve({
+          fileName: file.name,
+          mimeType: file.type,
+          base64: reader.result.split(',')[1]
+        });
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // ==========================================
+    // 6. STATISTIK & RENDER TABEL TIKET
+    // ==========================================
+    function updateStats() {
+      const tickets = getVisibleTickets();
+      let total = tickets.length, cNew = 0, cOngoing = 0, cDone = 0;
+
+      tickets.forEach(t => {
+        const st = (t['State'] || '').trim().toLowerCase();
+        if (st === 'new') cNew++;
+        else if (st === 'done') cDone++;
+        else if (st !== 'cancel') cOngoing++;
+      });
+
+      document.getElementById('statTotal').textContent = total;
+      document.getElementById('statNew').textContent = cNew;
+      document.getElementById('statProgress').textContent = cOngoing;
+      document.getElementById('statDone').textContent = cDone;
+    }
+
+    function getStateBadgeClass(state) {
+      const st = (state || '').toLowerCase();
+      if (st === 'new') return 'bg-amber-100 text-amber-800 border-amber-200';
+      if (st === 'in progress') return 'bg-blue-100 text-blue-800 border-blue-200';
+      if (st === 'test & review') return 'bg-purple-100 text-purple-800 border-purple-200';
+      if (st === 'deployment') return 'bg-cyan-100 text-cyan-800 border-cyan-200';
+      if (st === 'done') return 'bg-emerald-100 text-emerald-800 border-emerald-200';
+      if (st === 'cancel') return 'bg-rose-100 text-rose-800 border-rose-200';
+      return 'bg-slate-100 text-slate-700 border-slate-200';
+    }
+
+    function renderTable() {
+      const tbody = document.getElementById('ticketTableBody');
+      const kw = (document.getElementById('searchBox')?.value || '').toLowerCase();
+      const filterState = document.getElementById('filterState')?.value || 'ACTIVE_ONLY';
+
+      const filtered = getVisibleTickets().filter(t => {
+        const st = (t['State'] || '').trim();
+        const stLower = st.toLowerCase();
+        if (filterState === 'ACTIVE_ONLY') {
+          if (stLower === 'done' || stLower === 'cancel') return false;
+        } else if (filterState !== 'ALL') {
+          if (stLower !== filterState.toLowerCase()) return false;
+        }
+
+        if (!kw) return true;
+        const hay = [
+          t['Issue ID'], t['Request Access-Module-Support'], t['Description'],
+          t['Full Name'], t['Created By'], t['Assigned'], t['Assigned 2'], t['State']
+        ].join(' ').toLowerCase();
+        return hay.includes(kw);
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="py-10 text-center text-slate-400">Tidak ada tiket yang sesuai filter.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(t => {
+        const state = t['State'] || 'New';
+        const verify = t['User Verification'] || '';
+        const verifyBadge = verify
+          ? `<span class="mt-1 inline-block text-[10px] font-bold px-2 py-0.5 rounded ${verify.toUpperCase() === 'CONFIRMED' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-rose-50 text-rose-700 border border-rose-200'}">${verify}</span>`
+          : '';
+
+        return `
+          <tr onclick="openTicketModal('${t['Issue ID']}')" class="hover:bg-indigo-50/50 cursor-pointer transition">
+            <td class="py-3 px-4 font-extrabold text-indigo-700 align-top">#${t['Issue ID']}</td>
+            <td class="py-3 px-4 align-top max-w-[230px]">
+              <p class="font-bold text-slate-800 truncate">${t['Request Access-Module-Support'] || '-'}</p>
+              <p class="text-[11px] text-slate-500 line-clamp-2 mt-0.5">${t['Description'] || '-'}</p>
+            </td>
+            <td class="py-3 px-4 align-top">
+              <p class="font-semibold text-slate-700">${t['Full Name'] || '-'}</p>
+              <p class="text-[10px] text-slate-400">${t['Date Created'] || ''}</p>
+            </td>
+            <td class="py-3 px-4 align-top">
+              <p class="font-semibold text-slate-700">${t['Assigned'] || '<span class="text-slate-400 italic">Unassigned</span>'}</p>
+              <p class="text-[10px] text-indigo-600 font-medium">${t['Est Done'] ? 'Est: ' + t['Est Done'] : ''}</p>
+            </td>
+            <td class="py-3 px-4 align-top">
+              <span class="inline-block text-[10px] font-bold px-2.5 py-0.5 rounded-full border ${getStateBadgeClass(state)}">${state}</span>
+              <br>${verifyBadge}
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // ==========================================
+    // 7. MODAL DETAIL & UPDATE TIKET
+    // ==========================================
+    function openTicketModal(issueId) {
+      const ticket = (appData.tickets || []).find(t => String(t['Issue ID']).trim() === String(issueId).trim());
+      if (!ticket) return;
+      currentEditingTicket = ticket;
+
+      document.getElementById('modalIssueId').textContent = `#${ticket['Issue ID']}`;
+      document.getElementById('modalModule').textContent = ticket['Request Access-Module-Support'] || 'Detail Ticket';
+      document.getElementById('modalMeta').textContent = `Created: ${ticket['Date Created'] || '-'} • Priority: ${ticket['Priority'] || '-'} • Level: ${ticket['Ticket Level'] || '-'}`;
+      document.getElementById('modalReporter').textContent = `👤 ${ticket['Full Name'] || '-'} (${ticket['Created By'] || '-'})`;
+      document.getElementById('modalCompany').textContent = ticket['Company'] || '';
+
+      const st = ticket['State'] || 'New';
+      const stBadge = document.getElementById('modalCurrentStateBadge');
+      stBadge.textContent = st;
+      stBadge.className = `text-xs font-bold px-2.5 py-0.5 rounded-full border ${getStateBadgeClass(st)}`;
+
+      document.getElementById('modalDesc').textContent = ticket['Description'] || '-';
+
+      const odooBox = document.getElementById('modalOdooBox');
+      if ((ticket['Request Access-Module-Support'] || '').toUpperCase().includes('ACCESS RIGHT ODOO')) {
+        odooBox.innerHTML = `<b>🔐 Odoo Request:</b> ${ticket['User Name'] || '-'} (${ticket['User Email'] || '-'}) • ${ticket['Position'] || '-'} - ${ticket['Department'] || '-'}`;
+        odooBox.classList.remove('hidden');
+      } else {
+        odooBox.classList.add('hidden');
+      }
+
+      const attBox = document.getElementById('modalAttachmentBox');
+      if (ticket['Attachments']) {
+        attBox.innerHTML = `<a href="${ticket['Attachments']}" target="_blank" class="inline-flex items-center gap-1 text-xs font-bold text-indigo-600 hover:underline">📎 Lihat Lampiran</a>`;
+      } else {
+        attBox.innerHTML = '';
+      }
+
+      const isOwner = isOwnerOfTicket(ticket);
+      const isAdmin = isAdminUser();
+      const userContainer = document.getElementById('userVerificationContainer');
+      const adminContainer = document.getElementById('adminPanelContainer');
+
+      // PANEL KONFIRMASI USER (Jika pemilik tiket & status Test & Review / Done)
+      if (isOwner && ['test & review', 'done'].includes(st.toLowerCase())) {
+        userContainer.innerHTML = `
+          <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 space-y-3">
+            <h4 class="text-xs font-extrabold text-amber-900 uppercase">✅ User Verification & Feedback</h4>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-[11px] font-bold text-slate-700 mb-1">User Verification</label>
+                <select id="edit-UserVerification" class="w-full text-xs border border-slate-300 rounded-lg px-3 py-2 bg-white font-semibold">
+                  <option value="">-- Pilih Status --</option>
+                  <option value="CONFIRMED" ${ticket['User Verification'] === 'CONFIRMED' ? 'selected' : ''}>✔ CONFIRMED</option>
+                  <option value="INCOMPLETE" ${ticket['User Verification'] === 'INCOMPLETE' ? 'selected' : ''}>✘ INCOMPLETE</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-slate-700 mb-1">Rating Feedback (1-5)</label>
+                <select id="edit-UserFeedback" class="w-full text-xs border border-slate-300 rounded-lg px-3 py-2 bg-white">
+                  <option value="">-- Pilih Rating --</option>
+                  <option value="5" ${ticket['User Feedback'] == '5' ? 'selected' : ''}>⭐⭐⭐⭐⭐ (5 - Sangat Puas)</option>
+                  <option value="4" ${ticket['User Feedback'] == '4' ? 'selected' : ''}>⭐⭐⭐⭐ (4 - Puas)</option>
+                  <option value="3" ${ticket['User Feedback'] == '3' ? 'selected' : ''}>⭐⭐⭐ (3 - Cukup)</option>
+                  <option value="2" ${ticket['User Feedback'] == '2' ? 'selected' : ''}>⭐⭐ (2 - Kurang)</option>
+                  <option value="1" ${ticket['User Feedback'] == '1' ? 'selected' : ''}>⭐ (1 - Kecewa)</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">Reason / Catatan User</label>
+              <textarea id="edit-Reason" rows="2" class="w-full text-xs border border-slate-300 rounded-lg px-3 py-2 bg-white" placeholder="Isi alasan jika INCOMPLETE atau catatan tambahan...">${ticket['Reason'] || ''}</textarea>
+            </div>
+          </div>
+        `;
+      } else {
+        userContainer.innerHTML = '';
+      }
+
+      // PANEL ADMIN ITDS
+      if (isAdmin) {
+        const dd = appData.dropdowns;
+        const picList = (dd['Assigned'] && dd['Assigned'].length > 0) ? dd['Assigned'] : ['Angga', 'Jenius', 'Nurul', 'Ibnu'];
+        const orderedStates = getOrderedStates(dd['State']);
+        const orderedLevels = getOrderedLevels(dd['Ticket Level']);
+        const orderedPriorities = getOrderedPriorities(dd['Priority']);
+
+        adminContainer.innerHTML = `
+          <div class="bg-indigo-50/60 border border-indigo-200 rounded-xl p-4 space-y-3">
+            <h4 class="text-xs font-extrabold text-indigo-900 uppercase">🛡️ ITDS Admin Update</h4>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-[11px] font-bold text-slate-700 mb-1">State</label>
+                <select id="edit-State" class="w-full text-xs border border-slate-300 rounded-lg px-3 py-2 bg-white font-bold">
+                  ${orderedStates.map(s => `<option value="${s}" ${s.toLowerCase() === st.toLowerCase() ? 'selected' : ''}>${s}</option>`).join('')}
+                </select>
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-slate-700 mb-1">Assigned PIC</label>
+                <select id="edit-Assigned" class="w-full text-xs border border-slate-300 rounded-lg px-3 py-2 bg-white">
+                  <option value="">-- Unassigned --</option>
+                  ${picList.map(p => `<option value="${p}" ${p === ticket['Assigned'] ? 'selected' : ''}>${p}</option>`).join('')}
+                </select>
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-slate-700 mb-1">Ticket Level</label>
+                <select id="edit-TicketLevel" class="w-full text-xs border border-slate-300 rounded-lg px-3 py-2 bg-white">
+                  <option value="">-- Pilih Level --</option>
+                  ${orderedLevels.map(l => `<option value="${l}" ${l === ticket['Ticket Level'] ? 'selected' : ''}>${l}</option>`).join('')}
+                </select>
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-slate-700 mb-1">Priority</label>
+                <select id="edit-Priority" class="w-full text-xs border border-slate-300 rounded-lg px-3 py-2 bg-white">
+                  <option value="">-- Pilih Priority --</option>
+                  ${orderedPriorities.map(pr => `<option value="${pr}" ${pr === ticket['Priority'] ? 'selected' : ''}>${pr}</option>`).join('')}
+                </select>
+              </div>
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">Est Done</label>
+              <input type="text" id="edit-EstDone" value="${ticket['Est Done'] || ''}" placeholder="dd-MMM-yyyy/HH.mm.ss"
+                class="w-full text-xs border border-slate-300 rounded-lg px-3 py-2 bg-white">
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">Dev / ITDS Notes</label>
+              <textarea id="edit-Notes" rows="2" class="w-full text-xs border border-slate-300 rounded-lg px-3 py-2 bg-white">${ticket['Notes'] || ''}</textarea>
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">SA Preview / Note</label>
+              <textarea id="edit-SANote" rows="2" class="w-full text-xs border border-slate-300 rounded-lg px-3 py-2 bg-white">${ticket['SA Note'] || ''}</textarea>
+            </div>
+          </div>
+        `;
+      } else {
+        adminContainer.innerHTML = `
+          <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs space-y-1">
+            <p><b>Assigned PIC:</b> ${ticket['Assigned'] || 'Belum ditentukan'}</p>
+            <p><b>Est Done:</b> ${ticket['Est Done'] || '-'}</p>
+            <p><b>ITDS Notes:</b> ${ticket['Notes'] || '-'}</p>
+          </div>
+        `;
+      }
+
+      document.getElementById('btnSaveModal').classList.toggle('hidden', !isAdmin && !(isOwner && ['test & review', 'done'].includes(st.toLowerCase())));
+      document.getElementById('ticketModal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+      document.getElementById('ticketModal').classList.add('hidden');
+      currentEditingTicket = null;
+    }
+
+    async function saveTicketChanges() {
+      if (!currentEditingTicket) return;
+      const btn = document.getElementById('btnSaveModal');
+      btn.disabled = true;
+      btn.textContent = '⏳ Saving...';
+
+      const payloadData = {};
+      if (isAdminUser()) {
+        payloadData['State'] = document.getElementById('edit-State')?.value;
+        payloadData['Assigned'] = document.getElementById('edit-Assigned')?.value;
+        payloadData['Assigned Email'] = appData.picEmailMap[payloadData['Assigned']] || '';
+        payloadData['Ticket Level'] = document.getElementById('edit-TicketLevel')?.value;
+        payloadData['Priority'] = document.getElementById('edit-Priority')?.value;
+        payloadData['Est Done'] = document.getElementById('edit-EstDone')?.value;
+        payloadData['Notes'] = document.getElementById('edit-Notes')?.value;
+        payloadData['SA Note'] = document.getElementById('edit-SANote')?.value;
+      }
+
+      const verifyEl = document.getElementById('edit-UserVerification');
+      if (verifyEl) {
+        payloadData['User Verification'] = verifyEl.value;
+        payloadData['User Feedback'] = document.getElementById('edit-UserFeedback')?.value || '';
+        payloadData['Reason'] = document.getElementById('edit-Reason')?.value || '';
+      }
+
+      try {
+        const res = await fetch(GAS_WEBAPP_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: 'updateTicket',
+            issueId: currentEditingTicket['Issue ID'],
+            data: payloadData,
+            isAdmin: isAdminUser(),
+            userEmail: currentUser.email
+          })
+        });
+        const result = await res.json();
+        if (result.status === 'success') {
+          alert('✅ ' + result.message);
+          closeModal();
+          await loadSheetData();
+        } else {
+          alert('❌ ' + result.message);
+        }
+      } catch (err) {
+        alert('❌ Error koneksi: ' + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '💾 Save Update';
+      }
+    }
+
+    // Inisialisasi aplikasi saat halaman dibuka
+    checkSession();
+  </script>
+</body>
+</html>
