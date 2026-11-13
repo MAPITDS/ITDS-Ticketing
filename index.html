@@ -13,7 +13,7 @@
     .pill-btn { transition: all 0.15s ease; }
     .pill-btn.active { transform: translateY(-1px); box-shadow: 0 2px 6px rgba(79, 70, 229, 0.25); }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
-    .animate-fade { animation: fadeIn 0.25s ease-out forwards; }
+    .animate-fade { animation: fadeIn 0.2s ease-out forwards; }
 
     /* =========================================================
        CHEVRON / ARROW STEP-BY-STEP PIPELINE (ALA ODOO STATUSBAR)
@@ -69,7 +69,6 @@
   <div id="loginScreen" class="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-900 via-indigo-800 to-blue-900 p-4">
     <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 space-y-6 animate-fade">
       <div class="text-center space-y-2">
-        <!-- Logo Login (Ganti src="logo.png" dengan file logo Anda nanti; otomatis fallback ke teks IT jika file belum ada) -->
         <div class="w-16 h-16 mx-auto rounded-2xl bg-indigo-600 text-white flex items-center justify-center font-black text-2xl shadow-lg overflow-hidden">
           <img src="logo.png" alt="ITDS Logo" class="w-full h-full object-contain p-1.5 bg-white"
             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
@@ -107,7 +106,6 @@
     <header class="bg-gradient-to-r from-indigo-800 via-indigo-700 to-blue-700 text-white shadow-lg sticky top-0 z-30">
       <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-3">
         <div class="flex items-center gap-3">
-          <!-- Logo Navbar (Ganti src="logo.png" dengan file logo Anda nanti; otomatis fallback ke teks IT jika file belum ada) -->
           <div class="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center font-extrabold text-lg border border-white/20 overflow-hidden">
             <img src="logo.png" alt="ITDS Logo" class="w-full h-full object-contain p-1 bg-white"
               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
@@ -150,8 +148,8 @@
     <main class="max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
 
       <!-- KOLOM KIRI: FORM BUAT TIKET BARU (5 Kolom) -->
-      <section class="lg:col-span-5 bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden h-fit">
-        <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex justify-between items-center">
+      <section class="lg:col-span-5 bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-visible h-fit">
+        <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex justify-between items-center rounded-t-2xl">
           <div>
             <h2 class="text-base font-bold text-slate-800">Create New Ticket</h2>
             <p id="formSubtitle" class="text-xs text-slate-500">Profile Data Auto Fill</p>
@@ -256,15 +254,33 @@
               <input type="file" id="attachmentInput" accept="image/*,.pdf,.doc,.docx,.xls,.xlsx"
                 class="w-full text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 border border-slate-300 rounded-xl p-1">
             </div>
-            <div>
-              <div class="flex items-center justify-between mb-1">
-                <label class="block text-xs font-bold text-slate-700">4. Sent Mail CC</label>
-                <span id="create-ccCountBadge" class="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full">0 dipilih</span>
-              </div>
-              <input type="text" id="create-ccSearch" onkeyup="filterCreateCcCheckboxes()" placeholder="Cari nama atau email CC..."
-                class="w-full text-xs border border-slate-300 rounded-t-xl px-3 py-1.5 bg-white outline-none focus:border-indigo-500">
-              <div id="create-SentMailCCList"
-                class="max-h-36 overflow-y-auto border border-t-0 border-slate-300 rounded-b-xl bg-white p-2 grid grid-cols-1 gap-1.5">
+
+            <!-- MULTI-SELECT DROPDOWN SENT MAIL CC (CREATE TICKET) -->
+            <div class="relative cc-dropdown-wrapper" id="create-ccWrapper">
+              <label class="block text-xs font-bold text-slate-700 mb-1">4. Sent Mail CC</label>
+              <button type="button" onclick="toggleCcDropdown('create')"
+                class="w-full flex items-center justify-between gap-2 text-xs border border-slate-300 hover:border-indigo-400 rounded-xl px-3 py-2.5 bg-white text-left transition focus:ring-2 focus:ring-indigo-500 outline-none">
+                <span id="create-ccSummaryText" class="truncate text-slate-500">-- No CC Selected --</span>
+                <span class="flex items-center gap-1.5 shrink-0">
+                  <span id="create-ccCountBadge" class="hidden text-[10px] font-bold text-indigo-700 bg-indigo-100 px-1.5 py-0.5 rounded-full">0</span>
+                  <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                  </svg>
+                </span>
+              </button>
+
+              <!-- Popover Dropdown Menu -->
+              <div id="create-ccPanel"
+                class="hidden absolute left-0 right-0 sm:left-auto sm:w-72 mt-1.5 z-40 bg-white border border-slate-200 rounded-xl shadow-xl p-2 space-y-1.5 animate-fade">
+                <div class="flex items-center gap-1.5">
+                  <input type="text" id="create-ccSearch" onkeyup="filterCcCheckboxes('create')" placeholder="Cari nama / email..."
+                    class="w-full text-xs border border-slate-200 rounded-lg px-2.5 py-1.5 bg-slate-50 focus:bg-white focus:border-indigo-500 outline-none">
+                  <button type="button" onclick="clearCcSelection('create')" title="Reset pilihan"
+                    class="text-[11px] font-semibold text-rose-600 hover:bg-rose-50 px-2 py-1.5 rounded-lg shrink-0">
+                    Clear
+                  </button>
+                </div>
+                <div id="create-SentMailCCList" class="max-h-44 overflow-y-auto divide-y divide-slate-100"></div>
               </div>
             </div>
           </div>
@@ -363,7 +379,6 @@
                 <p id="tableSubtitle" class="text-xs text-slate-500">Default filter (Open Tickets)</p>
               </div>
 
-              <!-- TOMBOL ASSIGNED TO ME (AKTIF DEFAULT UNTUK ADMIN) -->
               <button type="button" id="btnAssignedToMe" onclick="toggleAssignedToMe()"
                 class="hidden items-center gap-1.5 text-xs font-bold px-3.5 py-2 rounded-xl border border-indigo-600 bg-indigo-600 text-white shadow-sm transition">
                 <span>🙋 Assigned to Me</span>
@@ -505,6 +520,126 @@
     let appData = { dropdowns: {}, picEmailMap: {}, userEmails: [], tickets: [] };
     let currentEditingTicket = null;
     let filterAssignedToMe = false;
+
+    // ==========================================
+    // HELPER MULTI-SELECT DROPDOWN (SENT MAIL CC)
+    // ==========================================
+    function toggleCcDropdown(prefix) {
+      const panel = document.getElementById(`${prefix}-ccPanel`);
+      if (!panel) return;
+      const isHidden = panel.classList.contains('hidden');
+
+      // Tutup dropdown CC lain yang sedang terbuka
+      document.querySelectorAll('[id$="-ccPanel"]').forEach(p => p.classList.add('hidden'));
+
+      if (isHidden) {
+        panel.classList.remove('hidden');
+        const searchInput = document.getElementById(`${prefix}-ccSearch`);
+        if (searchInput) {
+          searchInput.value = '';
+          filterCcCheckboxes(prefix);
+          setTimeout(() => searchInput.focus(), 50);
+        }
+      }
+    }
+
+    // Tutup popover dropdown otomatis saat klik di luar area dropdown
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.cc-dropdown-wrapper')) {
+        document.querySelectorAll('[id$="-ccPanel"]').forEach(p => p.classList.add('hidden'));
+      }
+    });
+
+    function populateCcDropdownOptions(prefix, existingCsv = '') {
+      const ccListContainer = document.getElementById(`${prefix}-SentMailCCList`);
+      const userList = appData.userEmails || [];
+      if (!ccListContainer) return;
+
+      const selectedCcItems = existingCsv
+        .toString()
+        .split(',')
+        .map(s => s.trim().toLowerCase())
+        .filter(Boolean);
+
+      ccListContainer.innerHTML = '';
+
+      userList.forEach(u => {
+        const val = (u.name || u.email || '').trim();
+        const emailStr = (u.email || '').trim();
+        if (!val) return;
+
+        const isChecked = selectedCcItems.includes(val.toLowerCase()) ||
+          (emailStr && selectedCcItems.includes(emailStr.toLowerCase()));
+        const labelText = u.name ? `${u.name} (${u.email})` : u.email;
+
+        const labelEl = document.createElement('label');
+        labelEl.className = 'cc-checkbox-item flex items-center gap-2 text-xs px-2.5 py-2 hover:bg-indigo-50 cursor-pointer select-none transition';
+        labelEl.dataset.search = labelText.toLowerCase();
+        labelEl.innerHTML = `
+          <input type="checkbox" value="${val.replace(/"/g, '&quot;')}" ${isChecked ? 'checked' : ''}
+            onchange="updateCcSummary('${prefix}')"
+            class="rounded text-indigo-600 focus:ring-indigo-500 w-3.5 h-3.5 shrink-0">
+          <span class="truncate text-slate-700 font-medium" title="${labelText.replace(/"/g, '&quot;')}">${labelText}</span>
+        `;
+        ccListContainer.appendChild(labelEl);
+      });
+
+      // Pertahankan nilai CC lama di sheet jika tidak ada di master userEmails
+      selectedCcItems.forEach(savedItem => {
+        const alreadyExists = Array.from(ccListContainer.querySelectorAll('input[type="checkbox"]')).some(
+          cb => cb.value.toLowerCase() === savedItem
+        );
+        if (!alreadyExists) {
+          const fallbackLabel = document.createElement('label');
+          fallbackLabel.className = 'cc-checkbox-item flex items-center gap-2 text-xs px-2.5 py-2 bg-amber-50/70 hover:bg-amber-100/70 cursor-pointer select-none transition';
+          fallbackLabel.dataset.search = savedItem;
+          fallbackLabel.innerHTML = `
+            <input type="checkbox" value="${savedItem.replace(/"/g, '&quot;')}" checked
+              onchange="updateCcSummary('${prefix}')"
+              class="rounded text-indigo-600 focus:ring-indigo-500 w-3.5 h-3.5 shrink-0">
+            <span class="truncate text-slate-700 font-medium">${savedItem}</span>
+          `;
+          ccListContainer.appendChild(fallbackLabel);
+        }
+      });
+
+      updateCcSummary(prefix);
+    }
+
+    function filterCcCheckboxes(prefix) {
+      const kw = (document.getElementById(`${prefix}-ccSearch`)?.value || '').toLowerCase();
+      document.querySelectorAll(`#${prefix}-SentMailCCList .cc-checkbox-item`).forEach(item => {
+        item.style.display = item.dataset.search.includes(kw) ? '' : 'none';
+      });
+    }
+
+    function clearCcSelection(prefix) {
+      document.querySelectorAll(`#${prefix}-SentMailCCList input[type="checkbox"]`).forEach(cb => {
+        cb.checked = false;
+      });
+      updateCcSummary(prefix);
+    }
+
+    function updateCcSummary(prefix) {
+      const summaryEl = document.getElementById(`${prefix}-ccSummaryText`);
+      const badgeEl = document.getElementById(`${prefix}-ccCountBadge`);
+      if (!summaryEl || !badgeEl) return;
+
+      const selectedValues = Array.from(
+        document.querySelectorAll(`#${prefix}-SentMailCCList input[type="checkbox"]:checked`)
+      ).map(cb => cb.value.trim()).filter(Boolean);
+
+      if (selectedValues.length === 0) {
+        summaryEl.textContent = '-- No CC Selected --';
+        summaryEl.className = 'truncate text-slate-500';
+        badgeEl.classList.add('hidden');
+      } else {
+        summaryEl.textContent = selectedValues.join(', ');
+        summaryEl.className = 'truncate text-slate-800 font-semibold';
+        badgeEl.textContent = selectedValues.length;
+        badgeEl.classList.remove('hidden');
+      }
+    }
 
     // ==========================================
     // HELPER PENGURUTAN & DEDUPLIKASI PILIHAN
@@ -855,47 +990,6 @@
       return all.filter(t => (t['Created By'] || '').toLowerCase() === myEmail);
     }
 
-    // Helper Checkbox Sent Mail CC pada Form Create Ticket
-    function renderCreateCcCheckboxes() {
-      const ccListContainer = document.getElementById('create-SentMailCCList');
-      const userList = appData.userEmails || [];
-      if (!ccListContainer) return;
-
-      ccListContainer.innerHTML = '';
-      userList.forEach(u => {
-        const val = (u.name || u.email || '').trim();
-        if (!val) return;
-
-        const labelText = u.name ? `${u.name} (${u.email})` : u.email;
-        const labelEl = document.createElement('label');
-        labelEl.className = 'cc-checkbox-item flex items-center gap-2 text-xs px-2 py-1.5 rounded-lg hover:bg-indigo-50 cursor-pointer select-none border border-transparent has-[:checked]:bg-indigo-50/80 has-[:checked]:border-indigo-200';
-        labelEl.dataset.search = labelText.toLowerCase();
-        labelEl.innerHTML = `
-          <input type="checkbox" value="${val.replace(/"/g, '&quot;')}"
-            onchange="updateCreateCcCountBadge()"
-            class="rounded text-indigo-600 focus:ring-indigo-500 w-3.5 h-3.5">
-          <span class="truncate text-slate-700 font-medium" title="${labelText.replace(/"/g, '&quot;')}">${labelText}</span>
-        `;
-        ccListContainer.appendChild(labelEl);
-      });
-
-      updateCreateCcCountBadge();
-    }
-
-    function filterCreateCcCheckboxes() {
-      const kw = (document.getElementById('create-ccSearch')?.value || '').toLowerCase();
-      document.querySelectorAll('#create-SentMailCCList .cc-checkbox-item').forEach(item => {
-        item.style.display = item.dataset.search.includes(kw) ? '' : 'none';
-      });
-    }
-
-    function updateCreateCcCountBadge() {
-      const badge = document.getElementById('create-ccCountBadge');
-      if (!badge) return;
-      const checkedCount = document.querySelectorAll('#create-SentMailCCList input[type="checkbox"]:checked').length;
-      badge.textContent = `${checkedCount} dipilih`;
-    }
-
     function initFormControls() {
       const dd = appData.dropdowns;
       fillSelect('dd-Company', dd['Company'] || [], '-- Choose Company --');
@@ -920,8 +1014,8 @@
       });
       filterEl.value = prevFilter;
 
-      // Render checkbox Sent Mail CC di Form Create Ticket
-      renderCreateCcCheckboxes();
+      // Isi opsi multi-select dropdown Sent Mail CC pada Form Create
+      populateCcDropdownOptions('create', '');
 
       if (isAdminUser()) {
         const picList = (dd['Assigned'] && dd['Assigned'].length > 0) ? dd['Assigned'] : ['Angga', 'Jenius', 'Nurul', 'Ibnu'];
@@ -1176,7 +1270,7 @@
         const dataObj = {};
         formData.forEach((v, k) => { dataObj[k] = v; });
 
-        // Ambil semua checkbox Sent Mail CC yang dipilih
+        // Ambil semua checkbox Sent Mail CC dari popover dropdown Create
         const checkedCreateCc = Array.from(
           document.querySelectorAll('#create-SentMailCCList input[type="checkbox"]:checked')
         ).map(cb => cb.value.trim()).filter(Boolean);
@@ -1209,7 +1303,7 @@
         if (result.status === 'success') {
           alert(result.message);
           e.target.reset();
-          updateCreateCcCountBadge();
+          clearCcSelection('create');
           toggleOdooAccessSection('');
           showAppScreen();
         } else {
@@ -1301,20 +1395,6 @@
       if (s === 'test & review' || s === 'deployment') return 'bg-purple-100 text-purple-800';
       if (s === 'cancel') return 'bg-rose-100 text-rose-800';
       return 'bg-amber-100 text-amber-800';
-    }
-
-    function filterEditCcCheckboxes() {
-      const kw = (document.getElementById('edit-ccSearch')?.value || '').toLowerCase();
-      document.querySelectorAll('#edit-SentMailCCList .cc-checkbox-item').forEach(item => {
-        item.style.display = item.dataset.search.includes(kw) ? '' : 'none';
-      });
-    }
-
-    function updateEditCcCountBadge() {
-      const badge = document.getElementById('edit-ccCountBadge');
-      if (!badge) return;
-      const checkedCount = document.querySelectorAll('#edit-SentMailCCList input[type="checkbox"]:checked').length;
-      badge.textContent = `${checkedCount} dipilih`;
     }
 
     function openTicketModal(ticket) {
@@ -1416,7 +1496,7 @@
       }
 
       // =====================================================================
-      // 2. PANEL UPDATE ADMIN ITDS (FULL ACCESS: LEVEL, PRIORITY, EST DONE, DLL)
+      // 2. PANEL UPDATE ADMIN ITDS (FULL ACCESS)
       // =====================================================================
       const adminContainer = document.getElementById('adminPanelContainer');
       if (adminMode) {
@@ -1426,15 +1506,15 @@
         const orderedPriorities = getOrderedPriorities(dd['Priority']);
 
         adminContainer.innerHTML = `
-          <div class="border border-slate-200 rounded-2xl overflow-hidden">
-            <div class="bg-slate-100 px-4 py-3 text-xs font-extrabold text-slate-700 flex flex-wrap justify-between items-center gap-2">
+          <div class="border border-slate-200 rounded-2xl overflow-visible">
+            <div class="bg-slate-100 px-4 py-3 text-xs font-extrabold text-slate-700 flex flex-wrap justify-between items-center gap-2 rounded-t-2xl">
               <span>🛠️ Panel Update Admin ITDS (Full Access)</span>
               <span class="text-[11px] font-bold px-2.5 py-0.5 rounded-full ${currentVerify.toUpperCase() === 'CONFIRMED' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">
                 ${currentVerify.toUpperCase() === 'CONFIRMED' ? '✅ User Verify: CONFIRMED' : `⚠️ User Verify: ${currentVerify || 'Not CONFIRMED yet'}`}
               </span>
             </div>
 
-            <div class="p-4 space-y-4 bg-white">
+            <div class="p-4 space-y-4 bg-white rounded-b-2xl">
               <!-- State Pipeline -->
               <div>
                 <label class="block text-xs font-bold text-slate-600 mb-1.5">Update State (Step-by-Step Pipeline)</label>
@@ -1442,7 +1522,7 @@
                 <div id="modalBtnGroup-State" class="arrow-pipeline"></div>
               </div>
 
-              <!-- Ticket Level, Priority, Est Done (Readonly) & Sent Mail CC -->
+              <!-- Ticket Level, Priority, Est Done & Multi-Select Dropdown Sent Mail CC -->
               <div class="bg-slate-50/80 p-3 rounded-xl border border-slate-200/80 space-y-3">
                 <div>
                   <label class="block text-xs font-bold text-slate-700 mb-1.5">Ticket Level</label>
@@ -1461,15 +1541,32 @@
                     <input type="text" id="edit-EstDone" value="${ticket['Est Done'] || ''}" placeholder="Auto-calculated" readonly
                       class="w-full text-xs font-bold text-indigo-700 bg-slate-100 border border-indigo-200 rounded-xl px-3 py-2 outline-none cursor-not-allowed select-none">
                   </div>
-                  <div class="sm:col-span-12">
-                    <div class="flex items-center justify-between mb-1">
-                      <label class="block text-xs font-bold text-slate-700">Sent Mail CC (Pilih satu atau lebih)</label>
-                      <span id="edit-ccCountBadge" class="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full">0 dipilih</span>
-                    </div>
-                    <input type="text" id="edit-ccSearch" onkeyup="filterEditCcCheckboxes()" placeholder="Cari nama atau email CC..."
-                      class="w-full text-xs border border-slate-300 rounded-t-xl px-3 py-1.5 bg-white outline-none focus:border-indigo-500">
-                    <div id="edit-SentMailCCList"
-                      class="max-h-36 overflow-y-auto border border-t-0 border-slate-300 rounded-b-xl bg-white p-2 grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+
+                  <!-- MULTI-SELECT DROPDOWN SENT MAIL CC (EDIT ADMIN) -->
+                  <div class="sm:col-span-12 relative cc-dropdown-wrapper" id="edit-ccWrapper">
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Sent Mail CC (Pilih satu atau lebih)</label>
+                    <button type="button" onclick="toggleCcDropdown('edit')"
+                      class="w-full flex items-center justify-between gap-2 text-xs border border-slate-300 hover:border-indigo-400 rounded-xl px-3 py-2.5 bg-white text-left transition focus:ring-2 focus:ring-indigo-500 outline-none">
+                      <span id="edit-ccSummaryText" class="truncate text-slate-500">-- No CC Selected --</span>
+                      <span class="flex items-center gap-1.5 shrink-0">
+                        <span id="edit-ccCountBadge" class="hidden text-[10px] font-bold text-indigo-700 bg-indigo-100 px-1.5 py-0.5 rounded-full">0</span>
+                        <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                      </span>
+                    </button>
+
+                    <div id="edit-ccPanel"
+                      class="hidden absolute left-0 right-0 mt-1.5 z-50 bg-white border border-slate-200 rounded-xl shadow-xl p-2 space-y-1.5 animate-fade">
+                      <div class="flex items-center gap-1.5">
+                        <input type="text" id="edit-ccSearch" onkeyup="filterCcCheckboxes('edit')" placeholder="Cari nama / email..."
+                          class="w-full text-xs border border-slate-200 rounded-lg px-2.5 py-1.5 bg-slate-50 focus:bg-white focus:border-indigo-500 outline-none">
+                        <button type="button" onclick="clearCcSelection('edit')" title="Reset pilihan"
+                          class="text-[11px] font-semibold text-rose-600 hover:bg-rose-50 px-2 py-1.5 rounded-lg shrink-0">
+                          Clear
+                        </button>
+                      </div>
+                      <div id="edit-SentMailCCList" class="max-h-44 overflow-y-auto divide-y divide-slate-100"></div>
                     </div>
                   </div>
                 </div>
@@ -1518,56 +1615,8 @@
           </div>
         `;
 
-        // Isi opsi checkbox Sent Mail CC setelah HTML selesai di-render
-        const ccListContainer = document.getElementById('edit-SentMailCCList');
-        const userList = appData.userEmails || [];
-        if (ccListContainer) {
-          const existingCcRaw = (ticket['Sent Mail CC'] || '').toString();
-          const selectedCcItems = existingCcRaw.split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
-
-          ccListContainer.innerHTML = '';
-
-          userList.forEach(u => {
-            const val = (u.name || u.email || '').trim();
-            const emailStr = (u.email || '').trim();
-            if (!val) return;
-
-            const isChecked = selectedCcItems.includes(val.toLowerCase()) || (emailStr && selectedCcItems.includes(emailStr.toLowerCase()));
-            const labelText = u.name ? `${u.name} (${u.email})` : u.email;
-
-            const labelEl = document.createElement('label');
-            labelEl.className = 'cc-checkbox-item flex items-center gap-2 text-xs px-2 py-1.5 rounded-lg hover:bg-indigo-50 cursor-pointer select-none border border-transparent has-[:checked]:bg-indigo-50/80 has-[:checked]:border-indigo-200';
-            labelEl.dataset.search = labelText.toLowerCase();
-            labelEl.innerHTML = `
-              <input type="checkbox" value="${val.replace(/"/g, '&quot;')}" ${isChecked ? 'checked' : ''}
-                onchange="updateEditCcCountBadge()"
-                class="rounded text-indigo-600 focus:ring-indigo-500 w-3.5 h-3.5">
-              <span class="truncate text-slate-700 font-medium" title="${labelText.replace(/"/g, '&quot;')}">${labelText}</span>
-            `;
-            ccListContainer.appendChild(labelEl);
-          });
-
-          // Jika ada nama CC lama di sheet yang tidak ada di daftar userEmails, tetap tampilkan agar tidak hilang
-          selectedCcItems.forEach(savedItem => {
-            const alreadyExists = Array.from(ccListContainer.querySelectorAll('input[type="checkbox"]')).some(
-              cb => cb.value.toLowerCase() === savedItem
-            );
-            if (!alreadyExists) {
-              const fallbackLabel = document.createElement('label');
-              fallbackLabel.className = 'cc-checkbox-item flex items-center gap-2 text-xs px-2 py-1.5 rounded-lg bg-amber-50 border border-amber-200 cursor-pointer select-none';
-              fallbackLabel.dataset.search = savedItem;
-              fallbackLabel.innerHTML = `
-                <input type="checkbox" value="${savedItem.replace(/"/g, '&quot;')}" checked
-                  onchange="updateEditCcCountBadge()"
-                  class="rounded text-indigo-600 focus:ring-indigo-500 w-3.5 h-3.5">
-                <span class="truncate text-slate-700 font-medium">${savedItem}</span>
-              `;
-              ccListContainer.appendChild(fallbackLabel);
-            }
-          });
-
-          updateEditCcCountBadge();
-        }
+        // Isi multi-select dropdown Sent Mail CC pada Modal Edit
+        populateCcDropdownOptions('edit', ticket['Sent Mail CC'] || '');
 
         renderArrowPipeline('modalBtnGroup-State', orderedStates, 'edit-State', (newSt) => {
           const fbEl = document.getElementById('feedbackSection');
@@ -1694,7 +1743,6 @@
       const updatePayload = {};
       const ownerMode = isOwnerOfTicket(currentEditingTicket);
 
-      // Hanya kirim data konfirmasi & feedback jika akun yang login adalah pemilik tiket
       if (ownerMode) {
         const verification = document.getElementById('edit-UserVerification')?.value || '';
         const reason = document.getElementById('edit-Reason')?.value.trim() || '';
@@ -1709,7 +1757,6 @@
         updatePayload['User Feedback'] = document.getElementById('edit-UserFeedback')?.value || '';
       }
 
-      // Kirim seluruh parameter operasional Admin jika login sebagai Admin
       if (isAdminUser()) {
         const targetState = document.getElementById('edit-State').value;
         const effectiveVerify = ownerMode
