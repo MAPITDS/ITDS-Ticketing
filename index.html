@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ITDS Ticketing System</title>
+  <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="apple-touch-icon" href="favicon.png">
 
@@ -14,6 +15,9 @@
     @keyframes fadeIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
     .animate-fade { animation: fadeIn 0.25s ease-out forwards; }
 
+    /* =========================================================
+       CHEVRON / ARROW STEP-BY-STEP PIPELINE (ALA ODOO STATUSBAR)
+    ========================================================== */
     .arrow-pipeline {
       display: flex;
       width: 100%;
@@ -59,7 +63,9 @@
 </head>
 <body class="bg-slate-100 text-slate-800 font-sans antialiased">
 
-  <!-- 1. HALAMAN LOGIN -->
+  <!-- =========================================================
+       1. HALAMAN LOGIN
+  ========================================================== -->
   <div id="loginScreen" class="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-900 via-indigo-800 to-blue-900 p-4">
     <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 space-y-6 animate-fade">
       <div class="text-center space-y-2">
@@ -92,8 +98,11 @@
     </div>
   </div>
 
-  <!-- 2. APLIKASI UTAMA -->
+  <!-- =========================================================
+       2. APLIKASI UTAMA
+  ========================================================== -->
   <div id="appScreen" class="hidden">
+    <!-- NAVBAR -->
     <header class="bg-gradient-to-r from-indigo-800 via-indigo-700 to-blue-700 text-white shadow-lg sticky top-0 z-30">
       <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-3">
         <div class="flex items-center gap-3">
@@ -137,7 +146,8 @@
     </header>
 
     <main class="max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
-      <!-- KOLOM KIRI: FORM BUAT TIKET BARU -->
+
+      <!-- KOLOM KIRI: FORM BUAT TIKET BARU (5 Kolom) -->
       <section class="lg:col-span-5 bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-visible h-fit">
         <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex justify-between items-center rounded-t-2xl">
           <div>
@@ -150,6 +160,7 @@
         </div>
 
         <form id="ticketForm" class="p-6 space-y-4">
+          <!-- IDENTITAS PELAPOR -->
           <div class="bg-slate-50/80 p-3.5 rounded-xl border border-slate-200/80 space-y-3">
             <div class="flex items-center justify-between">
               <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Created by (Auto-Fill)</span>
@@ -190,6 +201,7 @@
             </div>
           </div>
 
+          <!-- FIELD YANG DIISI USER -->
           <div>
             <label class="block text-xs font-bold text-slate-700 mb-1">1. Pick Request Access - Module - Support *</label>
             <select name="Request Access-Module-Support" id="dd-Request Access-Module-Support" required
@@ -199,6 +211,7 @@
             </select>
           </div>
 
+          <!-- CONDITIONAL SECTION: ACCESS RIGHT ODOO -->
           <div id="odooAccessSection" class="hidden animate-fade bg-indigo-50/70 border border-indigo-200 rounded-xl p-4 space-y-3">
             <div class="flex items-center gap-2 text-indigo-800 font-bold text-xs">
               <span>🔐 Detail Odoo Access Rights</span>
@@ -242,6 +255,7 @@
                 class="w-full text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 border border-slate-300 rounded-xl p-1">
             </div>
 
+            <!-- MULTI-SELECT DROPDOWN SENT MAIL CC (CREATE) -->
             <div class="relative cc-dropdown-wrapper" id="create-ccWrapper">
               <label class="block text-xs font-bold text-slate-700 mb-1">4. Sent Mail CC</label>
               <button type="button" onclick="toggleCcDropdown('create')"
@@ -270,7 +284,7 @@
             </div>
           </div>
 
-          <!-- BAGIAN KHUSUS ADMIN -->
+          <!-- BAGIAN KHUSUS ADMIN SAAT CREATE TICKET -->
           <div id="adminCreateFields" class="hidden border-t pt-4 space-y-4">
             <div class="flex items-center justify-between bg-indigo-50/80 px-3 py-2 rounded-xl border border-indigo-100">
               <span class="text-xs font-extrabold text-indigo-800 uppercase tracking-wider">🛡️ Admin ITDS Configuration</span>
@@ -293,7 +307,7 @@
               </div>
 
               <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1.5">Assigned 2 <span class="text-slate-400 font-normal">(Optional)</span></label>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">Assigned <span class="text-slate-400 font-normal">(Optional)</span></label>
                 <input type="hidden" name="Assigned 2" id="val-Assigned2">
                 <div id="btnGroup-Assigned2" class="flex flex-wrap gap-1.0"></div>
               </div>
@@ -335,7 +349,7 @@
         </form>
       </section>
 
-      <!-- KOLOM KANAN: MONITORING & DAFTAR TIKET -->
+      <!-- KOLOM KANAN: MONITORING & DAFTAR TIKET (7 Kolom) -->
       <section class="lg:col-span-7 space-y-4">
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <div class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm">
@@ -364,6 +378,7 @@
                 <p id="tableSubtitle" class="text-xs text-slate-500">Default filter (Open Tickets)</p>
               </div>
 
+              <!-- TOMBOL ASSIGNED TO ME (AKTIF DEFAULT UNTUK ADMIN) -->
               <button type="button" id="btnAssignedToMe" onclick="toggleAssignedToMe()"
                 class="hidden items-center gap-1.5 text-xs font-bold px-3.5 py-2 rounded-xl border border-indigo-600 bg-indigo-600 text-white shadow-sm transition">
                 <span>🙋 Assigned to Me</span>
@@ -401,7 +416,9 @@
     </main>
   </div>
 
-  <!-- 3. MODAL DETAIL TIKET -->
+  <!-- =========================================================
+       3. MODAL DETAIL TIKET
+  ========================================================== -->
   <div id="ticketModal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
     <div class="bg-white rounded-2xl max-w-2xl w-full shadow-2xl border border-slate-200 overflow-hidden my-8 animate-fade">
       <div class="bg-slate-800 text-white px-6 py-4 flex justify-between items-center">
@@ -416,6 +433,7 @@
       </div>
 
       <div class="p-6 space-y-5 max-h-[80vh] overflow-y-auto">
+        <!-- Ringkasan Kendala -->
         <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
           <div class="flex justify-between items-center text-xs text-slate-500">
             <span id="modalReporter"></span>
@@ -429,7 +447,10 @@
           <div id="modalAttachmentBox" class="pt-1"></div>
         </div>
 
+        <!-- KONTAINER KONFIRMASI USER & PENILAIAN (HANYA MUNCUL JIKA LOGIN === PEMILIK TIKET) -->
         <div id="userVerificationContainer"></div>
+
+        <!-- KONTAINER PANEL UPDATE ADMIN ITDS (HANYA MUNCUL JIKA LOGIN === ADMIN) -->
         <div id="adminPanelContainer"></div>
 
         <div class="flex justify-end gap-2.5 pt-2">
@@ -445,7 +466,9 @@
     </div>
   </div>
 
-  <!-- 4. MODAL GANTI PASSWORD -->
+  <!-- =========================================================
+       4. MODAL GANTI PASSWORD (KOLOM H)
+  ========================================================== -->
   <div id="changePassModal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden animate-fade">
       <div class="bg-indigo-800 text-white px-6 py-4 flex justify-between items-center">
@@ -505,7 +528,9 @@
       const panel = document.getElementById(`${prefix}-ccPanel`);
       if (!panel) return;
       const isHidden = panel.classList.contains('hidden');
+
       document.querySelectorAll('[id$="-ccPanel"]').forEach(p => p.classList.add('hidden'));
+
       if (isHidden) {
         panel.classList.remove('hidden');
         const searchInput = document.getElementById(`${prefix}-ccSearch`);
@@ -689,13 +714,7 @@
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({ action: 'login', email, password })
         });
-        const text = await res.text();
-        let result;
-        try {
-          result = JSON.parse(text);
-        } catch (parseErr) {
-          throw new Error('Server mengembalikan format tidak valid. Pastikan Web App diakses sebagai Anyone.');
-        }
+        const result = await res.json();
 
         if (result.status === 'success') {
           currentUser = result.user;
@@ -855,7 +874,7 @@
     }
 
     // ==========================================
-    // 2. GANTI PASSWORD
+    // 2. GANTI PASSWORD (KOLOM H)
     // ==========================================
     function openChangePasswordModal() {
       if (!currentUser) return;
@@ -1294,6 +1313,8 @@
           ? `<span class="mt-1 inline-block text-[10px] font-bold px-2 py-0.5 rounded ${verify.toUpperCase() === 'CONFIRMED' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-rose-50 text-rose-700 border border-rose-200'}">${verify}</span>`
           : '';
 
+        const picDisplay = [t['Assigned'], t['Assigned 2']].filter(Boolean).join(' & ');
+
         return `
           <tr onclick="openTicketModal('${t['Issue ID']}')" class="hover:bg-indigo-50/50 cursor-pointer transition">
             <td class="py-3 px-4 font-extrabold text-indigo-700 align-top">#${t['Issue ID']}</td>
@@ -1306,7 +1327,7 @@
               <p class="text-[10px] text-slate-400">${t['Date Created'] || ''}</p>
             </td>
             <td class="py-3 px-4 align-top">
-              <p class="font-semibold text-slate-700">${t['Assigned'] || '<span class="text-slate-400 italic">Unassigned</span>'}</p>
+              <p class="font-semibold text-slate-700">${picDisplay || '<span class="text-slate-400 italic">Unassigned</span>'}</p>
               <p class="text-[10px] text-indigo-600 font-medium">${t['Est Done'] ? 'Est: ' + t['Est Done'] : ''}</p>
             </td>
             <td class="py-3 px-4 align-top">
@@ -1319,8 +1340,47 @@
     }
 
     // ==========================================
-    // 7. MODAL DETAIL & UPDATE TIKET
+    // 7. MODAL DETAIL & UPDATE TIKET (UI ASLI)
     // ==========================================
+    function setUserVerificationChoice(choice) {
+      const hiddenEl = document.getElementById('edit-UserVerification');
+      const btnConf = document.getElementById('btnVerifyConfirmed');
+      const btnInc = document.getElementById('btnVerifyIncomplete');
+      const reasonWrap = document.getElementById('userReasonWrapper');
+      if (!hiddenEl) return;
+
+      hiddenEl.value = choice;
+
+      if (btnConf && btnInc) {
+        btnConf.className = choice === 'CONFIRMED'
+          ? 'flex-1 py-2.5 px-3 rounded-xl text-xs font-extrabold border-2 border-emerald-600 bg-emerald-600 text-white shadow-sm transition'
+          : 'flex-1 py-2.5 px-3 rounded-xl text-xs font-bold border border-slate-300 bg-white text-slate-600 hover:border-emerald-500 hover:text-emerald-700 transition';
+
+        btnInc.className = choice === 'INCOMPLETE'
+          ? 'flex-1 py-2.5 px-3 rounded-xl text-xs font-extrabold border-2 border-rose-600 bg-rose-600 text-white shadow-sm transition'
+          : 'flex-1 py-2.5 px-3 rounded-xl text-xs font-bold border border-slate-300 bg-white text-slate-600 hover:border-rose-500 hover:text-rose-700 transition';
+      }
+
+      if (reasonWrap) {
+        reasonWrap.classList.toggle('hidden', choice !== 'INCOMPLETE');
+      }
+    }
+
+    function setStarRating(ratingVal) {
+      const hiddenEl = document.getElementById('edit-UserFeedback');
+      if (!hiddenEl) return;
+      hiddenEl.value = ratingVal;
+
+      document.querySelectorAll('.star-rating-btn').forEach(btn => {
+        const starNum = parseInt(btn.dataset.star, 10);
+        if (starNum <= ratingVal) {
+          btn.className = 'star-rating-btn text-lg px-2 py-1 rounded-lg border border-amber-400 bg-amber-100 text-amber-600 font-bold transition';
+        } else {
+          btn.className = 'star-rating-btn text-lg px-2 py-1 rounded-lg border border-slate-200 bg-white text-slate-300 hover:text-amber-400 transition';
+        }
+      });
+    }
+
     function openTicketModal(issueId) {
       const ticket = (appData.tickets || []).find(t => String(t['Issue ID']).trim() === String(issueId).trim());
       if (!ticket) return;
@@ -1359,108 +1419,196 @@
       const userContainer = document.getElementById('userVerificationContainer');
       const adminContainer = document.getElementById('adminPanelContainer');
 
-      // PANEL KONFIRMASI USER (Jika pemilik tiket & status Test & Review / Done)
-      if (isOwner && ['test & review', 'done'].includes(st.toLowerCase())) {
+      // 1. KONTAINER KONFIRMASI USER (TOMBOL PILIHAN CONFIRMED / INCOMPLETE + BINTANG)
+      const isTestReview = st.toLowerCase() === 'test & review';
+      const isDone = st.toLowerCase() === 'done';
+
+      if (isOwner && (isTestReview || isDone)) {
+        const curVerify = (ticket['User Verification'] || '').toUpperCase();
+        const curFeedback = parseInt(ticket['User Feedback'] || '0', 10) || 0;
+
         userContainer.innerHTML = `
-          <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 space-y-3">
-            <h4 class="text-xs font-extrabold text-amber-900 uppercase">✅ User Verification & Feedback</h4>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div>
-                <label class="block text-[11px] font-bold text-slate-700 mb-1">User Verification</label>
-                <select id="edit-UserVerification" class="w-full text-xs border border-slate-300 rounded-lg px-3 py-2 bg-white font-semibold">
-                  <option value="">-- Pilih Status --</option>
-                  <option value="CONFIRMED" ${ticket['User Verification'] === 'CONFIRMED' ? 'selected' : ''}>✔ CONFIRMED</option>
-                  <option value="INCOMPLETE" ${ticket['User Verification'] === 'INCOMPLETE' ? 'selected' : ''}>✘ INCOMPLETE</option>
-                </select>
-              </div>
-              <div>
-                <label class="block text-[11px] font-bold text-slate-700 mb-1">Rating Feedback (1-5)</label>
-                <select id="edit-UserFeedback" class="w-full text-xs border border-slate-300 rounded-lg px-3 py-2 bg-white">
-                  <option value="">-- Pilih Rating --</option>
-                  <option value="5" ${ticket['User Feedback'] == '5' ? 'selected' : ''}>⭐⭐⭐⭐⭐ (5 - Sangat Puas)</option>
-                  <option value="4" ${ticket['User Feedback'] == '4' ? 'selected' : ''}>⭐⭐⭐⭐ (4 - Puas)</option>
-                  <option value="3" ${ticket['User Feedback'] == '3' ? 'selected' : ''}>⭐⭐⭐ (3 - Cukup)</option>
-                  <option value="2" ${ticket['User Feedback'] == '2' ? 'selected' : ''}>⭐⭐ (2 - Kurang)</option>
-                  <option value="1" ${ticket['User Feedback'] == '1' ? 'selected' : ''}>⭐ (1 - Kecewa)</option>
-                </select>
-              </div>
+          <div class="bg-amber-50/90 border border-amber-200 rounded-xl p-4 space-y-3">
+            <div class="flex items-center justify-between">
+              <h4 class="text-xs font-extrabold text-amber-900 uppercase">✅ User Verification & Rating</h4>
+              <span class="text-[10px] font-semibold text-amber-700 bg-amber-100 px-2 py-0.5 rounded">Requester Action</span>
             </div>
+
+            ${isTestReview ? `
+              <div>
+                <label class="block text-[11px] font-bold text-slate-700 mb-1.5">Apakah hasil pengerjaan sudah sesuai?</label>
+                <input type="hidden" id="edit-UserVerification" value="${curVerify}">
+                <div class="flex gap-2">
+                  <button type="button" id="btnVerifyConfirmed" onclick="setUserVerificationChoice('CONFIRMED')"
+                    class="flex-1 py-2.5 px-3 rounded-xl text-xs font-bold border border-slate-300 bg-white text-slate-600">
+                    ✔ CONFIRMED
+                  </button>
+                  <button type="button" id="btnVerifyIncomplete" onclick="setUserVerificationChoice('INCOMPLETE')"
+                    class="flex-1 py-2.5 px-3 rounded-xl text-xs font-bold border border-slate-300 bg-white text-slate-600">
+                    ✘ INCOMPLETE
+                  </button>
+                </div>
+              </div>
+
+              <div id="userReasonWrapper" class="${curVerify === 'INCOMPLETE' ? '' : 'hidden'}">
+                <label class="block text-[11px] font-bold text-rose-700 mb-1">Alasan Incomplete / Revisi *</label>
+                <textarea id="edit-Reason" rows="2" class="w-full text-xs border border-rose-300 rounded-lg px-3 py-2 bg-white"
+                  placeholder="Jelaskan bagian yang belum sesuai...">${ticket['Reason'] || ''}</textarea>
+              </div>
+            ` : `
+              <p class="text-xs text-emerald-800 font-semibold">Status Verifikasi: <b>${curVerify || 'CONFIRMED'}</b></p>
+            `}
+
             <div>
-              <label class="block text-[11px] font-bold text-slate-700 mb-1">Reason / Catatan User</label>
-              <textarea id="edit-Reason" rows="2" class="w-full text-xs border border-slate-300 rounded-lg px-3 py-2 bg-white" placeholder="Isi alasan jika INCOMPLETE atau catatan tambahan...">${ticket['Reason'] || ''}</textarea>
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">Penilaian Layanan ITDS (1 - 5 Bintang)</label>
+              <input type="hidden" id="edit-UserFeedback" value="${curFeedback || ''}">
+              <div class="flex items-center gap-1.5">
+                ${[1, 2, 3, 4, 5].map(n => `
+                  <button type="button" data-star="${n}" onclick="setStarRating(${n})"
+                    class="star-rating-btn text-lg px-2 py-1 rounded-lg border border-slate-200 bg-white text-slate-300">
+                    ★
+                  </button>
+                `).join('')}
+              </div>
             </div>
           </div>
         `;
+
+        if (isTestReview && curVerify) setUserVerificationChoice(curVerify);
+        if (curFeedback > 0) setStarRating(curFeedback);
       } else {
         userContainer.innerHTML = '';
       }
 
-      // PANEL ADMIN ITDS
+      // 2. KONTAINER PANEL UPDATE ADMIN ITDS (ARROW PIPELINE + PILL BUTTONS + MULTI-SELECT CC)
       if (isAdmin) {
         const dd = appData.dropdowns;
         const picList = (dd['Assigned'] && dd['Assigned'].length > 0) ? dd['Assigned'] : ['Angga', 'Jenius', 'Nurul', 'Ibnu'];
+        const pic2List = (dd['Assigned 2'] && dd['Assigned 2'].length > 0) ? dd['Assigned 2'] : picList;
         const orderedStates = getOrderedStates(dd['State']);
         const orderedLevels = getOrderedLevels(dd['Ticket Level']);
         const orderedPriorities = getOrderedPriorities(dd['Priority']);
 
         adminContainer.innerHTML = `
-          <div class="bg-indigo-50/60 border border-indigo-200 rounded-xl p-4 space-y-3">
-            <h4 class="text-xs font-extrabold text-indigo-900 uppercase">🛡️ ITDS Admin Update</h4>
+          <div class="bg-indigo-50/60 border border-indigo-200 rounded-xl p-4 space-y-4">
+            <div class="flex items-center justify-between">
+              <h4 class="text-xs font-extrabold text-indigo-900 uppercase">🛡️ ITDS Admin Update</h4>
+              <span class="text-[10px] font-semibold text-indigo-600">Verification: ${ticket['User Verification'] || '-'}</span>
+            </div>
+
+            <!-- ARROW PIPELINE STATE -->
+            <div>
+              <label class="block text-[11px] font-bold text-slate-700 mb-1.5">Pipeline State</label>
+              <input type="hidden" id="edit-State" value="${st}">
+              <div id="edit-btnGroup-State" class="arrow-pipeline"></div>
+            </div>
+
+            <!-- ASSIGNED & ASSIGNED 2 (PILL BUTTONS) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-white/80 p-3 rounded-xl border border-indigo-100">
+              <div>
+                <label class="block text-[11px] font-bold text-slate-700 mb-1.5">Assigned</label>
+                <input type="hidden" id="edit-Assigned" value="${ticket['Assigned'] || ''}">
+                <input type="hidden" id="edit-AssignedEmail" value="${ticket['Assigned Email'] || ''}">
+                <div id="edit-btnGroup-Assigned" class="flex flex-wrap gap-1.5"></div>
+                <p id="edit-displayAssignedEmail" class="text-[10px] text-indigo-600 font-medium mt-1 min-h-[14px]">${ticket['Assigned Email'] ? '✉ ' + ticket['Assigned Email'] : ''}</p>
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-slate-700 mb-1.5">Assigned 2</label>
+                <input type="hidden" id="edit-Assigned2" value="${ticket['Assigned 2'] || ''}">
+                <div id="edit-btnGroup-Assigned2" class="flex flex-wrap gap-1.5"></div>
+              </div>
+            </div>
+
+            <!-- TICKET LEVEL (PILL BUTTONS) -->
+            <div>
+              <label class="block text-[11px] font-bold text-slate-700 mb-1.5">Ticket Level</label>
+              <input type="hidden" id="edit-TicketLevel" value="${ticket['Ticket Level'] || ''}">
+              <div id="edit-btnGroup-TicketLevel" class="flex flex-wrap gap-1.5"></div>
+            </div>
+
+            <!-- PRIORITY (PILL BUTTONS) & EST DONE -->
+            <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
+              <div class="sm:col-span-7">
+                <label class="block text-[11px] font-bold text-slate-700 mb-1.5">Priority</label>
+                <input type="hidden" id="edit-Priority" value="${ticket['Priority'] || ''}">
+                <div id="edit-btnGroup-Priority" class="flex flex-wrap gap-1.5"></div>
+              </div>
+              <div class="sm:col-span-5">
+                <label class="block text-[11px] font-bold text-slate-700 mb-1.5">Est Done</label>
+                <input type="text" id="edit-EstDone" value="${ticket['Est Done'] || ''}" placeholder="dd-MMM-yyyy/HH.mm.ss"
+                  class="w-full text-xs font-bold text-indigo-700 bg-white border border-indigo-200 rounded-xl px-3 py-2 outline-none">
+              </div>
+            </div>
+
+            <!-- SENT MAIL CC (MULTI-SELECT DROPDOWN) -->
+            <div class="relative cc-dropdown-wrapper" id="edit-ccWrapper">
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">Sent Mail CC</label>
+              <button type="button" onclick="toggleCcDropdown('edit')"
+                class="w-full flex items-center justify-between gap-2 text-xs border border-slate-300 hover:border-indigo-400 rounded-xl px-3 py-2 bg-white text-left transition outline-none">
+                <span id="edit-ccSummaryText" class="truncate text-slate-500">-- No CC Selected --</span>
+                <span class="flex items-center gap-1.5 shrink-0">
+                  <span id="edit-ccCountBadge" class="hidden text-[10px] font-bold text-indigo-700 bg-indigo-100 px-1.5 py-0.5 rounded-full">0</span>
+                  <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                  </svg>
+                </span>
+              </button>
+              <div id="edit-ccPanel"
+                class="hidden absolute left-0 right-0 mt-1.5 z-40 bg-white border border-slate-200 rounded-xl shadow-xl p-2 space-y-1.5 animate-fade">
+                <div class="flex items-center gap-1.5">
+                  <input type="text" id="edit-ccSearch" onkeyup="filterCcCheckboxes('edit')" placeholder="Cari nama / email..."
+                    class="w-full text-xs border border-slate-200 rounded-lg px-2.5 py-1.5 bg-slate-50 focus:bg-white focus:border-indigo-500 outline-none">
+                  <button type="button" onclick="clearCcSelection('edit')"
+                    class="text-[11px] font-semibold text-rose-600 hover:bg-rose-50 px-2 py-1.5 rounded-lg shrink-0">
+                    Clear
+                  </button>
+                </div>
+                <div id="edit-SentMailCCList" class="max-h-40 overflow-y-auto divide-y divide-slate-100"></div>
+              </div>
+            </div>
+
+            <!-- DEV NOTES & SA NOTES -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label class="block text-[11px] font-bold text-slate-700 mb-1">State</label>
-                <select id="edit-State" class="w-full text-xs border border-slate-300 rounded-lg px-3 py-2 bg-white font-bold">
-                  ${orderedStates.map(s => `<option value="${s}" ${s.toLowerCase() === st.toLowerCase() ? 'selected' : ''}>${s}</option>`).join('')}
-                </select>
+                <label class="block text-[11px] font-bold text-slate-700 mb-1">Dev / ITDS Notes</label>
+                <textarea id="edit-Notes" rows="3" class="w-full text-xs border border-slate-300 rounded-xl px-3 py-2 bg-white">${ticket['Notes'] || ''}</textarea>
               </div>
               <div>
-                <label class="block text-[11px] font-bold text-slate-700 mb-1">Assigned PIC</label>
-                <select id="edit-Assigned" class="w-full text-xs border border-slate-300 rounded-lg px-3 py-2 bg-white">
-                  <option value="">-- Unassigned --</option>
-                  ${picList.map(p => `<option value="${p}" ${p === ticket['Assigned'] ? 'selected' : ''}>${p}</option>`).join('')}
-                </select>
+                <label class="block text-[11px] font-bold text-slate-700 mb-1">SA Preview / Note</label>
+                <textarea id="edit-SANote" rows="3" class="w-full text-xs border border-slate-300 rounded-xl px-3 py-2 bg-white">${ticket['SA Note'] || ''}</textarea>
               </div>
-              <div>
-                <label class="block text-[11px] font-bold text-slate-700 mb-1">Ticket Level</label>
-                <select id="edit-TicketLevel" class="w-full text-xs border border-slate-300 rounded-lg px-3 py-2 bg-white">
-                  <option value="">-- Pilih Level --</option>
-                  ${orderedLevels.map(l => `<option value="${l}" ${l === ticket['Ticket Level'] ? 'selected' : ''}>${l}</option>`).join('')}
-                </select>
-              </div>
-              <div>
-                <label class="block text-[11px] font-bold text-slate-700 mb-1">Priority</label>
-                <select id="edit-Priority" class="w-full text-xs border border-slate-300 rounded-lg px-3 py-2 bg-white">
-                  <option value="">-- Pilih Priority --</option>
-                  ${orderedPriorities.map(pr => `<option value="${pr}" ${pr === ticket['Priority'] ? 'selected' : ''}>${pr}</option>`).join('')}
-                </select>
-              </div>
-            </div>
-            <div>
-              <label class="block text-[11px] font-bold text-slate-700 mb-1">Est Done</label>
-              <input type="text" id="edit-EstDone" value="${ticket['Est Done'] || ''}" placeholder="dd-MMM-yyyy/HH.mm.ss"
-                class="w-full text-xs border border-slate-300 rounded-lg px-3 py-2 bg-white">
-            </div>
-            <div>
-              <label class="block text-[11px] font-bold text-slate-700 mb-1">Dev / ITDS Notes</label>
-              <textarea id="edit-Notes" rows="2" class="w-full text-xs border border-slate-300 rounded-lg px-3 py-2 bg-white">${ticket['Notes'] || ''}</textarea>
-            </div>
-            <div>
-              <label class="block text-[11px] font-bold text-slate-700 mb-1">SA Preview / Note</label>
-              <textarea id="edit-SANote" rows="2" class="w-full text-xs border border-slate-300 rounded-lg px-3 py-2 bg-white">${ticket['SA Note'] || ''}</textarea>
             </div>
           </div>
         `;
+
+        // Render ulang komponen Arrow Pipeline, Pill Buttons, dan CC Dropdown di dalam modal
+        renderArrowPipeline('edit-btnGroup-State', orderedStates, 'edit-State', null, st);
+        renderPillButtons('edit-btnGroup-Assigned', picList, 'edit-Assigned', (val) => {
+          const email = appData.picEmailMap[val] || '';
+          document.getElementById('edit-AssignedEmail').value = email;
+          document.getElementById('edit-displayAssignedEmail').textContent = email ? `✉ ${email}` : '';
+        }, ticket['Assigned'] || '', true);
+        renderPillButtons('edit-btnGroup-Assigned2', pic2List, 'edit-Assigned2', null, ticket['Assigned 2'] || '', true);
+        renderPillButtons('edit-btnGroup-TicketLevel', orderedLevels, 'edit-TicketLevel', () => {
+          calculateEstDone('edit-TicketLevel', 'edit-Priority', 'edit-EstDone', ticket['Date Created']);
+        }, ticket['Ticket Level'] || '');
+        renderPillButtons('edit-btnGroup-Priority', orderedPriorities, 'edit-Priority', () => {
+          calculateEstDone('edit-TicketLevel', 'edit-Priority', 'edit-EstDone', ticket['Date Created']);
+        }, ticket['Priority'] || '');
+        populateCcDropdownOptions('edit', ticket['Sent Mail CC'] || '');
       } else {
         adminContainer.innerHTML = `
-          <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs space-y-1">
-            <p><b>Assigned PIC:</b> ${ticket['Assigned'] || 'Belum ditentukan'}</p>
+          <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs space-y-1.5">
+            <p><b>Assigned PIC:</b> ${[ticket['Assigned'], ticket['Assigned 2']].filter(Boolean).join(' & ') || 'Belum ditentukan'}</p>
             <p><b>Est Done:</b> ${ticket['Est Done'] || '-'}</p>
-            <p><b>ITDS Notes:</b> ${ticket['Notes'] || '-'}</p>
+            <p><b>ITDS Notes:</b> <span class="whitespace-pre-line">${ticket['Notes'] || '-'}</span></p>
+            ${ticket['SA Note'] ? `<p><b>SA Note:</b> <span class="whitespace-pre-line">${ticket['SA Note']}</span></p>` : ''}
           </div>
         `;
       }
 
-      document.getElementById('btnSaveModal').classList.toggle('hidden', !isAdmin && !(isOwner && ['test & review', 'done'].includes(st.toLowerCase())));
+      const canUserAct = isOwner && (isTestReview || isDone);
+      document.getElementById('btnSaveModal').classList.toggle('hidden', !isAdmin && !canUserAct);
       document.getElementById('ticketModal').classList.remove('hidden');
     }
 
@@ -1478,20 +1626,31 @@
       const payloadData = {};
       if (isAdminUser()) {
         payloadData['State'] = document.getElementById('edit-State')?.value;
-        payloadData['Assigned'] = document.getElementById('edit-Assigned')?.value;
-        payloadData['Assigned Email'] = appData.picEmailMap[payloadData['Assigned']] || '';
-        payloadData['Ticket Level'] = document.getElementById('edit-TicketLevel')?.value;
-        payloadData['Priority'] = document.getElementById('edit-Priority')?.value;
-        payloadData['Est Done'] = document.getElementById('edit-EstDone')?.value;
-        payloadData['Notes'] = document.getElementById('edit-Notes')?.value;
-        payloadData['SA Note'] = document.getElementById('edit-SANote')?.value;
+        payloadData['Assigned'] = document.getElementById('edit-Assigned')?.value || '';
+        payloadData['Assigned Email'] = document.getElementById('edit-AssignedEmail')?.value || '';
+        payloadData['Assigned 2'] = document.getElementById('edit-Assigned2')?.value || '';
+        payloadData['Ticket Level'] = document.getElementById('edit-TicketLevel')?.value || '';
+        payloadData['Priority'] = document.getElementById('edit-Priority')?.value || '';
+        payloadData['Est Done'] = document.getElementById('edit-EstDone')?.value || '';
+        payloadData['Notes'] = document.getElementById('edit-Notes')?.value || '';
+        payloadData['SA Note'] = document.getElementById('edit-SANote')?.value || '';
+
+        const editSelectedCc = Array.from(
+          document.querySelectorAll('#edit-SentMailCCList input[type="checkbox"]:checked')
+        ).map(cb => cb.value.trim()).filter(Boolean);
+        payloadData['Sent Mail CC'] = editSelectedCc.join(', ');
       }
 
       const verifyEl = document.getElementById('edit-UserVerification');
-      if (verifyEl) {
+      if (verifyEl && verifyEl.value) {
         payloadData['User Verification'] = verifyEl.value;
-        payloadData['User Feedback'] = document.getElementById('edit-UserFeedback')?.value || '';
-        payloadData['Reason'] = document.getElementById('edit-Reason')?.value || '';
+        const reasonEl = document.getElementById('edit-Reason');
+        if (reasonEl) payloadData['Reason'] = reasonEl.value;
+      }
+
+      const feedbackEl = document.getElementById('edit-UserFeedback');
+      if (feedbackEl && feedbackEl.value) {
+        payloadData['User Feedback'] = feedbackEl.value;
       }
 
       try {
