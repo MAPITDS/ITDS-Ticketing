@@ -829,7 +829,9 @@
 
     function getVisibleTickets() {
       const all = appData.tickets || [];
-      if (isAdminUser()) return all;
+      if (isAdminUser()) {
+        return filterAssignedToMe ? all.filter(isTicketAssignedToCurrentUser) : all;
+      }
       const myEmail = (currentUser.email || '').toLowerCase();
       return all.filter(t => (t['Created By'] || '').toLowerCase() === myEmail);
     }
