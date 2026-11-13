@@ -667,8 +667,8 @@
       if (!isAdminUser()) {
         btn.classList.add('hidden');
         btn.classList.remove('inline-flex');
-        heading.textContent = 'Daftar Tiket Saya';
-        subtitle.textContent = 'Default menampilkan tiket aktif (selain Done & Cancel)';
+        heading.textContent = 'My Tasks Lists';
+        subtitle.textContent = 'Ongoing Tickets';
         return;
       }
 
@@ -684,13 +684,13 @@
       if (filterAssignedToMe) {
         btn.className = 'inline-flex items-center gap-1.5 text-xs font-bold px-3.5 py-2 rounded-xl border border-indigo-600 bg-indigo-600 text-white shadow-sm transition';
         countBadge.className = 'px-1.5 py-0.5 text-[10px] rounded-full bg-white/20 text-white font-extrabold';
-        heading.textContent = 'Tugas Saya (Assigned 1 & Assigned 2)';
-        subtitle.textContent = 'Menampilkan tiket yang ditugaskan kepada Anda • Klik "Assigned to Me" untuk melihat semua tiket';
+        heading.textContent = 'My Tasks';
+        subtitle.textContent = 'Displaying tickets assigned to you • Click "Assigned to Me" to view all tickets';
       } else {
         btn.className = 'inline-flex items-center gap-1.5 text-xs font-bold px-3.5 py-2 rounded-xl border border-slate-300 bg-white text-slate-700 hover:border-indigo-500 hover:text-indigo-700 transition shadow-2xs';
         countBadge.className = 'px-1.5 py-0.5 text-[10px] rounded-full bg-indigo-50 text-indigo-700 font-extrabold';
-        heading.textContent = 'Semua Daftar Tiket (Admin Full Access)';
-        subtitle.textContent = 'Default menampilkan tiket aktif (selain Done & Cancel)';
+        heading.textContent = 'All Tickets';
+        subtitle.textContent = 'Ongoing Tickets';
       }
     }
 
