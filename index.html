@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ITDS Ticketing System</title>
-  <!-- Favicon (Ganti href dengan nama file/URL gambar favicon Anda nanti) -->
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="apple-touch-icon" href="favicon.png">
 
@@ -59,8 +58,9 @@
       color: #ffffff;
       z-index: 2;
     }
+
     /* =========================================================
-       MODERN TICKET ROW HOVER & OVERDUE PULSE
+       MODERN TICKET ROW HOVER, OVERDUE & WARNING H-3
     ========================================================== */
     .ticket-row {
       transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
@@ -68,23 +68,29 @@
     }
     .ticket-row:hover {
       transform: translateY(-2px);
-      background-color: #eef2ff !important; /* indigo-50 */
-      border-left-color: #4f46e5; /* indigo-600 */
-      box-shadow: 0 6px 16px -4px rgba(79, 70, 229, 0.14);
+      background-color: #eef2ff !important;
+      border-left-color: #4f46e5;
+      box-shadow: 0 6px 16px -4px rgba(79, 70, 229, 0.15);
       position: relative;
       z-index: 10;
     }
     .ticket-row.is-overdue {
-      background-color: rgba(255, 241, 242, 0.55); /* rose-50 */
-      border-left-color: #e11d48; /* rose-600 */
+      background-color: rgba(255, 241, 242, 0.6);
+      border-left-color: #e11d48;
     }
     .ticket-row.is-overdue:hover {
-      background-color: #ffe4e6 !important; /* rose-100 */
-      border-left-color: #be123c; /* rose-700 */
-      box-shadow: 0 6px 16px -4px rgba(225, 29, 72, 0.18);
+      background-color: #ffe4e6 !important;
+      border-left-color: #be123c;
+      box-shadow: 0 6px 16px -4px rgba(225, 29, 72, 0.2);
     }
-    .ticket-row.is-due-soon {
-      border-left-color: #f59e0b; /* amber-500 */
+    .ticket-row.is-warning {
+      background-color: rgba(255, 251, 235, 0.55);
+      border-left-color: #f59e0b;
+    }
+    .ticket-row.is-warning:hover {
+      background-color: #fef3c7 !important;
+      border-left-color: #d97706;
+      box-shadow: 0 6px 16px -4px rgba(217, 119, 6, 0.18);
     }
     .ticket-row .row-arrow {
       opacity: 0;
@@ -94,6 +100,18 @@
     .ticket-row:hover .row-arrow {
       opacity: 1;
       transform: translateX(0);
+    }
+
+    /* =========================================================
+       INTERACTIVE STAT CARDS
+    ========================================================== */
+    .stat-card {
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      cursor: pointer;
+    }
+    .stat-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px -6px rgba(15, 23, 42, 0.12);
     }
   </style>
 </head>
@@ -108,20 +126,21 @@
         <div class="w-16 h-16 mx-auto rounded-2xl bg-slate-900 text-white flex items-center justify-center font-black text-2xl shadow-lg overflow-hidden">
           <img src="logo.png" alt="ITDS Logo" class="w-full h-full object-cover"
             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-          <span class="hidden w-full h-full items-center justify-center">ITDS</span>
+          <span class="hidden w-full h-full items-center justify-center">IT</span>
         </div>
-        
+
         <h1 class="text-xl font-extrabold text-slate-800 tracking-tight">ITDS Ticketing System</h1>
-      
+
         <!-- Slogan 3 Langkah: Buat • Tunggu • Selesai -->
         <div class="inline-flex items-center justify-center gap-1.5 text-[11px] font-bold text-indigo-700 bg-indigo-50 border border-indigo-100 px-3 py-1 rounded-full">
-          <span>📝 Create</span>
+          <span>📝 Buat</span>
           <span class="text-indigo-300">→</span>
-          <span>⏳ Wait/Track</span>
+          <span>⏳ Tunggu</span>
           <span class="text-indigo-300">→</span>
-          <span class="text-emerald-600">✅ Done</span>
+          <span class="text-emerald-600">✅ Selesai</span>
         </div>
-        <p class="text-xs text-slate-500">• • • Mitra Asa Pratama • • •</p>
+
+        <p class="text-[11px] text-slate-400">Mitra Asa Pratama • Login menggunakan akun terdaftar</p>
       </div>
 
       <form id="loginForm" class="space-y-4">
@@ -138,7 +157,7 @@
         <div id="loginError" class="hidden text-xs font-semibold text-rose-600 bg-rose-50 border border-rose-200 rounded-xl px-3 py-2 text-center"></div>
         <button type="submit" id="btnLogin"
           class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl shadow-md transition text-sm">
-          Login →
+          Masuk ke Portal →
         </button>
       </form>
     </div>
@@ -158,14 +177,8 @@
             <span class="hidden w-full h-full items-center justify-center">IT</span>
           </div>
           <div>
-            <h1 class="text-base sm:text-lg font-bold tracking-tight">ITDS Ticketing System</h1> 
-            <div class="inline-flex items-center justify-center gap-1.5 text-[11px] font-bold text-indigo-700 bg-indigo-50 border border-indigo-100 px-3 py-1 rounded-full">
-              <span>📝 Create</span>
-              <span class="text-indigo-300">→</span>
-              <span>⏳ Wait/Track</span>
-              <span class="text-indigo-300">→</span>
-              <span class="text-emerald-600">✅ Done</span>
-            </div>
+            <h1 class="text-base sm:text-lg font-bold tracking-tight">ITDS Ticketing System</h1>
+            <p class="text-[11px] text-indigo-200">Mitra Asa Pratama • Real-time Tickets Portal</p>
           </div>
         </div>
 
@@ -404,22 +417,34 @@
 
       <!-- KOLOM KANAN: MONITORING & DAFTAR TIKET (7 Kolom) -->
       <section class="lg:col-span-7 space-y-4">
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm">
+        <!-- 5 INTERACTIVE STAT CARDS -->
+        <div class="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
+          <div id="cardStatTotal" onclick="quickFilterByCard('ALL')" title="Klik untuk tampilkan semua tiket"
+            class="stat-card bg-white p-3 rounded-2xl border border-slate-200/80 shadow-sm">
             <p class="text-[11px] font-semibold text-slate-500">Total Tickets</p>
             <p id="statTotal" class="text-xl font-extrabold text-slate-800 mt-0.5">0</p>
           </div>
-          <div class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm">
+          <div id="cardStatNew" onclick="quickFilterByCard('New')" title="Klik untuk filter status New"
+            class="stat-card bg-white p-3 rounded-2xl border border-slate-200/80 shadow-sm">
             <p class="text-[11px] font-semibold text-amber-600">New</p>
             <p id="statNew" class="text-xl font-extrabold text-amber-600 mt-0.5">0</p>
           </div>
-          <div class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm">
+          <div id="cardStatOngoing" onclick="quickFilterByCard('ACTIVE_ONLY')" title="Klik untuk filter tiket aktif (Ongoing)"
+            class="stat-card bg-white p-3 rounded-2xl border border-slate-200/80 shadow-sm">
             <p class="text-[11px] font-semibold text-blue-600">Ongoing</p>
             <p id="statProgress" class="text-xl font-extrabold text-blue-600 mt-0.5">0</p>
           </div>
-          <div class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm">
+          <div id="cardStatDone" onclick="quickFilterByCard('Done')" title="Klik untuk filter tiket selesai (Done)"
+            class="stat-card bg-white p-3 rounded-2xl border border-slate-200/80 shadow-sm">
             <p class="text-[11px] font-semibold text-emerald-600">Done</p>
             <p id="statDone" class="text-xl font-extrabold text-emerald-600 mt-0.5">0</p>
+          </div>
+          <div id="cardStatOverdue" onclick="quickFilterByCard('OVERDUE_ONLY')" title="Klik untuk prioritas tiket lewat tenggat (Overdue)"
+            class="stat-card col-span-2 sm:col-span-1 bg-rose-50/70 p-3 rounded-2xl border border-rose-200 shadow-sm">
+            <p class="text-[11px] font-bold text-rose-600 flex items-center gap-1">
+              <span>🚨 Overdue</span>
+            </p>
+            <p id="statOverdue" class="text-xl font-extrabold text-rose-600 mt-0.5">0</p>
           </div>
         </div>
 
@@ -444,6 +469,7 @@
               <select id="filterState" onchange="renderTable()"
                 class="text-xs border border-slate-300 rounded-xl px-3 py-2 bg-white font-semibold text-indigo-700">
                 <option value="ACTIVE_ONLY">Default filter (Open Tickets)</option>
+                <option value="OVERDUE_ONLY">🚨 Overdue Tickets</option>
                 <option value="ALL">All Tickets</option>
               </select>
             </div>
@@ -499,10 +525,10 @@
           <div id="modalAttachmentBox" class="pt-1"></div>
         </div>
 
-        <!-- KONTAINER KONFIRMASI USER & PENILAIAN (HANYA MUNCUL JIKA LOGIN === PEMILIK TIKET) -->
+        <!-- KONTAINER KONFIRMASI USER & PENILAIAN -->
         <div id="userVerificationContainer"></div>
 
-        <!-- KONTAINER PANEL UPDATE ADMIN ITDS (HANYA MUNCUL JIKA LOGIN === ADMIN) -->
+        <!-- KONTAINER PANEL UPDATE ADMIN ITDS -->
         <div id="adminPanelContainer"></div>
 
         <div class="flex justify-end gap-2.5 pt-2">
@@ -581,7 +607,6 @@
       if (!panel) return;
       const isHidden = panel.classList.contains('hidden');
 
-      // Tutup dropdown CC lain yang sedang terbuka
       document.querySelectorAll('[id$="-ccPanel"]').forEach(p => p.classList.add('hidden'));
 
       if (isHidden) {
@@ -595,7 +620,6 @@
       }
     }
 
-    // Tutup popover dropdown otomatis saat klik di luar area dropdown
     document.addEventListener('click', (e) => {
       if (!e.target.closest('.cc-dropdown-wrapper')) {
         document.querySelectorAll('[id$="-ccPanel"]').forEach(p => p.classList.add('hidden'));
@@ -636,7 +660,6 @@
         ccListContainer.appendChild(labelEl);
       });
 
-      // Pertahankan nilai CC lama di sheet jika tidak ada di master userEmails
       selectedCcItems.forEach(savedItem => {
         const alreadyExists = Array.from(ccListContainer.querySelectorAll('input[type="checkbox"]')).some(
           cb => cb.value.toLowerCase() === savedItem
@@ -1056,6 +1079,7 @@
       const prevFilter = filterEl.value || 'ACTIVE_ONLY';
       filterEl.innerHTML = `
         <option value="ACTIVE_ONLY">Ongoing Tickets</option>
+        <option value="OVERDUE_ONLY">🚨 Overdue Tickets</option>
         <option value="ALL">All Tickets</option>
       `;
       orderedStates.forEach(st => {
@@ -1066,7 +1090,6 @@
       });
       filterEl.value = prevFilter;
 
-      // Isi opsi multi-select dropdown Sent Mail CC pada Form Create
       populateCcDropdownOptions('create', '');
 
       if (isAdminUser()) {
@@ -1216,8 +1239,9 @@
 
     // Helper: Parse format "10-Mei-2023/08.39.39" menjadi objek Date JavaScript
     function parseIndoSheetDateTime(dateStr) {
-      if (!dateStr) return new Date();
+      if (!dateStr) return null;
       const str = dateStr.toString().trim();
+      if (!str) return null;
 
       if (/^\d{4}-\d{2}-\d{2}/.test(str)) {
         const parsedIso = new Date(str);
@@ -1245,7 +1269,7 @@
       }
 
       const fallback = new Date(str);
-      return isNaN(fallback.getTime()) ? new Date() : fallback;
+      return isNaN(fallback.getTime()) ? null : fallback;
     }
 
     // Helper: Format objek Date kembali ke "17-Mei-2023/08.39.39"
@@ -1296,7 +1320,8 @@
       const daysToAdd = slaMatrix[priority]?.[level];
       if (!daysToAdd) return;
 
-      const baseDate = baseDateStr ? parseIndoSheetDateTime(baseDateStr) : new Date();
+      const parsedBase = baseDateStr ? parseIndoSheetDateTime(baseDateStr) : null;
+      const baseDate = parsedBase || new Date();
       baseDate.setDate(baseDate.getDate() + daysToAdd);
 
       document.getElementById(estOutputId).value = formatIndoSheetDateTime(baseDate);
@@ -1322,7 +1347,6 @@
         const dataObj = {};
         formData.forEach((v, k) => { dataObj[k] = v; });
 
-        // Ambil semua checkbox Sent Mail CC dari popover dropdown Create
         const checkedCreateCc = Array.from(
           document.querySelectorAll('#create-SentMailCCList input[type="checkbox"]:checked')
         ).map(cb => cb.value.trim()).filter(Boolean);
@@ -1370,71 +1394,125 @@
     });
 
     // ==========================================
-    // 4. MONITORING & MODAL DETAIL TICKET
+    // 4. MONITORING, SLA OVERDUE/H-3 & MODAL DETAIL
     // ==========================================
-    function updateStats() {
-      const t = getVisibleTickets();
-      document.getElementById('statTotal').textContent = t.length;
-      document.getElementById('statNew').textContent = t.filter(x => (x['State'] || '').toLowerCase() === 'new').length;
-      document.getElementById('statProgress').textContent = t.filter(x => ['in progress', 'test & review', 'deployment'].includes((x['State'] || '').toLowerCase())).length;
-      document.getElementById('statDone').textContent = t.filter(x => (x['State'] || '').toLowerCase() === 'done').length;
+    function formatDurationCompact(ms) {
+      const totalMinutes = Math.max(1, Math.floor(Math.abs(ms) / (1000 * 60)));
+      const days = Math.floor(totalMinutes / (60 * 24));
+      const hours = Math.floor((totalMinutes % (60 * 24)) / 60);
+      const mins = totalMinutes % 60;
+
+      if (days > 0) return `${days}d ${hours}h`;
+      if (hours > 0) return `${hours}h ${mins}m`;
+      return `${mins}m`;
     }
 
-    // Helper untuk mengecek status SLA / Est Done terhadap waktu hari ini
-    function getEstDoneBadgeInfo(estDoneStr, stateStr) {
-      const stateLower = (stateStr || '').trim().toLowerCase();
+    function getTicketSlaStatus(ticket) {
+      const stateLower = (ticket['State'] || '').trim().toLowerCase();
+      const estDoneStr = (ticket['Est Done'] || '').toString().trim();
+
       if (!estDoneStr || stateLower === 'done' || stateLower === 'cancel') {
         return {
+          status: 'none',
+          priorityRank: 3,
+          diffMs: Infinity,
           rowClass: '',
           html: estDoneStr ? `<div class="text-[10px] text-slate-400 mt-0.5">Est: ${estDoneStr}</div>` : ''
         };
       }
 
       const estDate = parseIndoSheetDateTime(estDoneStr);
-      const now = new Date();
-
-      // Bandingkan berdasarkan tanggal hari ini (awal hari 00:00)
-      const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-      const startOfEst = new Date(estDate.getFullYear(), estDate.getMonth(), estDate.getDate());
-      const diffDays = Math.round((startOfEst - startOfToday) / (1000 * 60 * 60 * 24));
-
-      if (estDate < now && diffDays < 0) {
-        const lateDays = Math.abs(diffDays);
+      if (!estDate) {
         return {
+          status: 'none',
+          priorityRank: 3,
+          diffMs: Infinity,
+          rowClass: '',
+          html: `<div class="text-[10px] text-slate-400 mt-0.5">Est: ${estDoneStr}</div>`
+        };
+      }
+
+      const now = new Date();
+      const diffMs = estDate.getTime() - now.getTime();
+      const threeDaysMs = 3 * 24 * 60 * 60 * 1000;
+
+      // 1. OVERDUE (Waktu Est Done sudah terlewati)
+      if (diffMs < 0) {
+        const overdueText = formatDurationCompact(diffMs);
+        return {
+          status: 'overdue',
+          priorityRank: 1,
+          diffMs: diffMs,
           rowClass: 'is-overdue',
           html: `
             <div class="mt-1 inline-flex items-center gap-1 text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-rose-100 text-rose-700 border border-rose-300 animate-pulse">
-              🚨 OVERDUE (${lateDays}h)
+              🚨 OVERDUE (${overdueText})
             </div>
             <div class="text-[10px] font-semibold text-rose-600 mt-0.5">Est: ${estDoneStr}</div>
           `
         };
-      } else if (diffDays === 0) {
+      }
+
+      // 2. WARNING H-3 (Dalam 3 hari ke depan sebelum Est Done)
+      if (diffMs <= threeDaysMs) {
+        const remainingText = formatDurationCompact(diffMs);
         return {
-          rowClass: 'is-due-soon',
+          status: 'warning',
+          priorityRank: 2,
+          diffMs: diffMs,
+          rowClass: 'is-warning',
           html: `
             <div class="mt-1 inline-flex items-center gap-1 text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-amber-100 text-amber-800 border border-amber-300">
-              ⚡ DUE TODAY
+              ⚠️ Due in ${remainingText}
             </div>
             <div class="text-[10px] font-semibold text-amber-700 mt-0.5">Est: ${estDoneStr}</div>
           `
         };
-      } else if (diffDays === 1) {
-        return {
-          rowClass: 'is-due-soon',
-          html: `
-            <div class="mt-1 inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-md bg-yellow-50 text-amber-700 border border-amber-200">
-              ⏳ H-1 Besok
-            </div>
-            <div class="text-[10px] text-slate-500 mt-0.5">Est: ${estDoneStr}</div>
-          `
-        };
       }
 
+      // 3. NORMAL (> 3 hari)
       return {
+        status: 'normal',
+        priorityRank: 3,
+        diffMs: diffMs,
         rowClass: '',
         html: `<div class="text-[10px] text-slate-400 mt-0.5">📅 Est: ${estDoneStr}</div>`
       };
+    }
+
+    function quickFilterByCard(filterValue) {
+      const filterEl = document.getElementById('filterState');
+      if (!filterEl) return;
+      filterEl.value = filterValue;
+      renderTable();
+    }
+
+    function updateActiveCardHighlight(currentFilter) {
+      const cards = {
+        'ALL': document.getElementById('cardStatTotal'),
+        'New': document.getElementById('cardStatNew'),
+        'ACTIVE_ONLY': document.getElementById('cardStatOngoing'),
+        'Done': document.getElementById('cardStatDone'),
+        'OVERDUE_ONLY': document.getElementById('cardStatOverdue')
+      };
+
+      Object.entries(cards).forEach(([key, el]) => {
+        if (!el) return;
+        if (key === currentFilter) {
+          el.classList.add('ring-2', 'ring-indigo-500', 'ring-offset-1');
+        } else {
+          el.classList.remove('ring-2', 'ring-indigo-500', 'ring-offset-1');
+        }
+      });
+    }
+
+    function updateStats() {
+      const t = getVisibleTickets();
+      document.getElementById('statTotal').textContent = t.length;
+      document.getElementById('statNew').textContent = t.filter(x => (x['State'] || '').toLowerCase() === 'new').length;
+      document.getElementById('statProgress').textContent = t.filter(x => ['in progress', 'test & review', 'deployment'].includes((x['State'] || '').toLowerCase())).length;
+      document.getElementById('statDone').textContent = t.filter(x => (x['State'] || '').toLowerCase() === 'done').length;
+      document.getElementById('statOverdue').textContent = t.filter(x => getTicketSlaStatus(x).status === 'overdue').length;
     }
 
     function renderTable() {
@@ -1442,26 +1520,42 @@
       const kw = document.getElementById('searchBox').value.toLowerCase();
       const stFilter = document.getElementById('filterState').value;
 
-      const filtered = getVisibleTickets().filter(t => {
-        const stateLower = (t['State'] || '').trim().toLowerCase();
-        let matchSt = true;
+      updateActiveCardHighlight(stFilter);
 
-        if (stFilter === 'ACTIVE_ONLY') {
-          matchSt = stateLower !== 'done' && stateLower !== 'cancel';
-        } else if (stFilter !== 'ALL' && stFilter !== '') {
-          matchSt = stateLower === stFilter.toLowerCase();
-        }
+      const filtered = getVisibleTickets()
+        .map(t => ({ ticket: t, sla: getTicketSlaStatus(t) }))
+        .filter(({ ticket: t, sla }) => {
+          const stateLower = (t['State'] || '').trim().toLowerCase();
+          let matchSt = true;
 
-        const text = `${t['Issue ID']} ${t['Request Access-Module-Support']} ${t['Description']} ${t['Full Name']} ${t['Assigned']} ${t['Assigned 2']}`.toLowerCase();
-        return matchSt && (!kw || text.includes(kw));
-      });
+          if (stFilter === 'ACTIVE_ONLY') {
+            matchSt = stateLower !== 'done' && stateLower !== 'cancel';
+          } else if (stFilter === 'OVERDUE_ONLY') {
+            matchSt = sla.status === 'overdue';
+          } else if (stFilter !== 'ALL' && stFilter !== '') {
+            matchSt = stateLower === stFilter.toLowerCase();
+          }
+
+          const text = `${t['Issue ID']} ${t['Request Access-Module-Support']} ${t['Description']} ${t['Full Name']} ${t['Assigned']} ${t['Assigned 2']}`.toLowerCase();
+          return matchSt && (!kw || text.includes(kw));
+        })
+        // Auto-Sort: Overdue paling atas, lalu Warning H-3, lalu sisanya urut waktu terdekat
+        .sort((a, b) => {
+          if (a.sla.priorityRank !== b.sla.priorityRank) {
+            return a.sla.priorityRank - b.sla.priorityRank;
+          }
+          if (a.sla.priorityRank < 3 && b.sla.priorityRank < 3) {
+            return a.sla.diffMs - b.sla.diffMs;
+          }
+          return 0;
+        });
 
       if (filtered.length === 0) {
         tbody.innerHTML = `<tr><td colspan="5" class="py-10 text-center text-slate-400">Ticket not found by filter.</td></tr>`;
         return;
       }
 
-      tbody.innerHTML = filtered.slice(0, 60).map(t => {
+      tbody.innerHTML = filtered.slice(0, 60).map(({ ticket: t, sla }) => {
         const badgeClass = getStateColor(t['State']);
         const verifyBadge = t['User Verification']
           ? `<span class="mt-1 inline-block text-[10px] font-bold px-2 py-0.5 rounded ${t['User Verification'].toUpperCase() === 'CONFIRMED' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-rose-50 text-rose-700 border border-rose-200'}">${t['User Verification']}</span>`
@@ -1469,11 +1563,8 @@
         const ratingBadge = t['User Feedback'] ? `<span class="mt-1 inline-block text-[10px] font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-800">⭐ ${t['User Feedback']}/10</span>` : '';
         const picText = t['Assigned 2'] ? `${t['Assigned'] || '-'} & ${t['Assigned 2']}` : (t['Assigned'] || '-');
 
-        // Hitung status Est Done (Overdue / Due Today / Normal)
-        const estInfo = getEstDoneBadgeInfo(t['Est Done'], t['State']);
-
         return `
-          <tr onclick='openTicketModal(${JSON.stringify(t).replace(/'/g, "&#39;")})' class="ticket-row ${estInfo.rowClass} cursor-pointer group">
+          <tr onclick='openTicketModal(${JSON.stringify(t).replace(/'/g, "&#39;")})' class="ticket-row ${sla.rowClass} cursor-pointer group">
             <td class="py-3.5 px-4 font-extrabold text-indigo-600 align-top whitespace-nowrap">
               <div class="flex items-center gap-1">
                 <span>#${t['Issue ID']}</span>
@@ -1494,7 +1585,7 @@
             </td>
             <td class="py-3.5 px-4 align-top">
               <div class="font-bold text-slate-700">${picText}</div>
-              ${estInfo.html}
+              ${sla.html}
             </td>
             <td class="py-3.5 px-4 align-top">
               <span class="inline-block px-2.5 py-1 rounded-full text-[11px] font-bold shadow-2xs ${badgeClass}">${t['State'] || '-'}</span>
@@ -1550,9 +1641,7 @@
       stBadge.textContent = ticketState;
       stBadge.className = `text-xs font-bold px-2.5 py-0.5 rounded-full ${getStateColor(ticketState)}`;
 
-      // =====================================================================
-      // 1. KONFIRMASI USER & PENILAIAN: HANYA DIRENDER JIKA LOGIN === PEMILIK TIKET
-      // =====================================================================
+      // 1. KONFIRMASI USER & PENILAIAN
       const verifyContainer = document.getElementById('userVerificationContainer');
       if (ownerMode) {
         verifyContainer.innerHTML = `
@@ -1612,9 +1701,7 @@
         verifyContainer.innerHTML = '';
       }
 
-      // =====================================================================
-      // 2. PANEL UPDATE ADMIN ITDS (FULL ACCESS)
-      // =====================================================================
+      // 2. PANEL UPDATE ADMIN ITDS
       const adminContainer = document.getElementById('adminPanelContainer');
       if (adminMode) {
         const dd = appData.dropdowns;
@@ -1632,14 +1719,12 @@
             </div>
 
             <div class="p-4 space-y-4 bg-white rounded-b-2xl">
-              <!-- State Pipeline -->
               <div>
                 <label class="block text-xs font-bold text-slate-600 mb-1.5">Update State (Step-by-Step Pipeline)</label>
                 <input type="hidden" id="edit-State">
                 <div id="modalBtnGroup-State" class="arrow-pipeline"></div>
               </div>
 
-              <!-- Ticket Level, Priority, Est Done & Multi-Select Dropdown Sent Mail CC -->
               <div class="bg-slate-50/80 p-3 rounded-xl border border-slate-200/80 space-y-3">
                 <div>
                   <label class="block text-xs font-bold text-slate-700 mb-1.5">Ticket Level</label>
@@ -1689,7 +1774,6 @@
                 </div>
               </div>
 
-              <!-- Assigned 1, Assigned 2 & Ticket Type -->
               <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
                   <label class="block text-xs font-semibold text-slate-600 mb-1">Assigned 1</label>
@@ -1705,7 +1789,6 @@
                 </div>
               </div>
 
-              <!-- Notes & SA Note -->
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label class="block text-xs font-semibold text-slate-600 mb-1">Notes (Catatan Admin)</label>
@@ -1717,7 +1800,6 @@
                 </div>
               </div>
 
-              <!-- Cost & Date Done -->
               <div class="grid grid-cols-2 gap-3">
                 <div>
                   <label class="block text-xs font-semibold text-slate-600 mb-1">Cost (Admin)</label>
@@ -1732,7 +1814,6 @@
           </div>
         `;
 
-        // Isi multi-select dropdown Sent Mail CC pada Modal Edit
         populateCcDropdownOptions('edit', ticket['Sent Mail CC'] || '');
 
         renderArrowPipeline('modalBtnGroup-State', orderedStates, 'edit-State', (newSt) => {
