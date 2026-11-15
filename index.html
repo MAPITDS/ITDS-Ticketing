@@ -1610,6 +1610,12 @@
       if (s === 'cancel') return 'bg-rose-100 text-rose-800';
       return 'bg-amber-100 text-amber-800';
     }
+    // Helper untuk membuat textarea otomatis menyesuaikan tinggi dengan panjang teks
+    function autoResizeTextarea(el) {
+      if (!el) return;
+      el.style.height = 'auto';
+      el.style.height = Math.max(el.scrollHeight, 62) + 'px';
+    }
 
     function openTicketModal(ticket) {
       currentEditingTicket = ticket;
@@ -1795,17 +1801,17 @@
                 </div>
               </div>
 
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label class="block text-xs font-semibold text-slate-600 mb-1">Notes (Catatan Admin)</label>
-                  <textarea id="edit-Notes" rows="2" class="w-full text-xs border border-slate-300 rounded-lg px-2.5 py-1.5"></textarea>
-                </div>
-                <div>
-                  <label class="block text-xs font-semibold text-slate-600 mb-1">SA Note (System Analyst)</label>
-                  <textarea id="edit-SANote" rows="2" class="w-full text-xs border border-slate-300 rounded-lg px-2.5 py-1.5"></textarea>
-                </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">SA Note (System Analyst)</label>
+                <textarea id="edit-SANote" rows="2" oninput="autoResizeTextarea(this)"
+                  class="w-full text-xs border border-slate-300 rounded-lg px-2.5 py-2 resize-none overflow-hidden leading-relaxed"></textarea>
               </div>
-
+              <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Notes (Catatan Admin)</label>
+                <textarea id="edit-Notes" rows="2" oninput="autoResizeTextarea(this)"
+                  class="w-full text-xs border border-slate-300 rounded-lg px-2.5 py-2 resize-none overflow-hidden leading-relaxed"></textarea>
+              </div>
+                
               <div class="grid grid-cols-2 gap-3">
                 <div>
                   <label class="block text-xs font-semibold text-slate-600 mb-1">Cost (Admin)</label>
@@ -1855,6 +1861,13 @@
         document.getElementById('edit-SANote').value = ticket['SA Note'] || '';
         document.getElementById('edit-Cost').value = ticket['Cost'] || '';
         document.getElementById('edit-DateDone').value = ticket['Date Done'] || 'Auto set on state Done';
+        const notesEl = document.getElementById('edit-Notes');
+        const saNoteEl = document.getElementById('edit-SANote');
+
+        notesEl.value = ticket['Notes'] || '';
+        saNoteEl.value = ticket['SA Note'] || '';
+        document.getElementById('edit-Cost').value = ticket['Cost'] || '';
+        document.getElementById('edit-DateDone').value = ticket['Date Done'] || 'Auto set on state Done';
       } else {
         adminContainer.innerHTML = ticket['Notes']
           ? `<div class="bg-blue-50/70 border border-blue-200 rounded-xl p-3 text-xs text-blue-900"><strong>Notes ITDS:</strong> ${ticket['Notes']}</div>`
@@ -1869,6 +1882,11 @@
       }
 
       document.getElementById('ticketModal').classList.remove('hidden');
+      // Hitung ulang tinggi Notes & SA Note setelah modal tampil di layar
+      if (adminMode) {
+        autoResizeTextarea(document.getElementById('edit-Notes'));
+        autoResizeTextarea(document.getElementById('edit-SANote'));
+      }
     }
 
     function closeModal() {
