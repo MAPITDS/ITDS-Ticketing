@@ -595,6 +595,135 @@
       </form>
     </div>
   </div>
+  <!-- =========================================================
+       5. MODAL ADMIN: MANAGE USERS (TAMBAH & EDIT MASTER USER)
+  ========================================================== -->
+  <div id="userManagerModal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl max-w-5xl w-full shadow-2xl border border-slate-200 overflow-hidden my-6 animate-fade">
+      <!-- Header -->
+      <div class="bg-slate-900 text-white px-6 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-2.5">
+          <span class="w-8 h-8 rounded-lg bg-amber-400 text-slate-900 flex items-center justify-center font-black text-sm">👥</span>
+          <div>
+            <h3 class="font-bold text-sm sm:text-base">Manage Users (Master Data)</h3>
+            <p class="text-[11px] text-slate-300">Tambah akun baru, ubah profil/company, ganti role, atau reset password</p>
+          </div>
+        </div>
+        <button onclick="closeUserManagerModal()" class="text-slate-300 hover:text-white text-2xl font-bold px-2">&times;</button>
+      </div>
+
+      <!-- Body: Split Kiri (Form) & Kanan (Tabel User) -->
+      <div class="p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 max-h-[82vh] overflow-y-auto">
+
+        <!-- KIRI: FORM TAMBAH / EDIT USER (5 Kolom) -->
+        <div class="lg:col-span-5 bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-3.5 h-fit">
+          <div class="flex items-center justify-between border-b border-slate-200 pb-2.5">
+            <h4 id="umFormTitle" class="text-xs font-extrabold uppercase tracking-wider text-indigo-700">
+              ➕ Add New User
+            </h4>
+            <button type="button" id="btnUmResetForm" onclick="resetUserFormToCreate()"
+              class="hidden text-[11px] font-bold text-rose-600 hover:underline">
+              + Mode Tambah Baru
+            </button>
+          </div>
+
+          <form id="adminUserForm" class="space-y-3">
+            <input type="hidden" id="umMode" value="create">
+            <input type="hidden" id="umOriginalEmail" value="">
+
+            <div class="grid grid-cols-2 gap-2.5">
+              <div>
+                <label class="block text-[11px] font-bold text-slate-700 mb-1">User ID</label>
+                <input type="text" id="umUserId" placeholder="Contoh: USR-01"
+                  class="w-full text-xs border border-slate-300 rounded-xl px-3 py-2 bg-white focus:ring-2 focus:ring-indigo-500 outline-none">
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-slate-700 mb-1">Role *</label>
+                <select id="umRole" required
+                  class="w-full text-xs font-bold border border-slate-300 rounded-xl px-3 py-2 bg-white focus:ring-2 focus:ring-indigo-500 outline-none">
+                  <option value="User">👤 User</option>
+                  <option value="Admin">🛡️ Admin</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">Full Name *</label>
+              <input type="text" id="umName" required placeholder="Nama lengkap karyawan"
+                class="w-full text-xs border border-slate-300 rounded-xl px-3 py-2 bg-white focus:ring-2 focus:ring-indigo-500 outline-none">
+            </div>
+
+            <div>
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">Email Login *</label>
+              <input type="email" id="umEmail" required placeholder="nama@mitraasa.co.id"
+                class="w-full text-xs border border-slate-300 rounded-xl px-3 py-2 bg-white focus:ring-2 focus:ring-indigo-500 outline-none">
+            </div>
+
+            <div class="grid grid-cols-2 gap-2.5">
+              <div>
+                <label class="block text-[11px] font-bold text-slate-700 mb-1">Phone / WA</label>
+                <input type="text" id="umPhone" placeholder="0812xxxx"
+                  class="w-full text-xs border border-slate-300 rounded-xl px-3 py-2 bg-white focus:ring-2 focus:ring-indigo-500 outline-none">
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-slate-700 mb-1">Company *</label>
+                <select id="umCompany" required
+                  class="w-full text-xs border border-slate-300 rounded-xl px-3 py-2 bg-white focus:ring-2 focus:ring-indigo-500 outline-none">
+                  <option value="">-- Company --</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">
+                Password <span id="umPassHint" class="text-slate-400 font-normal">(Wajib untuk user baru)</span>
+              </label>
+              <input type="text" id="umPassword" placeholder="Isi password awal / reset password..."
+                class="w-full text-xs border border-slate-300 rounded-xl px-3 py-2 bg-white focus:ring-2 focus:ring-indigo-500 outline-none">
+            </div>
+
+            <div id="umAlertBox" class="hidden text-xs font-semibold rounded-xl px-3 py-2 text-center"></div>
+
+            <button type="submit" id="btnUmSubmit"
+              class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-xl shadow text-xs transition">
+              ➕ Simpan User Baru
+            </button>
+          </form>
+        </div>
+
+        <!-- KANAN: DAFTAR SEMUA USER (7 Kolom) -->
+        <div class="lg:col-span-7 flex flex-col space-y-3">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <input type="text" id="umSearchBox" onkeyup="renderUserManagerTable()" placeholder="Cari nama, email, company, atau role..."
+              class="flex-1 min-w-[200px] text-xs border border-slate-300 rounded-xl px-3.5 py-2 focus:ring-2 focus:ring-indigo-500 outline-none">
+            <button type="button" onclick="fetchUsersForAdmin()"
+              class="text-xs font-bold px-3 py-2 rounded-xl border border-slate-300 hover:bg-slate-50 text-slate-700">
+              ↻ Refresh List
+            </button>
+          </div>
+
+          <div class="border border-slate-200 rounded-2xl overflow-hidden">
+            <div class="max-h-[420px] overflow-y-auto">
+              <table class="w-full text-left border-collapse">
+                <thead class="bg-slate-100 sticky top-0 z-10 border-b border-slate-200 text-[11px] font-bold text-slate-600 uppercase">
+                  <tr>
+                    <th class="py-2.5 px-3">User & Email</th>
+                    <th class="py-2.5 px-3">Company / WA</th>
+                    <th class="py-2.5 px-3">Role</th>
+                    <th class="py-2.5 px-3 text-right">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="umTableBody" class="divide-y divide-slate-100 text-xs">
+                  <tr><td colspan="4" class="py-8 text-center text-slate-400">Memuat data user...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
 
   <script>
     const GAS_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbxAOhY0ARkSYuhHszf7TlA9sZYyKpXBGateVUImm0KtLvfnssXEBVrSfpVKsYy6ffD-aA/exec';
@@ -1020,6 +1149,195 @@
       } finally {
         btn.disabled = false;
         btn.textContent = 'Update Password';
+      }
+    });
+    // ==========================================
+    // ADMIN: MANAGE USERS (CRUD MASTER USER)
+    // ==========================================
+    let adminUsersCache = [];
+
+    function openUserManagerModal() {
+      if (!isAdminUser()) return;
+      fillSelect('umCompany', (appData.dropdowns && appData.dropdowns['Company']) || [], '-- Choose Company --');
+      resetUserFormToCreate();
+      document.getElementById('userManagerModal').classList.remove('hidden');
+      fetchUsersForAdmin();
+    }
+
+    function closeUserManagerModal() {
+      document.getElementById('userManagerModal').classList.add('hidden');
+    }
+
+    async function fetchUsersForAdmin() {
+      const tbody = document.getElementById('umTableBody');
+      tbody.innerHTML = `<tr><td colspan="4" class="py-8 text-center text-slate-400">⏳ Mengambil daftar user dari Google Sheet...</td></tr>`;
+
+      try {
+        const res = await fetch(GAS_WEBAPP_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'getUsers' })
+        });
+        const result = await res.json();
+        if (result.status === 'success') {
+          adminUsersCache = result.users || [];
+          renderUserManagerTable();
+        } else {
+          tbody.innerHTML = `<tr><td colspan="4" class="py-8 text-center text-rose-500">${result.message || 'Gagal memuat user'}</td></tr>`;
+        }
+      } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="4" class="py-8 text-center text-rose-500">Error: ${err.message}</td></tr>`;
+      }
+    }
+
+    function renderUserManagerTable() {
+      const tbody = document.getElementById('umTableBody');
+      const kw = (document.getElementById('umSearchBox')?.value || '').toLowerCase();
+
+      const filtered = adminUsersCache.filter(u =>
+        `${u.userId} ${u.name} ${u.email} ${u.company} ${u.role} ${u.phone}`.toLowerCase().includes(kw)
+      );
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" class="py-8 text-center text-slate-400">User tidak ditemukan.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(u => {
+        const isAdm = (u.role || '').toLowerCase().includes('admin');
+        const roleBadge = isAdm
+          ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-indigo-100 text-indigo-800">🛡️ Admin</span>`
+          : `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700">👤 User</span>`;
+
+        return `
+          <tr class="hover:bg-indigo-50/50 transition">
+            <td class="py-2.5 px-3">
+              <div class="font-bold text-slate-800">${u.name || '-'} <span class="text-[10px] text-slate-400 font-normal">${u.userId ? `(${u.userId})` : ''}</span></div>
+              <div class="text-[11px] text-indigo-600">${u.email}</div>
+            </td>
+            <td class="py-2.5 px-3">
+              <div class="font-semibold text-slate-700">${u.company || '-'}</div>
+              <div class="text-[10px] text-slate-400">${u.phone || '-'}</div>
+            </td>
+            <td class="py-2.5 px-3">${roleBadge}</td>
+            <td class="py-2.5 px-3 text-right">
+              <button type="button" onclick='selectUserToEdit(${JSON.stringify(u).replace(/'/g, "&#39;")})'
+                class="text-[11px] font-bold px-2.5 py-1 rounded-lg bg-indigo-50 hover:bg-indigo-600 text-indigo-700 hover:text-white border border-indigo-200 transition">
+                ✏️ Edit
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function selectUserToEdit(user) {
+      document.getElementById('umMode').value = 'edit';
+      document.getElementById('umOriginalEmail').value = user.email;
+      document.getElementById('umFormTitle').textContent = `✏️ Edit User: ${user.name}`;
+      document.getElementById('umFormTitle').className = 'text-xs font-extrabold uppercase tracking-wider text-amber-700';
+      document.getElementById('btnUmResetForm').classList.remove('hidden');
+
+      document.getElementById('umUserId').value = user.userId || '';
+      document.getElementById('umName').value = user.name || '';
+      document.getElementById('umEmail').value = user.email || '';
+      document.getElementById('umPhone').value = user.phone || '';
+      document.getElementById('umRole').value = (user.role || '').toLowerCase().includes('admin') ? 'Admin' : 'User';
+
+      const compEl = document.getElementById('umCompany');
+      if (user.company && ![...compEl.options].some(o => o.value === user.company)) {
+        const opt = document.createElement('option');
+        opt.value = user.company;
+        opt.textContent = user.company;
+        compEl.appendChild(opt);
+      }
+      compEl.value = user.company || '';
+
+      const passEl = document.getElementById('umPassword');
+      passEl.value = '';
+      passEl.required = false;
+      passEl.placeholder = 'Kosongkan jika tidak ingin ganti password';
+      document.getElementById('umPassHint').textContent = '(Opsional — isi untuk reset password)';
+
+      const btn = document.getElementById('btnUmSubmit');
+      btn.textContent = '💾 Update Data User';
+      btn.className = 'w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-2.5 rounded-xl shadow text-xs transition';
+      document.getElementById('umAlertBox').classList.add('hidden');
+    }
+
+    function resetUserFormToCreate() {
+      document.getElementById('adminUserForm').reset();
+      document.getElementById('umMode').value = 'create';
+      document.getElementById('umOriginalEmail').value = '';
+      document.getElementById('umFormTitle').textContent = '➕ Add New User';
+      document.getElementById('umFormTitle').className = 'text-xs font-extrabold uppercase tracking-wider text-indigo-700';
+      document.getElementById('btnUmResetForm').classList.add('hidden');
+
+      const passEl = document.getElementById('umPassword');
+      passEl.required = true;
+      passEl.placeholder = 'Minimal 4 karakter';
+      document.getElementById('umPassHint').textContent = '(Wajib untuk user baru)';
+
+      const btn = document.getElementById('btnUmSubmit');
+      btn.textContent = '➕ Simpan User Baru';
+      btn.className = 'w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-xl shadow text-xs transition';
+      document.getElementById('umAlertBox').classList.add('hidden');
+    }
+
+    document.getElementById('adminUserForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const mode = document.getElementById('umMode').value;
+      const alertBox = document.getElementById('umAlertBox');
+      const btn = document.getElementById('btnUmSubmit');
+
+      alertBox.classList.add('hidden');
+      btn.disabled = true;
+      btn.textContent = '⏳ Menyimpan ke Sheet...';
+
+      const payload = {
+        action: mode === 'edit' ? 'adminUpdateUser' : 'createUser',
+        originalEmail: document.getElementById('umOriginalEmail').value,
+        userId: document.getElementById('umUserId').value.trim(),
+        name: document.getElementById('umName').value.trim(),
+        email: document.getElementById('umEmail').value.trim(),
+        phone: document.getElementById('umPhone').value.trim(),
+        company: document.getElementById('umCompany').value,
+        role: document.getElementById('umRole').value
+      };
+
+      const passVal = document.getElementById('umPassword').value.trim();
+      if (mode === 'edit') {
+        payload.newPassword = passVal;
+      } else {
+        payload.password = passVal;
+      }
+
+      try {
+        const res = await fetch(GAS_WEBAPP_URL, {
+          method: 'POST',
+          body: JSON.stringify(payload)
+        });
+        const result = await res.json();
+
+        if (result.status === 'success') {
+          alertBox.textContent = '✅ ' + result.message;
+          alertBox.className = 'text-xs font-semibold rounded-xl px-3 py-2 text-center bg-emerald-50 text-emerald-700 border border-emerald-200';
+          alertBox.classList.remove('hidden');
+
+          await fetchUsersForAdmin();
+          loadSheetData(); // Refresh dropdown Sent Mail CC agar user baru ikut muncul
+          if (mode === 'create') resetUserFormToCreate();
+        } else {
+          alertBox.textContent = '❌ ' + (result.message || 'Gagal menyimpan data user.');
+          alertBox.className = 'text-xs font-semibold rounded-xl px-3 py-2 text-center bg-rose-50 text-rose-600 border border-rose-200';
+          alertBox.classList.remove('hidden');
+        }
+      } catch (err) {
+        alertBox.textContent = 'Error: ' + err.message;
+        alertBox.className = 'text-xs font-semibold rounded-xl px-3 py-2 text-center bg-rose-50 text-rose-600 border border-rose-200';
+        alertBox.classList.remove('hidden');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = mode === 'edit' ? '💾 Update Data User' : '➕ Simpan User Baru';
       }
     });
 
