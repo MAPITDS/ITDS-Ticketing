@@ -50,7 +50,7 @@
       padding-right: 0.95rem;
       clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 10px 50%);
     }
-    .arrow-step:hover:not(.active) {
+    .arrow-step:hover:not(.active):not(:disabled) {
       background-color: #e2e8f0;
       color: #1e293b;
     }
@@ -208,7 +208,7 @@
             🔑 Change Password
           </button>
 
-          <button id="btnNavManageUsers" onclick="openUserManagerModal()" title="Kelola Master User"
+          <button id="btnNavManageUsers" onclick="openUserManagerModal()" title="Master User Directory"
             class="hidden bg-amber-400 hover:bg-amber-300 text-slate-900 text-xs font-extrabold px-3 py-1.5 rounded-lg shadow-xs transition">
             👥 Manage Users
           </button>
@@ -361,11 +361,11 @@
             </div>
           </div>
 
-          <!-- BAGIAN KHUSUS ADMIN SAAT CREATE TICKET -->
+          <!-- BAGIAN KHUSUS ADMIN / FULL SAAT CREATE TICKET -->
           <div id="adminCreateFields" class="hidden border-t pt-4 space-y-4">
             <div class="flex items-center justify-between bg-indigo-50/80 px-3 py-2 rounded-xl border border-indigo-100">
               <span class="text-xs font-extrabold text-indigo-800 uppercase tracking-wider">🛡️ Admin ITDS Configuration</span>
-              <span class="text-[10px] text-indigo-600 font-semibold">Full Access</span>
+              <span id="adminCreateRoleBadge" class="text-[10px] text-indigo-600 font-semibold">Full Access</span>
             </div>
 
             <div>
@@ -390,22 +390,25 @@
               </div>
             </div>
 
-            <div>
-              <label class="block text-xs font-bold text-slate-700 mb-1.5">Ticket Level</label>
-              <input type="hidden" name="Ticket Level" id="val-Ticket Level">
-              <div id="btnGroup-Ticket Level" class="flex flex-wrap gap-1.5"></div>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
-              <div class="sm:col-span-7">
-                <label class="block text-xs font-bold text-slate-700 mb-1.5">Priority</label>
-                <input type="hidden" name="Priority" id="val-Priority">
-                <div id="btnGroup-Priority" class="flex flex-wrap gap-1.5"></div>
+            <!-- KHUSUS ROLE FULL: TICKET LEVEL, PRIORITY, EST DONE -->
+            <div id="fullOnlyCreateSlaSection" class="space-y-4">
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">Ticket Level</label>
+                <input type="hidden" name="Ticket Level" id="val-Ticket Level">
+                <div id="btnGroup-Ticket Level" class="flex flex-wrap gap-1.5"></div>
               </div>
-              <div class="sm:col-span-5">
-                <label class="block text-[11px] font-bold text-slate-600 mb-1.5">Est Done (Auto)</label>
-                <input type="text" name="Est Done" id="val-EstDone" placeholder="Auto-calculated" readonly
-                  class="w-full text-xs font-bold text-indigo-700 bg-slate-100 border border-indigo-200 rounded-xl px-3 py-2 outline-none cursor-not-allowed select-none">
+
+              <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
+                <div class="sm:col-span-7">
+                  <label class="block text-xs font-bold text-slate-700 mb-1.5">Priority</label>
+                  <input type="hidden" name="Priority" id="val-Priority">
+                  <div id="btnGroup-Priority" class="flex flex-wrap gap-1.5"></div>
+                </div>
+                <div class="sm:col-span-5">
+                  <label class="block text-[11px] font-bold text-slate-600 mb-1.5">Est Done (Auto)</label>
+                  <input type="text" name="Est Done" id="val-EstDone" placeholder="Auto-calculated" readonly
+                    class="w-full text-xs font-bold text-indigo-700 bg-slate-100 border border-indigo-200 rounded-xl px-3 py-2 outline-none cursor-not-allowed select-none">
+                </div>
               </div>
             </div>
 
@@ -600,8 +603,9 @@
       </form>
     </div>
   </div>
+
   <!-- =========================================================
-       5. MODAL ADMIN: MANAGE USERS (TAMBAH & EDIT MASTER USER)
+       5. MODAL ADMIN / FULL: MANAGE USERS (MASTER USER)
   ========================================================== -->
   <div id="userManagerModal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
     <div class="bg-white rounded-2xl max-w-5xl w-full shadow-2xl border border-slate-200 overflow-hidden my-6 animate-fade">
@@ -610,18 +614,18 @@
         <div class="flex items-center gap-2.5">
           <span class="w-8 h-8 rounded-lg bg-amber-400 text-slate-900 flex items-center justify-center font-black text-sm">👥</span>
           <div>
-            <h3 class="font-bold text-sm sm:text-base">Manage Users (Master Data)</h3>
-            <p class="text-[11px] text-slate-300">Tambah akun baru, ubah profil/company, ganti role, atau reset password</p>
+            <h3 id="umModalHeaderTitle" class="font-bold text-sm sm:text-base">Manage Users (Master Data)</h3>
+            <p id="umModalHeaderSubtitle" class="text-[11px] text-slate-300">Tambah akun baru, ubah profil/company, ganti role, atau reset password</p>
           </div>
         </div>
         <button onclick="closeUserManagerModal()" class="text-slate-300 hover:text-white text-2xl font-bold px-2">&times;</button>
       </div>
 
-      <!-- Body: Split Kiri (Form) & Kanan (Tabel User) -->
+      <!-- Body: Split Kiri (Form Khusus Full) & Kanan (Tabel User) -->
       <div class="p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 max-h-[82vh] overflow-y-auto">
 
-        <!-- KIRI: FORM TAMBAH / EDIT USER (5 Kolom) -->
-        <div class="lg:col-span-5 bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-3.5 h-fit">
+        <!-- KIRI: FORM TAMBAH / EDIT USER (Hanya tampil untuk role Full) -->
+        <div id="umFormColumn" class="lg:col-span-5 bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-3.5 h-fit">
           <div class="flex items-center justify-between border-b border-slate-200 pb-2.5">
             <h4 id="umFormTitle" class="text-xs font-extrabold uppercase tracking-wider text-indigo-700">
               ➕ Add New User
@@ -648,6 +652,7 @@
                   class="w-full text-xs font-bold border border-slate-300 rounded-xl px-3 py-2 bg-white focus:ring-2 focus:ring-indigo-500 outline-none">
                   <option value="User">👤 User</option>
                   <option value="Admin">🛡️ Admin</option>
+                  <option value="Full">👑 Full</option>
                 </select>
               </div>
             </div>
@@ -696,8 +701,8 @@
           </form>
         </div>
 
-        <!-- KANAN: DAFTAR SEMUA USER (7 Kolom) -->
-        <div class="lg:col-span-7 flex flex-col space-y-3">
+        <!-- KANAN: DAFTAR SEMUA USER -->
+        <div id="umListColumn" class="lg:col-span-7 flex flex-col space-y-3">
           <div class="flex flex-wrap items-center justify-between gap-2">
             <input type="text" id="umSearchBox" onkeyup="renderUserManagerTable()" placeholder="Cari nama, email, company, atau role..."
               class="flex-1 min-w-[200px] text-xs border border-slate-300 rounded-xl px-3.5 py-2 focus:ring-2 focus:ring-indigo-500 outline-none">
@@ -715,7 +720,7 @@
                     <th class="py-2.5 px-3">User & Email</th>
                     <th class="py-2.5 px-3">Company / WA</th>
                     <th class="py-2.5 px-3">Role</th>
-                    <th class="py-2.5 px-3 text-right">Action</th>
+                    <th id="umActionHeader" class="py-2.5 px-3 text-right">Action</th>
                   </tr>
                 </thead>
                 <tbody id="umTableBody" class="divide-y divide-slate-100 text-xs">
@@ -902,7 +907,7 @@
     }
 
     // ==========================================
-    // 1. AUTENTIKASI & ROLE MANAGEMENT
+    // 1. AUTENTIKASI & 3-ROLE MANAGEMENT (USER / ADMIN / FULL)
     // ==========================================
     function checkSession() {
       const saved = localStorage.getItem(STORAGE_KEY);
@@ -947,7 +952,7 @@
         errBox.classList.remove('hidden');
       } finally {
         btn.disabled = false;
-        btn.textContent = 'Masuk ke Portal →';
+        btn.textContent = 'Login →';
       }
     });
 
@@ -959,8 +964,18 @@
       document.getElementById('loginScreen').classList.remove('hidden');
     }
 
+    // Mengecek apakah user memiliki akses penuh ('Full')
+    function isFullAccessUser() {
+      if (!currentUser) return false;
+      const r = (currentUser.role || '').trim().toLowerCase();
+      return r === 'full' || r.includes('full');
+    }
+
+    // Mengecek apakah user adalah Staff ITDS (baik role 'Admin' maupun 'Full')
     function isAdminUser() {
-      return currentUser && (currentUser.role || '').toLowerCase().includes('admin');
+      if (!currentUser) return false;
+      const r = (currentUser.role || '').trim().toLowerCase();
+      return r.includes('admin') || r === 'full' || r.includes('full');
     }
 
     function isOwnerOfTicket(ticket) {
@@ -1015,6 +1030,9 @@
         return;
       }
 
+      const fullMode = isFullAccessUser();
+      const defaultTitle = fullMode ? 'All Tickets (Full Access)' : 'All Tickets (Admin Access)';
+
       btn.classList.remove('hidden');
       btn.classList.add('inline-flex');
 
@@ -1032,7 +1050,7 @@
       } else {
         btn.className = 'inline-flex items-center gap-1.5 text-xs font-bold px-3.5 py-2 rounded-xl border border-slate-300 bg-white text-slate-700 hover:border-indigo-500 hover:text-indigo-700 transition shadow-2xs';
         countBadge.className = 'px-1.5 py-0.5 text-[10px] rounded-full bg-indigo-50 text-indigo-700 font-extrabold';
-        heading.textContent = 'All Tickets (Admin Full Access)';
+        heading.textContent = defaultTitle;
         subtitle.textContent = 'Default filter (Open Tickets)';
       }
     }
@@ -1042,27 +1060,36 @@
       document.getElementById('appScreen').classList.remove('hidden');
 
       const adminMode = isAdminUser();
+      const fullMode = isFullAccessUser();
       filterAssignedToMe = adminMode;
-      
+
       const btnManageUsers = document.getElementById('btnNavManageUsers');
       if (btnManageUsers) {
-        adminMode ? btnManageUsers.classList.remove('hidden') : btnManageUsers.classList.add('hidden');
+        if (adminMode) {
+          btnManageUsers.classList.remove('hidden');
+          btnManageUsers.textContent = fullMode ? '👥 Manage Users' : '👥 Users Directory';
+        } else {
+          btnManageUsers.classList.add('hidden');
+        }
       }
 
       document.getElementById('navUserName').textContent = currentUser.name;
-      document.getElementById('navUserRole').textContent = adminMode ? '🛡️ Admin ITDS (Full Access)' : '👤 User';
+      document.getElementById('navUserRole').textContent = fullMode
+        ? '👑 Full Access (ITDS)'
+        : (adminMode ? '🛡️ Admin ITDS' : '👤 User');
 
       applyUserAutoFillAndPermissions();
 
-      document.getElementById('tableHeadingTitle').textContent = adminMode
-        ? 'All Tickets (Admin Full Access)'
-        : 'My Ticket Lists';
+      document.getElementById('tableHeadingTitle').textContent = fullMode
+        ? 'All Tickets (Full Access)'
+        : (adminMode ? 'All Tickets (Admin Access)' : 'My Ticket Lists');
 
       loadSheetData();
     }
 
     function applyUserAutoFillAndPermissions() {
       const adminMode = isAdminUser();
+      const fullMode = isFullAccessUser();
 
       const fullNameEl = document.getElementById('form-FullName');
       const emailEl    = document.getElementById('form-CreatedBy');
@@ -1091,7 +1118,18 @@
         compEl.classList.add('bg-white');
         document.getElementById('badgeAutoFillLock').classList.add('hidden');
         document.getElementById('adminCreateFields').classList.remove('hidden');
-        document.getElementById('formSubtitle').textContent = 'Admin Mode: Full Access all tickets parameter';
+
+        const roleBadgeEl = document.getElementById('adminCreateRoleBadge');
+        const fullSlaSec = document.getElementById('fullOnlyCreateSlaSection');
+        if (fullMode) {
+          if (roleBadgeEl) roleBadgeEl.textContent = '👑 Full Access';
+          if (fullSlaSec) fullSlaSec.classList.remove('hidden');
+          document.getElementById('formSubtitle').textContent = 'Full Mode: Full Access all tickets parameter';
+        } else {
+          if (roleBadgeEl) roleBadgeEl.textContent = '🛡️ Admin Mode';
+          if (fullSlaSec) fullSlaSec.classList.add('hidden');
+          document.getElementById('formSubtitle').textContent = 'Admin Mode: Ticket Level, Priority & Closing restricted to Full role';
+        }
       }
     }
 
@@ -1161,15 +1199,38 @@
         btn.textContent = 'Update Password';
       }
     });
+
     // ==========================================
-    // ADMIN: MANAGE USERS (CRUD MASTER USER)
+    // ADMIN / FULL: MANAGE USERS (CRUD KHUSUS FULL, VIEW-ONLY UNTUK ADMIN)
     // ==========================================
     let adminUsersCache = [];
 
     function openUserManagerModal() {
       if (!isAdminUser()) return;
-      fillSelect('umCompany', (appData.dropdowns && appData.dropdowns['Company']) || [], '-- Choose Company --');
-      resetUserFormToCreate();
+      const fullMode = isFullAccessUser();
+      const formCol = document.getElementById('umFormColumn');
+      const listCol = document.getElementById('umListColumn');
+      const actionHeader = document.getElementById('umActionHeader');
+      const headerTitle = document.getElementById('umModalHeaderTitle');
+      const headerSubtitle = document.getElementById('umModalHeaderSubtitle');
+
+      if (fullMode) {
+        formCol.classList.remove('hidden');
+        listCol.className = 'lg:col-span-7 flex flex-col space-y-3';
+        actionHeader.classList.remove('hidden');
+        headerTitle.textContent = 'Manage Users (Master Data)';
+        headerSubtitle.textContent = 'Tambah akun baru, ubah profil/company, ganti role, atau reset password';
+        fillSelect('umCompany', (appData.dropdowns && appData.dropdowns['Company']) || [], '-- Choose Company --');
+        resetUserFormToCreate();
+      } else {
+        // Mode View-Only (Read-Only) untuk Admin biasa
+        formCol.classList.add('hidden');
+        listCol.className = 'lg:col-span-12 flex flex-col space-y-3';
+        actionHeader.classList.add('hidden');
+        headerTitle.textContent = 'Users Directory (View-Only)';
+        headerSubtitle.textContent = 'Daftar akun terdaftar • Penambahan & perubahan data user hanya dapat dilakukan oleh role Full';
+      }
+
       document.getElementById('userManagerModal').classList.remove('hidden');
       fetchUsersForAdmin();
     }
@@ -1180,7 +1241,8 @@
 
     async function fetchUsersForAdmin() {
       const tbody = document.getElementById('umTableBody');
-      tbody.innerHTML = `<tr><td colspan="4" class="py-8 text-center text-slate-400">⏳ Mengambil daftar user dari Google Sheet...</td></tr>`;
+      const colCount = isFullAccessUser() ? 4 : 3;
+      tbody.innerHTML = `<tr><td colspan="${colCount}" class="py-8 text-center text-slate-400">⏳ Mengambil daftar user dari Google Sheet...</td></tr>`;
 
       try {
         const res = await fetch(GAS_WEBAPP_URL, {
@@ -1192,31 +1254,44 @@
           adminUsersCache = result.users || [];
           renderUserManagerTable();
         } else {
-          tbody.innerHTML = `<tr><td colspan="4" class="py-8 text-center text-rose-500">${result.message || 'Gagal memuat user'}</td></tr>`;
+          tbody.innerHTML = `<tr><td colspan="${colCount}" class="py-8 text-center text-rose-500">${result.message || 'Gagal memuat user'}</td></tr>`;
         }
       } catch (err) {
-        tbody.innerHTML = `<tr><td colspan="4" class="py-8 text-center text-rose-500">Error: ${err.message}</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="${colCount}" class="py-8 text-center text-rose-500">Error: ${err.message}</td></tr>`;
       }
     }
 
     function renderUserManagerTable() {
       const tbody = document.getElementById('umTableBody');
       const kw = (document.getElementById('umSearchBox')?.value || '').toLowerCase();
+      const fullMode = isFullAccessUser();
+      const colCount = fullMode ? 4 : 3;
 
       const filtered = adminUsersCache.filter(u =>
         `${u.userId} ${u.name} ${u.email} ${u.company} ${u.role} ${u.phone}`.toLowerCase().includes(kw)
       );
 
       if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" class="py-8 text-center text-slate-400">User tidak ditemukan.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="${colCount}" class="py-8 text-center text-slate-400">User tidak ditemukan.</td></tr>`;
         return;
       }
 
       tbody.innerHTML = filtered.map(u => {
-        const isAdm = (u.role || '').toLowerCase().includes('admin');
-        const roleBadge = isAdm
-          ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-indigo-100 text-indigo-800">🛡️ Admin</span>`
-          : `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700">👤 User</span>`;
+        const rLower = (u.role || '').trim().toLowerCase();
+        const roleBadge = (rLower === 'full' || rLower.includes('full'))
+          ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-100 text-amber-800 border border-amber-300">👑 Full</span>`
+          : (rLower.includes('admin')
+              ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-indigo-100 text-indigo-800">🛡️ Admin</span>`
+              : `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700">👤 User</span>`);
+
+        const actionCellHtml = fullMode
+          ? `<td class="py-2.5 px-3 text-right">
+               <button type="button" onclick='selectUserToEdit(${JSON.stringify(u).replace(/'/g, "&#39;")})'
+                 class="text-[11px] font-bold px-2.5 py-1 rounded-lg bg-indigo-50 hover:bg-indigo-600 text-indigo-700 hover:text-white border border-indigo-200 transition">
+                 ✏️ Edit
+               </button>
+             </td>`
+          : '';
 
         return `
           <tr class="hover:bg-indigo-50/50 transition">
@@ -1229,18 +1304,14 @@
               <div class="text-[10px] text-slate-400">${u.phone || '-'}</div>
             </td>
             <td class="py-2.5 px-3">${roleBadge}</td>
-            <td class="py-2.5 px-3 text-right">
-              <button type="button" onclick='selectUserToEdit(${JSON.stringify(u).replace(/'/g, "&#39;")})'
-                class="text-[11px] font-bold px-2.5 py-1 rounded-lg bg-indigo-50 hover:bg-indigo-600 text-indigo-700 hover:text-white border border-indigo-200 transition">
-                ✏️ Edit
-              </button>
-            </td>
+            ${actionCellHtml}
           </tr>
         `;
       }).join('');
     }
 
     function selectUserToEdit(user) {
+      if (!isFullAccessUser()) return;
       document.getElementById('umMode').value = 'edit';
       document.getElementById('umOriginalEmail').value = user.email;
       document.getElementById('umFormTitle').textContent = `✏️ Edit User: ${user.name}`;
@@ -1251,7 +1322,11 @@
       document.getElementById('umName').value = user.name || '';
       document.getElementById('umEmail').value = user.email || '';
       document.getElementById('umPhone').value = user.phone || '';
-      document.getElementById('umRole').value = (user.role || '').toLowerCase().includes('admin') ? 'Admin' : 'User';
+
+      const roleLower = (user.role || '').trim().toLowerCase();
+      document.getElementById('umRole').value = (roleLower === 'full' || roleLower.includes('full'))
+        ? 'Full'
+        : (roleLower.includes('admin') ? 'Admin' : 'User');
 
       const compEl = document.getElementById('umCompany');
       if (user.company && ![...compEl.options].some(o => o.value === user.company)) {
@@ -1295,6 +1370,11 @@
 
     document.getElementById('adminUserForm').addEventListener('submit', async (e) => {
       e.preventDefault();
+      if (!isFullAccessUser()) {
+        alert('⚠️ Akses ditolak: Hanya role Full yang dapat menambah atau mengubah data user.');
+        return;
+      }
+
       const mode = document.getElementById('umMode').value;
       const alertBox = document.getElementById('umAlertBox');
       const btn = document.getElementById('btnUmSubmit');
@@ -1305,6 +1385,7 @@
 
       const payload = {
         action: mode === 'edit' ? 'adminUpdateUser' : 'createUser',
+        requesterRole: currentUser.role,
         originalEmail: document.getElementById('umOriginalEmail').value,
         userId: document.getElementById('umUserId').value.trim(),
         name: document.getElementById('umName').value.trim(),
@@ -1334,7 +1415,7 @@
           alertBox.classList.remove('hidden');
 
           await fetchUsersForAdmin();
-          loadSheetData(); // Refresh dropdown Sent Mail CC agar user baru ikut muncul
+          loadSheetData();
           if (mode === 'create') resetUserFormToCreate();
         } else {
           alertBox.textContent = '❌ ' + (result.message || 'Gagal menyimpan data user.');
@@ -1437,8 +1518,12 @@
         }, '', true);
 
         renderPillButtons('btnGroup-Assigned2', pic2List, 'val-Assigned2', null, '', true);
-        renderPillButtons('btnGroup-Ticket Level', orderedLevels, 'val-Ticket Level', () => calculateEstDone('val-Ticket Level', 'val-Priority', 'val-EstDone'));
-        renderPillButtons('btnGroup-Priority', orderedPriorities, 'val-Priority', () => calculateEstDone('val-Ticket Level', 'val-Priority', 'val-EstDone'));
+
+        if (isFullAccessUser()) {
+          renderPillButtons('btnGroup-Ticket Level', orderedLevels, 'val-Ticket Level', () => calculateEstDone('val-Ticket Level', 'val-Priority', 'val-EstDone'));
+          renderPillButtons('btnGroup-Priority', orderedPriorities, 'val-Priority', () => calculateEstDone('val-Ticket Level', 'val-Priority', 'val-EstDone'));
+        }
+
         renderArrowPipeline('btnGroup-State', orderedStates, 'val-State', null, 'New');
       }
     }
@@ -1498,20 +1583,40 @@
       const hiddenInput = document.getElementById(hiddenInputId);
       if (!container || !hiddenInput) return;
 
+      const fullAccess = isFullAccessUser();
       container.innerHTML = '';
+
       states.forEach(st => {
+        const stLower = st.toLowerCase();
+        const isRestrictedState = (stLower === 'done' || stLower === 'cancel') && !fullAccess;
+
         const btn = document.createElement('button');
         btn.type = 'button';
-        btn.textContent = st;
         btn.className = 'arrow-step';
 
-        if (st.toLowerCase() === (defaultValue || '').toLowerCase()) {
+        if (isRestrictedState) {
+          btn.innerHTML = `${st} <span title="Hanya role Full yang dapat memilih status ini">🔒</span>`;
+          btn.disabled = true;
+          btn.classList.add('opacity-45', 'cursor-not-allowed');
+        } else {
+          btn.textContent = st;
+        }
+
+        if (stLower === (defaultValue || '').toLowerCase()) {
           hiddenInput.value = st;
           applyActiveArrowStyle(btn, st);
+          if (isRestrictedState) {
+            btn.classList.remove('opacity-45');
+          }
         }
 
         btn.onclick = () => {
-          if (containerId === 'modalBtnGroup-State' && st.toLowerCase() === 'deployment') {
+          if (isRestrictedState) {
+            alert(`⚠️ Akses Dibatasi!\nHanya user dengan role "Full" yang dapat mengubah status tiket menjadi "${st}".`);
+            return;
+          }
+
+          if (containerId === 'modalBtnGroup-State' && stLower === 'deployment') {
             const verifyVal = (currentEditingTicket['User Verification'] || '').toUpperCase();
             if (verifyVal !== 'CONFIRMED') {
               alert('⚠️ Tidak dapat memindahkan status ke Deployment!\nUser terkait harus mengisi User Verification menjadi CONFIRMED terlebih dahulu.');
@@ -1521,7 +1626,7 @@
 
           hiddenInput.value = st;
           [...container.children].forEach(b => {
-            b.className = 'arrow-step';
+            b.classList.remove('active');
             b.style.backgroundColor = '';
           });
           applyActiveArrowStyle(btn, st);
@@ -1623,6 +1728,7 @@
 
     // Kalkulasi Est Done sesuai matriks Priority & Ticket Level
     function calculateEstDone(levelInputId, priorityInputId, estOutputId, baseDateStr = null) {
+      if (!isFullAccessUser()) return;
       const level = (document.getElementById(levelInputId)?.value || '').toUpperCase().trim();
       const priority = (document.getElementById(priorityInputId)?.value || '').toUpperCase().trim();
       if (!level || !priority) return;
@@ -1694,6 +1800,14 @@
           delete dataObj['Ticket Level'];
           delete dataObj['Priority'];
           delete dataObj['Est Done'];
+        } else if (!isFullAccessUser()) {
+          // Admin biasa tidak dapat mengatur Ticket Level, Priority, Est Done, atau langsung Done/Cancel
+          delete dataObj['Ticket Level'];
+          delete dataObj['Priority'];
+          delete dataObj['Est Done'];
+          if (['done', 'cancel'].includes((dataObj['State'] || '').trim().toLowerCase())) {
+            dataObj['State'] = 'New';
+          }
         }
 
         const fileInput = document.getElementById('attachmentInput');
@@ -1704,6 +1818,7 @@
           body: JSON.stringify({
             action: 'createTicket',
             isAdmin: isAdminUser(),
+            role: currentUser.role,
             data: dataObj,
             file: filePayload
           })
@@ -1938,6 +2053,7 @@
       if (s === 'cancel') return 'bg-rose-100 text-rose-800';
       return 'bg-amber-100 text-amber-800';
     }
+
     // Helper untuk membuat textarea otomatis menyesuaikan tinggi dengan panjang teks
     function autoResizeTextarea(el) {
       if (!el) return;
@@ -1948,6 +2064,7 @@
     function openTicketModal(ticket) {
       currentEditingTicket = ticket;
       const adminMode = isAdminUser();
+      const fullMode = isFullAccessUser();
       const ownerMode = isOwnerOfTicket(ticket);
       const ticketState = (ticket['State'] || 'New').trim();
       const isTestAndReview = ticketState.toLowerCase() === 'test & review';
@@ -2041,7 +2158,7 @@
         verifyContainer.innerHTML = '';
       }
 
-      // 2. PANEL UPDATE ADMIN ITDS
+      // 2. PANEL UPDATE ADMIN / FULL ITDS
       const adminContainer = document.getElementById('adminPanelContainer');
       if (adminMode) {
         const dd = appData.dropdowns;
@@ -2049,23 +2166,7 @@
         const orderedLevels = getOrderedLevels(dd['Ticket Level']);
         const orderedPriorities = getOrderedPriorities(dd['Priority']);
 
-        adminContainer.innerHTML = `
-          <div class="border border-slate-200 rounded-2xl overflow-visible">
-            <div class="bg-slate-100 px-4 py-3 text-xs font-extrabold text-slate-700 flex flex-wrap justify-between items-center gap-2 rounded-t-2xl">
-              <span>🛠️ Panel Update Admin ITDS (Full Access)</span>
-              <span class="text-[11px] font-bold px-2.5 py-0.5 rounded-full ${currentVerify.toUpperCase() === 'CONFIRMED' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">
-                ${currentVerify.toUpperCase() === 'CONFIRMED' ? '✅ User Verify: CONFIRMED' : `⚠️ User Verify: ${currentVerify || 'Not CONFIRMED yet'}`}
-              </span>
-            </div>
-
-            <div class="p-4 space-y-4 bg-white rounded-b-2xl">
-              <div>
-                <label class="block text-xs font-bold text-slate-600 mb-1.5">Update State (Step-by-Step Pipeline)</label>
-                <input type="hidden" id="edit-State">
-                <div id="modalBtnGroup-State" class="arrow-pipeline"></div>
-              </div>
-
-              <div class="bg-slate-50/80 p-3 rounded-xl border border-slate-200/80 space-y-3">
+        const levelPrioritySectionHtml = fullMode ? `
                 <div>
                   <label class="block text-xs font-bold text-slate-700 mb-1.5">Ticket Level</label>
                   <input type="hidden" id="edit-TicketLevel">
@@ -2083,33 +2184,74 @@
                     <input type="text" id="edit-EstDone" value="${ticket['Est Done'] || ''}" placeholder="Auto-calculated" readonly
                       class="w-full text-xs font-bold text-indigo-700 bg-slate-100 border border-indigo-200 rounded-xl px-3 py-2 outline-none cursor-not-allowed select-none">
                   </div>
+                </div>
+        ` : `
+                <div class="grid grid-cols-3 gap-2.5 bg-white p-3 rounded-xl border border-slate-200">
+                  <div>
+                    <span class="block text-[10px] font-bold uppercase text-slate-400">Ticket Level 👁️</span>
+                    <span class="text-xs font-extrabold text-slate-700">${ticket['Ticket Level'] || '-'}</span>
+                    <input type="hidden" id="edit-TicketLevel" value="${ticket['Ticket Level'] || ''}">
+                  </div>
+                  <div>
+                    <span class="block text-[10px] font-bold uppercase text-slate-400">Priority 👁️</span>
+                    <span class="text-xs font-extrabold text-rose-600">${ticket['Priority'] || '-'}</span>
+                    <input type="hidden" id="edit-Priority" value="${ticket['Priority'] || ''}">
+                  </div>
+                  <div>
+                    <span class="block text-[10px] font-bold uppercase text-slate-400">Est Done 👁️</span>
+                    <span class="text-xs font-bold text-indigo-700">${ticket['Est Done'] || '-'}</span>
+                    <input type="hidden" id="edit-EstDone" value="${ticket['Est Done'] || ''}">
+                  </div>
+                </div>
+        `;
 
-                  <!-- MULTI-SELECT DROPDOWN SENT MAIL CC (EDIT ADMIN) -->
-                  <div class="sm:col-span-12 relative cc-dropdown-wrapper" id="edit-ccWrapper">
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Sent Mail CC (Pilih satu atau lebih)</label>
-                    <button type="button" onclick="toggleCcDropdown('edit')"
-                      class="w-full flex items-center justify-between gap-2 text-xs border border-slate-300 hover:border-indigo-400 rounded-xl px-3 py-2.5 bg-white text-left transition focus:ring-2 focus:ring-indigo-500 outline-none">
-                      <span id="edit-ccSummaryText" class="truncate text-slate-500">-- No CC Selected --</span>
-                      <span class="flex items-center gap-1.5 shrink-0">
-                        <span id="edit-ccCountBadge" class="hidden text-[10px] font-bold text-indigo-700 bg-indigo-100 px-1.5 py-0.5 rounded-full">0</span>
-                        <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                        </svg>
-                      </span>
-                    </button>
+        adminContainer.innerHTML = `
+          <div class="border border-slate-200 rounded-2xl overflow-visible">
+            <div class="bg-slate-100 px-4 py-3 text-xs font-extrabold text-slate-700 flex flex-wrap justify-between items-center gap-2 rounded-t-2xl">
+              <span>${fullMode ? '👑 Panel Update ITDS (Full Access)' : '🛠️ Panel Update Admin ITDS (Standard Access)'}</span>
+              <span class="text-[11px] font-bold px-2.5 py-0.5 rounded-full ${currentVerify.toUpperCase() === 'CONFIRMED' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">
+                ${currentVerify.toUpperCase() === 'CONFIRMED' ? '✅ User Verify: CONFIRMED' : `⚠️ User Verify: ${currentVerify || 'Not CONFIRMED yet'}`}
+              </span>
+            </div>
 
-                    <div id="edit-ccPanel"
-                      class="hidden absolute left-0 right-0 mt-1.5 z-50 bg-white border border-slate-200 rounded-xl shadow-xl p-2 space-y-1.5 animate-fade">
-                      <div class="flex items-center gap-1.5">
-                        <input type="text" id="edit-ccSearch" onkeyup="filterCcCheckboxes('edit')" placeholder="Cari nama / email..."
-                          class="w-full text-xs border border-slate-200 rounded-lg px-2.5 py-1.5 bg-slate-50 focus:bg-white focus:border-indigo-500 outline-none">
-                        <button type="button" onclick="clearCcSelection('edit')" title="Reset pilihan"
-                          class="text-[11px] font-semibold text-rose-600 hover:bg-rose-50 px-2 py-1.5 rounded-lg shrink-0">
-                          Clear
-                        </button>
-                      </div>
-                      <div id="edit-SentMailCCList" class="max-h-44 overflow-y-auto divide-y divide-slate-100"></div>
+            <div class="p-4 space-y-4 bg-white rounded-b-2xl">
+              <div>
+                <div class="flex justify-between items-center mb-1.5">
+                  <label class="text-xs font-bold text-slate-600">Update State (Step-by-Step Pipeline)</label>
+                  ${!fullMode ? '<span class="text-[10px] text-slate-400">Done & Cancel khusus role Full 🔒</span>' : ''}
+                </div>
+                <input type="hidden" id="edit-State">
+                <div id="modalBtnGroup-State" class="arrow-pipeline"></div>
+              </div>
+
+              <div class="bg-slate-50/80 p-3 rounded-xl border border-slate-200/80 space-y-3">
+                ${levelPrioritySectionHtml}
+
+                <!-- MULTI-SELECT DROPDOWN SENT MAIL CC (EDIT ADMIN) -->
+                <div class="relative cc-dropdown-wrapper" id="edit-ccWrapper">
+                  <label class="block text-xs font-bold text-slate-700 mb-1">Sent Mail CC (Pilih satu atau lebih)</label>
+                  <button type="button" onclick="toggleCcDropdown('edit')"
+                    class="w-full flex items-center justify-between gap-2 text-xs border border-slate-300 hover:border-indigo-400 rounded-xl px-3 py-2.5 bg-white text-left transition focus:ring-2 focus:ring-indigo-500 outline-none">
+                    <span id="edit-ccSummaryText" class="truncate text-slate-500">-- No CC Selected --</span>
+                    <span class="flex items-center gap-1.5 shrink-0">
+                      <span id="edit-ccCountBadge" class="hidden text-[10px] font-bold text-indigo-700 bg-indigo-100 px-1.5 py-0.5 rounded-full">0</span>
+                      <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                      </svg>
+                    </span>
+                  </button>
+
+                  <div id="edit-ccPanel"
+                    class="hidden absolute left-0 right-0 mt-1.5 z-50 bg-white border border-slate-200 rounded-xl shadow-xl p-2 space-y-1.5 animate-fade">
+                    <div class="flex items-center gap-1.5">
+                      <input type="text" id="edit-ccSearch" onkeyup="filterCcCheckboxes('edit')" placeholder="Cari nama / email..."
+                        class="w-full text-xs border border-slate-200 rounded-lg px-2.5 py-1.5 bg-slate-50 focus:bg-white focus:border-indigo-500 outline-none">
+                      <button type="button" onclick="clearCcSelection('edit')" title="Reset pilihan"
+                        class="text-[11px] font-semibold text-rose-600 hover:bg-rose-50 px-2 py-1.5 rounded-lg shrink-0">
+                        Clear
+                      </button>
                     </div>
+                    <div id="edit-SentMailCCList" class="max-h-44 overflow-y-auto divide-y divide-slate-100"></div>
                   </div>
                 </div>
               </div>
@@ -2139,7 +2281,7 @@
                 <textarea id="edit-Notes" rows="2" oninput="autoResizeTextarea(this)"
                   class="w-full text-xs border border-slate-300 rounded-lg px-2.5 py-2 resize-none overflow-hidden leading-relaxed"></textarea>
               </div>
-                
+
               <div class="grid grid-cols-2 gap-3">
                 <div>
                   <label class="block text-xs font-semibold text-slate-600 mb-1">Cost (Admin)</label>
@@ -2168,13 +2310,15 @@
           }
         }, ticketState);
 
-        renderPillButtons('modalBtnGroup-TicketLevel', orderedLevels, 'edit-TicketLevel', () => {
-          calculateEstDone('edit-TicketLevel', 'edit-Priority', 'edit-EstDone', ticket['Date Created']);
-        }, ticket['Ticket Level'] || '');
+        if (fullMode) {
+          renderPillButtons('modalBtnGroup-TicketLevel', orderedLevels, 'edit-TicketLevel', () => {
+            calculateEstDone('edit-TicketLevel', 'edit-Priority', 'edit-EstDone', ticket['Date Created']);
+          }, ticket['Ticket Level'] || '');
 
-        renderPillButtons('modalBtnGroup-Priority', orderedPriorities, 'edit-Priority', () => {
-          calculateEstDone('edit-TicketLevel', 'edit-Priority', 'edit-EstDone', ticket['Date Created']);
-        }, ticket['Priority'] || '');
+          renderPillButtons('modalBtnGroup-Priority', orderedPriorities, 'edit-Priority', () => {
+            calculateEstDone('edit-TicketLevel', 'edit-Priority', 'edit-EstDone', ticket['Date Created']);
+          }, ticket['Priority'] || '');
+        }
 
         fillSelect('edit-Assigned', dd['Assigned'] || ['Angga', 'Jenius', 'Nurul', 'Ibnu'], '-- Set Assigned --');
         document.getElementById('edit-Assigned').value = ticket['Assigned'] || '';
@@ -2185,10 +2329,6 @@
         fillSelect('edit-TicketType', dd['Ticket Type'] || ['Bug', 'Feature Request', 'Access Right', 'Support'], '-- Choose Ticket Type --');
         document.getElementById('edit-TicketType').value = ticket['Ticket Type'] || '';
 
-        document.getElementById('edit-Notes').value = ticket['Notes'] || '';
-        document.getElementById('edit-SANote').value = ticket['SA Note'] || '';
-        document.getElementById('edit-Cost').value = ticket['Cost'] || '';
-        document.getElementById('edit-DateDone').value = ticket['Date Done'] || 'Auto set on state Done';
         const notesEl = document.getElementById('edit-Notes');
         const saNoteEl = document.getElementById('edit-SANote');
 
@@ -2292,6 +2432,7 @@
     async function saveTicketChanges() {
       const updatePayload = {};
       const ownerMode = isOwnerOfTicket(currentEditingTicket);
+      const fullMode = isFullAccessUser();
 
       if (ownerMode) {
         const verification = document.getElementById('edit-UserVerification')?.value || '';
@@ -2309,20 +2450,33 @@
 
       if (isAdminUser()) {
         const targetState = document.getElementById('edit-State').value;
+        const targetStateLower = targetState.trim().toLowerCase();
+        const originalStateLower = (currentEditingTicket['State'] || '').trim().toLowerCase();
+
+        // Cegah Admin biasa mengubah state ke Done atau Cancel
+        if (!fullMode && (targetStateLower === 'done' || targetStateLower === 'cancel') && targetStateLower !== originalStateLower) {
+          alert(`⚠️ Akses Ditolak!\nHanya role "Full" yang diizinkan mengubah status tiket menjadi "${targetState}".`);
+          return;
+        }
+
         const effectiveVerify = ownerMode
           ? (updatePayload['User Verification'] || '').toUpperCase()
           : (currentEditingTicket['User Verification'] || '').toUpperCase();
 
-        if (targetState.toLowerCase() === 'deployment' && effectiveVerify !== 'CONFIRMED') {
+        if (targetStateLower === 'deployment' && effectiveVerify !== 'CONFIRMED') {
           alert('⚠️ Unable to save the Deployment status before the relevant User completes User Verification, setting it to CONFIRMED!');
           return;
         }
 
         const assignedPic = document.getElementById('edit-Assigned').value;
         updatePayload['State'] = targetState;
-        updatePayload['Ticket Level'] = document.getElementById('edit-TicketLevel').value;
-        updatePayload['Priority'] = document.getElementById('edit-Priority').value;
-        updatePayload['Est Done'] = document.getElementById('edit-EstDone').value;
+
+        if (fullMode) {
+          updatePayload['Ticket Level'] = document.getElementById('edit-TicketLevel').value;
+          updatePayload['Priority'] = document.getElementById('edit-Priority').value;
+          updatePayload['Est Done'] = document.getElementById('edit-EstDone').value;
+        }
+
         updatePayload['Assigned'] = assignedPic;
         updatePayload['Assigned Email'] = appData.picEmailMap[assignedPic] || '';
         updatePayload['Assigned 2'] = document.getElementById('edit-Assigned2').value;
@@ -2349,6 +2503,7 @@
             action: 'updateTicket',
             issueId: currentEditingTicket['Issue ID'],
             isAdmin: isAdminUser(),
+            role: currentUser.role,
             userEmail: currentUser.email,
             data: updatePayload
           })
