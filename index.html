@@ -208,6 +208,11 @@
             🔑 Change Password
           </button>
 
+          <button id="btnNavManageUsers" onclick="openUserManagerModal()" title="Kelola Master User"
+            class="hidden bg-amber-400 hover:bg-amber-300 text-slate-900 text-xs font-extrabold px-3 py-1.5 rounded-lg shadow-xs transition">
+            👥 Manage Users
+          </button>
+
           <button onclick="logoutUser()"
             class="bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold px-3.5 py-1.5 rounded-lg shadow-sm transition">
             Logout
@@ -1038,6 +1043,11 @@
 
       const adminMode = isAdminUser();
       filterAssignedToMe = adminMode;
+      
+      const btnManageUsers = document.getElementById('btnNavManageUsers');
+      if (btnManageUsers) {
+        adminMode ? btnManageUsers.classList.remove('hidden') : btnManageUsers.classList.add('hidden');
+      }
 
       document.getElementById('navUserName').textContent = currentUser.name;
       document.getElementById('navUserRole').textContent = adminMode ? '🛡️ Admin ITDS (Full Access)' : '👤 User';
