@@ -1363,7 +1363,7 @@
       document.getElementById('umPassHint').textContent = '(Mandatory for new users)';
 
       const btn = document.getElementById('btnUmSubmit');
-      btn.textContent = '➕ Simpan User Baru';
+      btn.textContent = '➕ Save New User';
       btn.className = 'w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-xl shadow text-xs transition';
       document.getElementById('umAlertBox').classList.add('hidden');
     }
@@ -2141,7 +2141,7 @@
 
             <div id="feedbackSection" class="${ticketState.toLowerCase() === 'done' ? '' : 'hidden'} animate-fade pt-2 border-t border-emerald-200">
               <div class="flex justify-between items-center mb-2">
-                <label class="text-xs font-bold text-slate-800">⭐ Seberapa puas Anda dengan layanan ITDS? (1 - 10)</label>
+                <label class="text-xs font-bold text-slate-800">⭐ How satisfied are you with ITDS services? (1 - 10)</label>
                 <span id="feedbackEmojiLabel" class="text-xs font-bold text-indigo-600">Pilih angka</span>
               </div>
               <input type="hidden" id="edit-UserFeedback" value="${ticket['User Feedback'] || ''}">
@@ -2218,7 +2218,7 @@
               <div>
                 <div class="flex justify-between items-center mb-1.5">
                   <label class="text-xs font-bold text-slate-600">Update State (Step-by-Step Pipeline)</label>
-                  ${!fullMode ? '<span class="text-[10px] text-slate-400">Done & Cancel khusus role Full 🔒</span>' : ''}
+                  ${!fullMode ? '<span class="text-[10px] text-slate-400">Done & Cancel specifically for Full roles 🔒</span>' : ''}
                 </div>
                 <input type="hidden" id="edit-State">
                 <div id="modalBtnGroup-State" class="arrow-pipeline"></div>
