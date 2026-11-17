@@ -2455,7 +2455,7 @@
 
         // Cegah Admin biasa mengubah state ke Done atau Cancel
         if (!fullMode && (targetStateLower === 'done' || targetStateLower === 'cancel') && targetStateLower !== originalStateLower) {
-          alert(`⚠️ Akses Ditolak!\nHanya role "Full" yang diizinkan mengubah status tiket menjadi "${targetState}".`);
+          alert(`⚠️ Access Denied!\nOnly the -Full- role is permitted to change the ticket status to "${targetState}".`);
           return;
         }
 
