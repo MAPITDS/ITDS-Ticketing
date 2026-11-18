@@ -309,6 +309,24 @@
           <span id="syncStatus" class="text-xs px-2.5 py-1.5 rounded-full bg-white/15 text-amber-200 font-medium">
             ● Syncing...
           </span>
+          <!-- BADGE ONLINE USERS (COUNT + POPOVER NAMA USER) -->
+          <div class="relative" id="onlineUsersWrapper">
+            <button type="button" onclick="toggleOnlineUsersPopover()" title="Lihat siapa saja yang sedang online"
+              class="flex items-center gap-1.5 text-[10px] sm:text-xs px-2.5 py-1.5 rounded-full bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-200 border border-emerald-400/30 font-bold transition">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span id="onlineCountText">1 Online</span>
+            </button>
+
+            <!-- Popover Daftar User yang Sedang Login -->
+            <div id="onlineUsersPopover"
+              class="hidden absolute right-0 mt-2 w-64 bg-white text-slate-800 rounded-2xl shadow-2xl border border-slate-200 p-3 z-50 animate-fade">
+              <div class="flex items-center justify-between border-b border-slate-100 pb-2 mb-2">
+                <span class="text-xs font-extrabold text-slate-700">🟢 Online</span>
+                <span id="onlinePopoverBadge" class="text-[10px] font-bold bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full">1</span>
+              </div>
+              <div id="onlineUsersList" class="max-h-48 overflow-y-auto divide-y divide-slate-100 text-xs"></div>
+            </div>
+          </div>
 
           <button onclick="loadSheetData()" title="Refresh Data"
             class="bg-white/15 hover:bg-white/25 text-white text-xs font-semibold px-3 py-1.5 rounded-lg border border-white/20 transition">
@@ -1581,6 +1599,79 @@
         console.error(err);
         badge.textContent = '✕ Offline';
       }
+    }
+
+    let heartbeatTimer = null;
+
+    function toggleOnlineUsersPopover() {
+      const pop = document.getElementById('onlineUsersPopover');
+      if (pop) pop.classList.toggle('hidden');
+    }
+
+    // Tutup popover jika klik di luar area
+    document.addEventListener('click', function(e) {
+      const wrapper = document.getElementById('onlineUsersWrapper');
+      const pop = document.getElementById('onlineUsersPopover');
+      if (wrapper && pop && !wrapper.contains(e.target)) {
+        pop.classList.add('hidden');
+      }
+    });
+
+    async function sendOnlineHeartbeat() {
+      if (!currentUser || !currentUser.email) return;
+      try {
+        const res = await fetch(GAS_WEBAPP_URL, {
+          method: 'POST',
+          body: JSON.stringify({
+            action: 'heartbeat',
+            user: {
+              email: currentUser.email,
+              name: currentUser.name,
+              role: currentUser.role
+            }
+          })
+        });
+        const data = await res.json();
+        if (data.status === 'success') {
+          renderOnlineUsers(data.onlineUsers || []);
+        }
+      } catch (err) {
+        console.warn('Heartbeat skipped:', err);
+      }
+    }
+
+    function renderOnlineUsers(users) {
+      const count = users.length || 1;
+      const countEl = document.getElementById('onlineCountText');
+      const badgeEl = document.getElementById('onlinePopoverBadge');
+      const listEl  = document.getElementById('onlineUsersList');
+
+      if (countEl) countEl.textContent = `${count} Online`;
+      if (badgeEl) badgeEl.textContent = count;
+      if (!listEl) return;
+
+      listEl.innerHTML = users.map(u => {
+        const isMe = currentUser && u.email.toLowerCase() === currentUser.email.toLowerCase();
+        const roleBadge = u.role.toLowerCase().includes('full')
+          ? 'bg-amber-100 text-amber-800'
+          : (u.role.toLowerCase().includes('admin') ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-600');
+
+        return `
+          <div class="py-2 flex items-center justify-between gap-2">
+            <div class="min-w-0">
+              <p class="font-bold text-slate-800 truncate">${u.name} ${isMe ? '<span class="text-[10px] text-emerald-600">(Anda)</span>' : ''}</p>
+              <p class="text-[10px] text-slate-400 truncate">${u.email}</p>
+            </div>
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 ${roleBadge}">${u.role}</span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function startOnlineHeartbeat() {
+      sendOnlineHeartbeat(); // Langsung kirim saat baru masuk
+      if (heartbeatTimer) clearInterval(heartbeatTimer);
+      heartbeatTimer = setInterval(sendOnlineHeartbeat, 60000); // Ulangi tiap 60 detik
     }
 
     function getVisibleTickets() {
