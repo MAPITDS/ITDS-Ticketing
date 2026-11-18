@@ -250,6 +250,8 @@
           <span>⏳ Wait & Track</span>
           <span class="text-indigo-300">→</span>
           <span class="text-emerald-600">✅ Done</span>
+          <span class="text-indigo-300">→</span>
+          <span class="text-emerald-600">⭐ Rate</span>
         </div>
 
         <p class="text-[11px] text-slate-400">• • • Mitra Asa Pratama • • •</p>
@@ -296,6 +298,8 @@
               <span>⏳ Wait & Track</span>
               <span class="text-indigo-300">→</span>
               <span class="text-emerald-600">✅ Done</span>
+              <span class="text-indigo-300">→</span>
+              <span class="text-emerald-600">⭐ Rate</span>
             </div>
           </div>
         </div>
@@ -563,27 +567,27 @@
       <section class="lg:col-span-7 space-y-4">
         <!-- 5 INTERACTIVE STAT CARDS -->
         <div class="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
-          <div id="cardStatTotal" onclick="quickFilterByCard('ALL')" title="Klik untuk tampilkan semua tiket"
+          <div id="cardStatTotal" onclick="quickFilterByCard('ALL')" title="Click to show all list"
             class="stat-card bg-white p-3 rounded-2xl border border-slate-200/80 shadow-sm">
             <p class="text-[11px] font-semibold text-slate-500">Total Tickets</p>
             <p id="statTotal" class="text-xl font-extrabold text-slate-800 mt-0.5">0</p>
           </div>
-          <div id="cardStatNew" onclick="quickFilterByCard('New')" title="Klik untuk filter status New"
+          <div id="cardStatNew" onclick="quickFilterByCard('New')" title="Click to filter New State"
             class="stat-card bg-white p-3 rounded-2xl border border-slate-200/80 shadow-sm">
             <p class="text-[11px] font-semibold text-amber-600">New</p>
             <p id="statNew" class="text-xl font-extrabold text-amber-600 mt-0.5">0</p>
           </div>
-          <div id="cardStatOngoing" onclick="quickFilterByCard('ACTIVE_ONLY')" title="Klik untuk filter tiket aktif (Ongoing)"
+          <div id="cardStatOngoing" onclick="quickFilterByCard('ACTIVE_ONLY')" title="Click to filter active (Ongoing)"
             class="stat-card bg-white p-3 rounded-2xl border border-slate-200/80 shadow-sm">
             <p class="text-[11px] font-semibold text-blue-600">Ongoing</p>
             <p id="statProgress" class="text-xl font-extrabold text-blue-600 mt-0.5">0</p>
           </div>
-          <div id="cardStatDone" onclick="quickFilterByCard('Done')" title="Klik untuk filter tiket selesai (Done)"
+          <div id="cardStatDone" onclick="quickFilterByCard('Done')" title="Click to filter Done State"
             class="stat-card bg-white p-3 rounded-2xl border border-slate-200/80 shadow-sm">
             <p class="text-[11px] font-semibold text-emerald-600">Done</p>
             <p id="statDone" class="text-xl font-extrabold text-emerald-600 mt-0.5">0</p>
           </div>
-          <div id="cardStatOverdue" onclick="quickFilterByCard('OVERDUE_ONLY')" title="Klik untuk prioritas tiket lewat tenggat (Overdue)"
+          <div id="cardStatOverdue" onclick="quickFilterByCard('OVERDUE_ONLY')" title="Click to Priority ticket Overdue"
             class="stat-card col-span-2 sm:col-span-1 bg-rose-50/70 p-3 rounded-2xl border border-rose-200 shadow-sm">
             <p class="text-[11px] font-bold text-rose-600 flex items-center gap-1">
               <span>🚨 Overdue</span>
@@ -2614,7 +2618,7 @@
         4: '😕 4 - Below Expectation', 5: '😐 5 - Good', 6: '🙂 6 - Good Enough',
         7: '😊 7 - Well Done', 8: '😄 8 - Bravo', 9: '🤩 9 - Satisfying', 10: '🏆 10 - Perfect!'
       };
-      label.textContent = emojis[selectedVal] || 'Klik skor 1 - 10';
+      label.textContent = emojis[selectedVal] || 'Rate 1 - 10';
 
       container.innerHTML = '';
       for (let i = 1; i <= 10; i++) {
