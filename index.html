@@ -319,7 +319,7 @@
 
             <!-- Popover Daftar User yang Sedang Login -->
             <div id="onlineUsersPopover"
-              class="hidden absolute right-0 mt-2 w-64 bg-white text-slate-800 rounded-2xl shadow-2xl border border-slate-200 p-3 z-50 animate-fade">
+              class="hidden absolute right-[-40px] sm:right-0 mt-2 w-64 bg-white text-slate-800 rounded-2xl shadow-2xl border border-slate-200 p-3 z-50 animate-fade">
               <div class="flex items-center justify-between border-b border-slate-100 pb-2 mb-2">
                 <span class="text-xs font-extrabold text-slate-700">🟢 Online</span>
                 <span id="onlinePopoverBadge" class="text-[10px] font-bold bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full">1</span>
@@ -1215,6 +1215,7 @@
         : (adminMode ? 'All Tickets (Admin Access)' : 'My Ticket Lists');
 
       loadSheetData();
+      startOnlineHeartbeat();
     }
 
     function applyUserAutoFillAndPermissions() {
