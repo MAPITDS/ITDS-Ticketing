@@ -2303,6 +2303,20 @@
       } else {
         odooBox.classList.add('hidden');
       }
+      const reasonBox = document.getElementById('modalIncompleteReasonBox');
+      const reasonTextEl = document.getElementById('modalIncompleteReasonText');
+      const verifyVal = (ticket['User Verification'] || '').toString().trim().toUpperCase();
+      const reasonVal = (ticket['Reason'] || ticket['User Feedback'] || '').toString().trim();
+
+      if (reasonBox && reasonTextEl) {
+        if (verifyVal === 'INCOMPLETE' || reasonVal !== '') {
+          reasonTextEl.textContent = reasonVal || '(User menandai INCOMPLETE tanpa menuliskan keterangan alasan)';
+          reasonBox.classList.remove('hidden');
+        } else {
+          reasonBox.classList.add('hidden');
+          reasonTextEl.textContent = '';
+        }
+      }
 
       const attBox = document.getElementById('modalAttachmentBox');
       attBox.innerHTML = ticket['Attachments']
