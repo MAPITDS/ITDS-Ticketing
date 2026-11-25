@@ -347,6 +347,11 @@
             👥 Manage Users
           </button>
 
+          <button id="btnNavReports" onclick="openReportModal()" title="ITDS SLA & Workload Report"
+            class="hidden bg-emerald-400 hover:bg-emerald-300 text-slate-900 text-xs font-extrabold px-2.5 sm:px-3 py-1.5 rounded-lg shadow-xs transition">
+            📊 <span class="hidden sm:inline">Reports</span>
+          </button>
+
           <button onclick="logoutUser()"
             class="bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold px-3.5 py-1.5 rounded-lg shadow-sm transition">
             Logout
@@ -875,6 +880,134 @@
     </div>
   </div>
 
+  <!-- =========================================================
+       6. MODAL ANALYTICS, SLA & WORKLOAD REPORT (ADMIN & FULL)
+  ========================================================== -->
+  <div id="reportModal" class="hidden fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 overflow-y-auto">
+    <div class="bg-white rounded-t-3xl sm:rounded-2xl max-w-6xl w-full shadow-2xl border border-slate-200 overflow-hidden sm:my-6 animate-fade max-h-[94vh] flex flex-col">
+      <!-- Header -->
+      <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white px-4 sm:px-6 py-4 flex flex-wrap justify-between items-center gap-3 shrink-0">
+        <div class="flex items-center gap-3">
+          <span class="w-9 h-9 rounded-xl bg-emerald-400 text-slate-900 flex items-center justify-center font-black text-base shrink-0">📊</span>
+          <div>
+            <h3 class="font-bold text-sm sm:text-base">ITDS Performance, SLA & Workload Report</h3>
+            <p class="text-[11px] text-indigo-200">Evaluasi SLA, beban kerja PIC, kepuasan user (CSAT), dan distribusi kategori</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button type="button" onclick="exportReportToCSV()"
+            class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-extrabold px-3 py-1.5 rounded-lg shadow transition">
+            ⬇️ Export CSV
+          </button>
+          <button onclick="closeReportModal()" class="text-slate-300 hover:text-white text-2xl font-bold px-2">&times;</button>
+        </div>
+      </div>
+
+      <!-- Filter Bar -->
+      <div class="bg-slate-50 border-b border-slate-200 px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-2.5 shrink-0">
+        <div class="flex flex-wrap items-center gap-2">
+          <select id="repFilterPeriod" onchange="renderAdminReport()"
+            class="text-xs font-bold border border-slate-300 rounded-xl px-3 py-2 bg-white text-slate-700 outline-none focus:ring-2 focus:ring-indigo-500">
+            <option value="ALL">📅 Semua Periode</option>
+            <option value="THIS_MONTH">Bulan Ini</option>
+            <option value="LAST_MONTH">Bulan Lalu</option>
+            <option value="THIS_YEAR" selected>Tahun Ini</option>
+          </select>
+
+          <select id="repFilterCompany" onchange="renderAdminReport()"
+            class="text-xs font-bold border border-slate-300 rounded-xl px-3 py-2 bg-white text-slate-700 outline-none focus:ring-2 focus:ring-indigo-500">
+            <option value="ALL">🏢 Semua Company</option>
+          </select>
+        </div>
+        <span id="repPeriodSummary" class="text-[11px] font-semibold text-slate-500">Menampilkan 0 tiket</span>
+      </div>
+
+      <!-- Body Content -->
+      <div class="p-4 sm:p-6 space-y-6 overflow-y-auto flex-1 bg-slate-100/60">
+        <!-- 1. EXECUTIVE KPI CARDS -->
+        <div class="grid grid-cols-2 lg:grid-cols-5 gap-3">
+          <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
+            <p class="text-[11px] font-bold text-slate-400 uppercase">SLA On-Time Rate</p>
+            <p id="repKpiSla" class="text-2xl font-black text-emerald-600 mt-1">0%</p>
+            <p id="repKpiSlaSub" class="text-[11px] text-slate-500 mt-0.5">0 dari 0 tiket tepat waktu</p>
+          </div>
+          <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
+            <p class="text-[11px] font-bold text-slate-400 uppercase">Avg Resolution (MTTR)</p>
+            <p id="repKpiMttr" class="text-2xl font-black text-indigo-600 mt-1">-</p>
+            <p class="text-[11px] text-slate-500 mt-0.5">Rata-rata waktu selesai</p>
+          </div>
+          <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
+            <p class="text-[11px] font-bold text-slate-400 uppercase">User Satisfaction</p>
+            <p id="repKpiCsat" class="text-2xl font-black text-amber-500 mt-1">- / 10</p>
+            <p id="repKpiCsatSub" class="text-[11px] text-slate-500 mt-0.5">Berdasarkan 0 ulasan</p>
+          </div>
+          <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
+            <p class="text-[11px] font-bold text-slate-400 uppercase">Active & Overdue</p>
+            <div class="flex items-baseline gap-2 mt-1">
+              <p id="repKpiActive" class="text-2xl font-black text-blue-600">0</p>
+              <span id="repKpiOverdue" class="text-xs font-extrabold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-full">0 Overdue</span>
+            </div>
+            <p id="repKpiIncomplete" class="text-[11px] text-slate-500 mt-0.5">0 tiket sempat Incomplete</p>
+          </div>
+          <div class="col-span-2 lg:col-span-1 bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
+            <p class="text-[11px] font-bold text-slate-400 uppercase">Completion & Cost</p>
+            <p id="repKpiDoneRate" class="text-2xl font-black text-slate-800 mt-1">0%</p>
+            <p id="repKpiCost" class="text-[11px] font-semibold text-slate-500 mt-0.5">Total Cost: Rp 0</p>
+          </div>
+        </div>
+
+        <!-- 2. WORKLOAD & SLA PER ADMIN / PIC PETUGAS -->
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+          <div class="px-4 sm:px-5 py-3.5 border-b border-slate-200 flex flex-wrap justify-between items-center gap-2 bg-slate-50">
+            <div>
+              <h4 class="text-xs sm:text-sm font-extrabold text-slate-800">👷 Workload & Kinerja per Admin / PIC ITDS</h4>
+              <p class="text-[11px] text-slate-500">Menghitung tiket utama (Assigned 1), kolaborasi (Assigned 2), kepatuhan SLA, dan rating CSAT</p>
+            </div>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse min-w-[680px]">
+              <thead>
+                <tr class="bg-slate-50/80 border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase">
+                  <th class="py-3 px-4">Nama Petugas / PIC</th>
+                  <th class="py-3 px-3 text-center">Total (PIC 1)</th>
+                  <th class="py-3 px-3 text-center">Support (PIC 2)</th>
+                  <th class="py-3 px-3 text-center">Open Load</th>
+                  <th class="py-3 px-3 text-center">Overdue</th>
+                  <th class="py-3 px-3 text-center">Done</th>
+                  <th class="py-3 px-4">SLA On-Time</th>
+                  <th class="py-3 px-3 text-center">Avg Rating</th>
+                </tr>
+              </thead>
+              <tbody id="repPicTableBody" class="divide-y divide-slate-100 text-xs"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 3. BREAKDOWN KATEGORI MODUL, LEVEL & COMPANY -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+          <!-- Kiri: Top Modul / Request Category -->
+          <div class="lg:col-span-7 bg-white rounded-2xl border border-slate-200 shadow-xs p-4 sm:p-5 space-y-3">
+            <h4 class="text-xs sm:text-sm font-extrabold text-slate-800">📂 Distribusi per Kategori / Modul</h4>
+            <div id="repModuleBars" class="space-y-2.5 text-xs"></div>
+          </div>
+
+          <!-- Kanan: Breakdown Ticket Level & Company -->
+          <div class="lg:col-span-5 space-y-4">
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-4 sm:p-5 space-y-3">
+              <h4 class="text-xs sm:text-sm font-extrabold text-slate-800">🎚️ Kompleksitas (Ticket Level)</h4>
+              <div id="repLevelList" class="space-y-2 text-xs"></div>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-4 sm:p-5 space-y-3">
+              <h4 class="text-xs sm:text-sm font-extrabold text-slate-800">🏢 Tiket per Company</h4>
+              <div id="repCompanyList" class="space-y-2 text-xs"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
     const GAS_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbxAOhY0ARkSYuhHszf7TlA9sZYyKpXBGateVUImm0KtLvfnssXEBVrSfpVKsYy6ffD-aA/exec';
     const STORAGE_KEY = 'itds_ticketing_user';
@@ -1212,6 +1345,11 @@
           btnManageUsers.classList.add('hidden');
         }
       }
+      const btnRep = document.getElementById('btnNavReports');
+        if (btnRep) {
+          if (isAdminUser()) btnRep.classList.remove('hidden');
+          else btnRep.classList.add('hidden');
+        }
 
       document.getElementById('navUserName').textContent = currentUser.name;
       document.getElementById('navUserRole').textContent = fullMode
@@ -2753,6 +2891,333 @@
     }
 
     window.addEventListener('DOMContentLoaded', checkSession);
+    // =========================================================
+    // ITDS ANALYTICS, SLA & WORKLOAD REPORT (ADMIN & FULL)
+    // =========================================================
+    let lastReportPicRows = [];
+
+    function openReportModal() {
+      if (!isAdminUser()) {
+        alert('Akses ditolak: Menu Report hanya untuk role Admin dan Full.');
+        return;
+      }
+
+      // Isi opsi filter Company secara dinamis dari data tiket
+      const compSelect = document.getElementById('repFilterCompany');
+      if (compSelect && appData && Array.isArray(appData.tickets)) {
+        const companies = [...new Set(appData.tickets.map(t => (t['Company'] || '').trim()).filter(Boolean))].sort();
+        const prevVal = compSelect.value;
+        compSelect.innerHTML = '<option value="ALL">🏢 Semua Company</option>' +
+          companies.map(c => `<option value="${c}">${c}</option>`).join('');
+        if (companies.includes(prevVal)) compSelect.value = prevVal;
+      }
+
+      renderAdminReport();
+      document.getElementById('reportModal').classList.remove('hidden');
+    }
+
+    function closeReportModal() {
+      document.getElementById('reportModal').classList.add('hidden');
+    }
+
+    function parseReportDateFlexible(str) {
+      if (!str) return null;
+      if (str instanceof Date) return isNaN(str.getTime()) ? null : str;
+      const s = String(str).trim();
+      const monthMap = {
+        jan: 0, feb: 1, mar: 2, apr: 3, mei: 4, may: 4,
+        jun: 5, jul: 6, agu: 7, aug: 7, sep: 8, okt: 9, oct: 9, nov: 10, des: 11, dec: 11
+      };
+      // Format dd-MMM-yyyy/HH.mm.ss atau dd/MMM/yyyy HH:mm:ss
+      const m1 = s.match(/^(\d{1,2})[-\/]([A-Za-z]+)[-\/](\d{4})(?:[\/\s]+(\d{1,2})[\.:](\d{1,2})(?:[\.:](\d{1,2}))?)?/);
+      if (m1 && monthMap[m1[2].toLowerCase()] !== undefined) {
+        return new Date(+m1[3], monthMap[m1[2].toLowerCase()], +m1[1], +(m1[4]||0), +(m1[5]||0), +(m1[6]||0));
+      }
+      // Format dd/mm/yyyy HH:mm:ss
+      const m2 = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:[\s]+(\d{1,2}):(\d{1,2})(?::(\d{1,2}))?)?/);
+      if (m2) {
+        return new Date(+m2[3], +m2[2] - 1, +m2[1], +(m2[4]||0), +(m2[5]||0), +(m2[6]||0));
+      }
+      const d = new Date(s);
+      return isNaN(d.getTime()) ? null : d;
+    }
+
+    function renderAdminReport() {
+      const tickets = (appData && Array.isArray(appData.tickets)) ? appData.tickets : [];
+      const period = document.getElementById('repFilterPeriod')?.value || 'ALL';
+      const compFilter = document.getElementById('repFilterCompany')?.value || 'ALL';
+
+      const now = new Date();
+      const curMonth = now.getMonth();
+      const curYear = now.getFullYear();
+      const lastMonthDate = new Date(curYear, curMonth - 1, 1);
+
+      const filtered = tickets.filter(t => {
+        if (compFilter !== 'ALL' && (t['Company'] || '').trim() !== compFilter) return false;
+        if (period === 'ALL') return true;
+
+        const dt = parseReportDateFlexible(t['Date Created']);
+        if (!dt) return false;
+
+        if (period === 'THIS_MONTH') {
+          return dt.getMonth() === curMonth && dt.getFullYear() === curYear;
+        }
+        if (period === 'LAST_MONTH') {
+          return dt.getMonth() === lastMonthDate.getMonth() && dt.getFullYear() === lastMonthDate.getFullYear();
+        }
+        if (period === 'THIS_YEAR') {
+          return dt.getFullYear() === curYear;
+        }
+        return true;
+      });
+
+      document.getElementById('repPeriodSummary').textContent = `Menganalisis ${filtered.length} tiket`;
+
+      // Variabel Agregasi
+      let doneCount = 0;
+      let cancelCount = 0;
+      let activeCount = 0;
+      let overdueCount = 0;
+      let incompleteCount = 0;
+
+      let slaEvaluated = 0;
+      let slaOnTime = 0;
+
+      let mttrTotalHours = 0;
+      let mttrCount = 0;
+
+      let csatSum = 0;
+      let csatCount = 0;
+      let totalCost = 0;
+
+      const picStats = {};
+      const moduleMap = {};
+      const levelMap = {};
+      const companyMap = {};
+
+      const ensurePic = (name) => {
+        if (!picStats[name]) {
+          picStats[name] = {
+            name, totalPrimary: 0, totalSecondary: 0, open: 0, overdue: 0, done: 0,
+            slaEval: 0, slaMet: 0, ratingSum: 0, ratingCount: 0
+          };
+        }
+        return picStats[name];
+      };
+
+      filtered.forEach(t => {
+        const state = (t['State'] || 'New').trim();
+        const stLower = state.toLowerCase();
+        const isDone = stLower === 'done';
+        const isCancel = stLower === 'cancel';
+        const isClosed = isDone || isCancel;
+
+        const dtCreated = parseReportDateFlexible(t['Date Created']);
+        const dtEst = parseReportDateFlexible(t['Est Done']);
+        const dtDone = parseReportDateFlexible(t['Date Done']);
+
+        const isOverdue = !isClosed && dtEst && (now > dtEst);
+
+        if (isDone) doneCount++;
+        else if (isCancel) cancelCount++;
+        else activeCount++;
+
+        if (isOverdue) overdueCount++;
+        if ((t['User Verification'] || '').toString().trim().toUpperCase() === 'INCOMPLETE') incompleteCount++;
+
+        // Evaluasi SLA untuk tiket Done yang punya Est Done
+        let ticketMetSla = null;
+        if (isDone && dtEst) {
+          slaEvaluated++;
+          const compareDate = dtDone || now;
+          if (compareDate <= dtEst) {
+            slaOnTime++;
+            ticketMetSla = true;
+          } else {
+            ticketMetSla = false;
+          }
+        }
+
+        // Hitung MTTR (Date Done - Date Created)
+        if (isDone && dtCreated && dtDone && dtDone >= dtCreated) {
+          const diffHours = (dtDone - dtCreated) / (1000 * 60 * 60);
+          mttrTotalHours += diffHours;
+          mttrCount++;
+        }
+
+        // Hitung CSAT
+        const rating = parseFloat(t['User Feedback']);
+        if (!isNaN(rating) && rating > 0) {
+          csatSum += rating;
+          csatCount++;
+        }
+
+        // Hitung Cost
+        const rawCost = String(t['Cost'] || '').replace(/[^\d]/g, '');
+        if (rawCost) totalCost += parseInt(rawCost, 10);
+
+        // Agregasi PIC 1 (Assigned) & PIC 2 (Assigned 2)
+        const pic1 = (t['Assigned'] || '').trim() || 'Unassigned';
+        const p1 = ensurePic(pic1);
+        p1.totalPrimary++;
+        if (!isClosed) p1.open++;
+        if (isOverdue) p1.overdue++;
+        if (isDone) p1.done++;
+        if (ticketMetSla !== null) {
+          p1.slaEval++;
+          if (ticketMetSla) p1.slaMet++;
+        }
+        if (!isNaN(rating) && rating > 0) {
+          p1.ratingSum += rating;
+          p1.ratingCount++;
+        }
+
+        const pic2 = (t['Assigned 2'] || '').trim();
+        if (pic2 && pic2 !== pic1) {
+          const p2 = ensurePic(pic2);
+          p2.totalSecondary++;
+        }
+
+        // Agregasi Modul, Level, Company
+        const mod = (t['Request Access-Module-Support'] || 'Lainnya').trim();
+        moduleMap[mod] = (moduleMap[mod] || 0) + 1;
+
+        const lvl = (t['Ticket Level'] || 'Unset').trim();
+        levelMap[lvl] = (levelMap[lvl] || 0) + 1;
+
+        const comp = (t['Company'] || 'Unknown').trim();
+        companyMap[comp] = (companyMap[comp] || 0) + 1;
+      });
+
+      // Render KPI Cards
+      const slaRate = slaEvaluated > 0 ? Math.round((slaOnTime / slaEvaluated) * 100) : 0;
+      document.getElementById('repKpiSla').textContent = slaEvaluated > 0 ? `${slaRate}%` : 'N/A';
+      document.getElementById('repKpiSla').className = `text-2xl font-black mt-1 ${slaRate >= 85 ? 'text-emerald-600' : (slaRate >= 70 ? 'text-amber-500' : 'text-rose-600')}`;
+      document.getElementById('repKpiSlaSub').textContent = `${slaOnTime} dari ${slaEvaluated} tiket selesai tepat waktu`;
+
+      if (mttrCount > 0) {
+        const avgHrs = mttrTotalHours / mttrCount;
+        document.getElementById('repKpiMttr').textContent = avgHrs >= 24
+          ? `${(avgHrs / 24).toFixed(1)} Hari`
+          : `${avgHrs.toFixed(1)} Jam`;
+      } else {
+        document.getElementById('repKpiMttr').textContent = '-';
+      }
+
+      document.getElementById('repKpiCsat').textContent = csatCount > 0 ? `${(csatSum / csatCount).toFixed(1)} / 10` : '- / 10';
+      document.getElementById('repKpiCsatSub').textContent = `Berdasarkan ${csatCount} ulasan user`;
+
+      document.getElementById('repKpiActive').textContent = activeCount;
+      document.getElementById('repKpiOverdue').textContent = `${overdueCount} Overdue`;
+      document.getElementById('repKpiIncomplete').textContent = `${incompleteCount} tiket berstatus Incomplete`;
+
+      const validTotal = Math.max(filtered.length - cancelCount, 1);
+      const doneRate = filtered.length > 0 ? Math.round((doneCount / validTotal) * 100) : 0;
+      document.getElementById('repKpiDoneRate').textContent = `${doneRate}% Done`;
+      document.getElementById('repKpiCost').textContent = `Total Cost: Rp ${totalCost.toLocaleString('id-ID')}`;
+
+      // Render Tabel PIC
+      const picRows = Object.values(picStats).sort((a, b) => {
+        if (a.name === 'Unassigned') return 1;
+        if (b.name === 'Unassigned') return -1;
+        return b.totalPrimary - a.totalPrimary;
+      });
+      lastReportPicRows = picRows;
+
+      const picTbody = document.getElementById('repPicTableBody');
+      if (picRows.length === 0) {
+        picTbody.innerHTML = '<tr><td colspan="8" class="py-6 text-center text-slate-400">Tidak ada data tiket pada periode ini.</td></tr>';
+      } else {
+        picTbody.innerHTML = picRows.map(p => {
+          const pSla = p.slaEval > 0 ? Math.round((p.slaMet / p.slaEval) * 100) : null;
+          const pRating = p.ratingCount > 0 ? (p.ratingSum / p.ratingCount).toFixed(1) : '-';
+          const slaBarColor = pSla === null ? 'bg-slate-300' : (pSla >= 85 ? 'bg-emerald-500' : (pSla >= 70 ? 'bg-amber-500' : 'bg-rose-500'));
+
+          return `
+            <tr class="hover:bg-slate-50">
+              <td class="py-3 px-4 font-bold text-slate-800">${p.name === 'Unassigned' ? '<span class="text-rose-500 italic">Unassigned</span>' : p.name}</td>
+              <td class="py-3 px-3 text-center font-extrabold text-indigo-700">${p.totalPrimary}</td>
+              <td class="py-3 px-3 text-center text-slate-500">${p.totalSecondary}</td>
+              <td class="py-3 px-3 text-center">
+                <span class="px-2 py-0.5 rounded-full font-bold ${p.open > 5 ? 'bg-amber-100 text-amber-800' : 'bg-blue-50 text-blue-700'}">${p.open}</span>
+              </td>
+              <td class="py-3 px-3 text-center">
+                ${p.overdue > 0 ? `<span class="px-2 py-0.5 rounded-full bg-rose-100 text-rose-700 font-extrabold">${p.overdue}</span>` : '<span class="text-slate-300">0</span>'}
+              </td>
+              <td class="py-3 px-3 text-center font-bold text-emerald-700">${p.done}</td>
+              <td class="py-3 px-4">
+                ${pSla !== null ? `
+                  <div class="flex items-center gap-2">
+                    <div class="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
+                      <div class="h-full ${slaBarColor}" style="width: ${pSla}%"></div>
+                    </div>
+                    <span class="font-extrabold text-[11px] w-9 text-right">${pSla}%</span>
+                  </div>
+                ` : '<span class="text-[11px] text-slate-400">N/A</span>'}
+              </td>
+              <td class="py-3 px-3 text-center font-bold text-amber-600">${pRating !== '-' ? `⭐ ${pRating}` : '-'}</td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      // Render Breakdown Modul
+      const maxMod = Math.max(...Object.values(moduleMap), 1);
+      document.getElementById('repModuleBars').innerHTML = Object.entries(moduleMap)
+        .sort((a, b) => b[1] - a[1])
+        .map(([name, count]) => {
+          const pct = Math.round((count / maxMod) * 100);
+          return `
+            <div>
+              <div class="flex justify-between text-[11px] font-bold text-slate-700 mb-1">
+                <span class="truncate pr-2">${name}</span>
+                <span class="text-indigo-700 shrink-0">${count} tiket</span>
+              </div>
+              <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                <div class="h-full bg-indigo-500 rounded-full" style="width: ${pct}%"></div>
+              </div>
+            </div>
+          `;
+        }).join('') || '<p class="text-slate-400">Belum ada data.</p>';
+
+      // Render Breakdown Level & Company
+      const renderSimpleKeyVal = (mapObj, badgeClass) => Object.entries(mapObj)
+        .sort((a, b) => b[1] - a[1])
+        .map(([k, v]) => `
+          <div class="flex items-center justify-between py-1 border-b border-slate-100 last:border-0">
+            <span class="font-semibold text-slate-700 truncate pr-2">${k}</span>
+            <span class="text-[11px] font-extrabold px-2.5 py-0.5 rounded-full ${badgeClass}">${v}</span>
+          </div>
+        `).join('') || '<p class="text-slate-400">Belum ada data.</p>';
+
+      document.getElementById('repLevelList').innerHTML = renderSimpleKeyVal(levelMap, 'bg-slate-100 text-slate-700');
+      document.getElementById('repCompanyList').innerHTML = renderSimpleKeyVal(companyMap, 'bg-indigo-50 text-indigo-700');
+    }
+
+    function exportReportToCSV() {
+      if (!lastReportPicRows || lastReportPicRows.length === 0) {
+        alert('Tidak ada data laporan untuk diekspor.');
+        return;
+      }
+      const headers = ['Nama PIC', 'Total Primary', 'Total Support', 'Open Load', 'Overdue', 'Done', 'SLA Evaluated', 'SLA On-Time', 'SLA %', 'Avg Rating'];
+      const lines = [headers.join(',')];
+
+      lastReportPicRows.forEach(p => {
+        const slaPct = p.slaEval > 0 ? Math.round((p.slaMet / p.slaEval) * 100) + '%' : 'N/A';
+        const avgRat = p.ratingCount > 0 ? (p.ratingSum / p.ratingCount).toFixed(1) : '-';
+        lines.push([
+          `"${p.name}"`, p.totalPrimary, p.totalSecondary, p.open, p.overdue, p.done, p.slaEval, p.slaMet, slaPct, avgRat
+        ].join(','));
+      });
+
+      const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `ITDS_SLA_Workload_Report_${new Date().toISOString().slice(0, 10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
   </script>
 </body>
 </html>
